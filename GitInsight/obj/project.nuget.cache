@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "HpfIAGe7VQkOZLlyABkFNQHbm9T6othR5Dvm5SfJdZ/pf11l3pZhjvd2zx34gOKCHVWE8fQ1BzqfjVKUTA9eBw==",
+  "success": true,
+  "projectFilePath": "c:\\Users\\jgrum\\Documents\\Programming\\Csharp\\ThirdSemesterProjectGitInsight\\GitInsight\\GitInsight\\GitInsight.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\jgrum\\.nuget\\packages\\libgit2sharp\\0.26.2\\libgit2sharp.0.26.2.nupkg.sha512",
+    "C:\\Users\\jgrum\\.nuget\\packages\\libgit2sharp.nativebinaries\\2.0.306\\libgit2sharp.nativebinaries.2.0.306.nupkg.sha512"
+  ],
+  "logs": []
+}
