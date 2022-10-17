@@ -9,6 +9,7 @@
       "GitInsightTest/1.0.0": {
         "dependencies": {
           "FluentAssertions": "6.7.0",
+          "GitInsight": "1.0.0",
           "LibGit2Sharp": "0.27.0-preview-0182",
           "Microsoft.NET.Test.Sdk": "17.1.0",
           "coverlet.collector": "3.1.2",
@@ -1198,7 +1199,15 @@
           }
         }
       },
-      "xunit.runner.visualstudio/2.4.3": {}
+      "xunit.runner.visualstudio/2.4.3": {},
+      "GitInsight/1.0.0": {
+        "dependencies": {
+          "LibGit2Sharp": "0.27.0-preview-0182"
+        },
+        "runtime": {
+          "GitInsight.dll": {}
+        }
+      }
     }
   },
   "libraries": {
@@ -1885,6 +1894,11 @@
       "sha512": "sha512-kZZSmOmKA8OBlAJaquPXnJJLM9RwQ27H7BMVqfMLUcTi9xHinWGJiWksa3D4NEtz0wZ/nxd2mogObvBgJKCRhQ==",
       "path": "xunit.runner.visualstudio/2.4.3",
       "hashPath": "xunit.runner.visualstudio.2.4.3.nupkg.sha512"
+    },
+    "GitInsight/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
     }
   }
 }

@@ -113,3 +113,9 @@ C:\Users\jgrum\Documents\Programming\Csharp\ThirdSemesterProjectGitInsight\GitIn
 C:\Users\jgrum\Documents\Programming\Csharp\ThirdSemesterProjectGitInsight\GitInsight\GitInsightTest\bin\Debug\net6.0\runtimes\win-x64\native\git2-b7bad55.dll
 C:\Users\jgrum\Documents\Programming\Csharp\ThirdSemesterProjectGitInsight\GitInsight\GitInsightTest\bin\Debug\net6.0\runtimes\win-x86\native\git2-b7bad55.dll
 C:\Users\jgrum\Documents\Programming\Csharp\ThirdSemesterProjectGitInsight\GitInsight\GitInsightTest\bin\Debug\net6.0\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\jgrum\Documents\Programming\Csharp\ThirdSemesterProjectGitInsight\GitInsight\GitInsightTest\bin\Debug\net6.0\CoverletSourceRootsMapping
+C:\Users\jgrum\Documents\Programming\Csharp\ThirdSemesterProjectGitInsight\GitInsight\GitInsightTest\bin\Debug\net6.0\GitInsight.deps.json
+C:\Users\jgrum\Documents\Programming\Csharp\ThirdSemesterProjectGitInsight\GitInsight\GitInsightTest\bin\Debug\net6.0\GitInsight.runtimeconfig.json
+C:\Users\jgrum\Documents\Programming\Csharp\ThirdSemesterProjectGitInsight\GitInsight\GitInsightTest\bin\Debug\net6.0\GitInsight.exe
+C:\Users\jgrum\Documents\Programming\Csharp\ThirdSemesterProjectGitInsight\GitInsight\GitInsightTest\bin\Debug\net6.0\GitInsight.dll
+C:\Users\jgrum\Documents\Programming\Csharp\ThirdSemesterProjectGitInsight\GitInsight\GitInsightTest\bin\Debug\net6.0\GitInsight.pdb
