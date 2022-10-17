@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,8 +11,16 @@ namespace GitInsight
 {
     public class GitCommands
     {
-        public static string GitJacobUrl { get; set; } = "C:/Users/jgrum/Documents/Programming/Csharp/ThirdSemesterProjectGitInsight/GitInsight/.git";
-
+    
+        public static string GetGitLocalFolder()
+        {
+            var projectPath = Path.Combine(Directory.GetParent(typeof(GitCommands).GetTypeInfo().Assembly.Location).FullName);
+            var rootFolder = projectPath.Substring(0, projectPath.IndexOf("\\GitInsight\\") + 12);
+            
+            var gitFolder = Path.Combine(rootFolder, ".git");
+            Console.WriteLine(gitFolder);
+            return gitFolder;
+        }
         
         public static void GitLogByDateAuthor(string author)
         {
@@ -19,7 +28,7 @@ namespace GitInsight
 
             Console.WriteLine(author);
             
-            using (var repo = new Repository(GitJacobUrl))
+            using (var repo = new Repository(GetGitLocalFolder()))
             {
                 repo.Commits.QueryBy(new CommitFilter
                         { IncludeReachableFrom = repo.Head, SortBy = CommitSortStrategies.Time })
@@ -56,7 +65,7 @@ namespace GitInsight
         {
             var dateformat = "dd-MM-yyyy";
             
-            using (var repo = new Repository(GitJacobUrl))
+            using (var repo = new Repository(GetGitLocalFolder()))
             {
                 repo.Commits.QueryBy(new CommitFilter
                         { IncludeReachableFrom = repo.Head, SortBy = CommitSortStrategies.Time })
@@ -109,7 +118,7 @@ namespace GitInsight
         //Base example from website:
         public static void GitLog()
         {
-            using (var repo = new Repository(GitJacobUrl))
+            using (var repo = new Repository(GetGitLocalFolder()))
             {
                 var RFC2822Format = "ddd dd MMM HH:mm:ss yyyy K";
                 
