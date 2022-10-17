@@ -17,16 +17,12 @@ namespace GitInsight
             var projectPath = Path.Combine(Directory.GetParent(typeof(GitCommands).GetTypeInfo().Assembly.Location).FullName);
             var rootFolder = projectPath.Substring(0, projectPath.IndexOf("\\GitInsight\\") + 12);
             
-            var gitFolder = Path.Combine(rootFolder, ".git");
-            Console.WriteLine(gitFolder);
-            return gitFolder;
+            return Path.Combine(rootFolder, ".git");
         }
         
         public static void GitLogByDateAuthor(string author)
         {
             var dateformat = "dd-MM-yyyy";
-
-            Console.WriteLine(author);
             
             using (var repo = new Repository(GetGitLocalFolder()))
             {
