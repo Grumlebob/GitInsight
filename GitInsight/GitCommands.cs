@@ -11,35 +11,8 @@ namespace GitInsight
     public class GitCommands
     {
         public static string GitJacobUrl { get; set; } = "C:/Users/jgrum/Documents/Programming/Csharp/ThirdSemesterProjectGitInsight/GitInsight/.git";
+
         
-        public static void GitLog()
-        {
-            using (var repo = new Repository(GitJacobUrl))
-            {
-                var RFC2822Format = "ddd dd MMM HH:mm:ss yyyy K";
-                
-                foreach (Commit c in repo.Commits.Take(15))
-                {
-                
-                    Console.WriteLine(string.Format("commit {0}", c.Id));
-
-                    if (c.Parents.Count() > 1)
-                    {
-                        Console.WriteLine("Merge: {0}",
-                            string.Join(" ", c.Parents.Select(p => p.Id.Sha.Substring(0, 7)).ToArray()));
-                    }
-
-                    Console.WriteLine(string.Format("Author: {0} <{1}>", c.Author.Name, c.Author.Email));
-                    Console.WriteLine("Date:   {0}", c.Author.When.ToString(RFC2822Format, CultureInfo.InvariantCulture));
-                    Console.WriteLine();
-                    Console.WriteLine(c.Message);
-                    Console.WriteLine("author below");
-                    Console.WriteLine(c.Author.Name);
-                    Console.WriteLine();
-                }
-            }
-        }
-
         public static void GitLogByDateAuthor(string author)
         {
             var dateformat = "dd-MM-yyyy";
@@ -79,7 +52,7 @@ namespace GitInsight
             }
         }
         
-        public static void GitLogByDateAllAuthor()
+        public static void GitLogByAllAuthorsByDate()
         {
             var dateformat = "dd-MM-yyyy";
             
@@ -132,10 +105,35 @@ namespace GitInsight
                 }
             }
         }
-
-        //https://stackoverflow.com/questions/35769003/git-commit-count-per-day
         
+        //Base example from website:
+        public static void GitLog()
+        {
+            using (var repo = new Repository(GitJacobUrl))
+            {
+                var RFC2822Format = "ddd dd MMM HH:mm:ss yyyy K";
+                
+                foreach (Commit c in repo.Commits.Take(15))
+                {
+                    Console.WriteLine(string.Format("commit {0}", c.Id));
 
+                    if (c.Parents.Count() > 1)
+                    {
+                        Console.WriteLine("Merge: {0}",
+                            string.Join(" ", c.Parents.Select(p => p.Id.Sha.Substring(0, 7)).ToArray()));
+                    }
+
+                    Console.WriteLine(string.Format("Author: {0} <{1}>", c.Author.Name, c.Author.Email));
+                    Console.WriteLine("Date:   {0}", c.Author.When.ToString(RFC2822Format, CultureInfo.InvariantCulture));
+                    Console.WriteLine();
+                    Console.WriteLine(c.Message);
+                    Console.WriteLine("author below");
+                    Console.WriteLine(c.Author.Name);
+                    Console.WriteLine();
+                }
+            }
+        }
+        
         public static void GitCommitFrequency()
         {
             throw new NotImplementedException();
