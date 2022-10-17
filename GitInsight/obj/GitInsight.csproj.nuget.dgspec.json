@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\jgrum\\Documents\\Programming\\Csharp\\ThirdSemesterProjectGitInsight\\GitInsight\\GitInsight\\GitInsight.csproj": {}
+    "C:\\Users\\jgrum\\Documents\\Programming\\Csharp\\ThirdSemesterProjectGitInsight\\GitInsight\\GitInsight\\GitInsight.csproj": {}
   },
   "projects": {
-    "c:\\Users\\jgrum\\Documents\\Programming\\Csharp\\ThirdSemesterProjectGitInsight\\GitInsight\\GitInsight\\GitInsight.csproj": {
+    "C:\\Users\\jgrum\\Documents\\Programming\\Csharp\\ThirdSemesterProjectGitInsight\\GitInsight\\GitInsight\\GitInsight.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\jgrum\\Documents\\Programming\\Csharp\\ThirdSemesterProjectGitInsight\\GitInsight\\GitInsight\\GitInsight.csproj",
+        "projectUniqueName": "C:\\Users\\jgrum\\Documents\\Programming\\Csharp\\ThirdSemesterProjectGitInsight\\GitInsight\\GitInsight\\GitInsight.csproj",
         "projectName": "GitInsight",
-        "projectPath": "c:\\Users\\jgrum\\Documents\\Programming\\Csharp\\ThirdSemesterProjectGitInsight\\GitInsight\\GitInsight\\GitInsight.csproj",
+        "projectPath": "C:\\Users\\jgrum\\Documents\\Programming\\Csharp\\ThirdSemesterProjectGitInsight\\GitInsight\\GitInsight\\GitInsight.csproj",
         "packagesPath": "C:\\Users\\jgrum\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\jgrum\\Documents\\Programming\\Csharp\\ThirdSemesterProjectGitInsight\\GitInsight\\GitInsight\\obj\\",
+        "outputPath": "C:\\Users\\jgrum\\Documents\\Programming\\Csharp\\ThirdSemesterProjectGitInsight\\GitInsight\\GitInsight\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\jgrum\\AppData\\Roaming\\NuGet\\NuGet.Config",

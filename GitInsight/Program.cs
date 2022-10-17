@@ -11,9 +11,11 @@ if (args.Length > 0)
     }
     if (args[0] == "commitauthor") 
     {
-        GitCommands.GitCommitFrequency();
+        GitCommands.GitCommitAuthor();
         Console.WriteLine(args[0]); //dotnet run --args
     }
 }
 
 GitCommands.GitLog();
+
+

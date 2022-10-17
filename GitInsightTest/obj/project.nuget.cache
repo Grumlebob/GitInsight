@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "d0qBX+sHj1Fp2nYAS/hCcCyWWFZ5y/QRkO+aSiki4lA6JH6HIW7Pf91SF9ItMsILOIZWq1HK0OvjGeqWJ1yJfw==",
+  "dgSpecHash": "8BRdpHlTTDjHYtZW6Uv8Bx0hw7Mrh91GTCKdyw4pu04knnHHzf27WuNezmZQEc5XDGZ0Ezk9FiVg9IwZyAt1aQ==",
   "success": true,
-  "projectFilePath": "c:\\Users\\jgrum\\Documents\\Programming\\Csharp\\ThirdSemesterProjectGitInsight\\GitInsight\\GitInsightTest\\GitInsightTest.csproj",
+  "projectFilePath": "C:\\Users\\jgrum\\Documents\\Programming\\Csharp\\ThirdSemesterProjectGitInsight\\GitInsight\\GitInsightTest\\GitInsightTest.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\jgrum\\.nuget\\packages\\coverlet.collector\\3.1.2\\coverlet.collector.3.1.2.nupkg.sha512",
     "C:\\Users\\jgrum\\.nuget\\packages\\microsoft.codecoverage\\17.1.0\\microsoft.codecoverage.17.1.0.nupkg.sha512",
