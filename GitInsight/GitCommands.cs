@@ -17,8 +17,6 @@ namespace GitInsight
             using (var repo = new Repository(GitJacobUrl))
             {
                 var RFC2822Format = "ddd dd MMM HH:mm:ss yyyy K";
-
-                
                 
                 foreach (Commit c in repo.Commits.Take(15))
                 {
@@ -42,49 +40,105 @@ namespace GitInsight
             }
         }
 
-        public static void GitLogByAuthor(string author)
+        public static void GitLogByDateAuthor(string author)
         {
+            var dateformat = "dd-MM-yyyy";
+
+            Console.WriteLine(author);
+            
             using (var repo = new Repository(GitJacobUrl))
             {
                 repo.Commits.QueryBy(new CommitFilter
                         { IncludeReachableFrom = repo.Head, SortBy = CommitSortStrategies.Time })
                     .Where(c => c.Author.Name == author)
-                    .ToList()
-                    .ForEach(c => Console.WriteLine(c.Message));
-
-                Dictionary<DateTimeOffset, int> commitsByDate = new Dictionary<DateTimeOffset, int>();
+                    .ToList();
+                
+                Dictionary<string, int> commitsByDate = new Dictionary<string, int>();
+                
                 foreach (Commit c in repo.Commits)
                 {
+                    var whenFormatted = c.Author.When.ToString(dateformat, CultureInfo.InvariantCulture);
+                    //Console.WriteLine(whenFormatted);
+                   
                     if (c.Author.Name == author)
                     {
-                        if (commitsByDate.ContainsKey(c.Author.When))
+                        if (commitsByDate.ContainsKey(whenFormatted))
                         {
-                            commitsByDate[c.Author.When]++;
+                            commitsByDate[whenFormatted]++;
                         }
                         else
                         {
-                            commitsByDate.Add(c.Author.When, 1);
+                            commitsByDate.Add(whenFormatted, 1);
                         }
                     }
                 }
-
                 foreach (var item in commitsByDate)
                 {
-                    Console.WriteLine(item.Key + " " + item.Value);
+                    Console.WriteLine(item.Value + " " + item.Key);
+                }
+            }
+        }
+        
+        public static void GitLogByDateAllAuthor()
+        {
+            var dateformat = "dd-MM-yyyy";
+            
+            using (var repo = new Repository(GitJacobUrl))
+            {
+                repo.Commits.QueryBy(new CommitFilter
+                        { IncludeReachableFrom = repo.Head, SortBy = CommitSortStrategies.Time })
+                    .Where(c => c.Author.Name == c.Author.Name)
+                    .ToList();
+                
+                Dictionary<string, List<Commit>> commitsByAuthor = new Dictionary<string, List<Commit>>();
+                
+                foreach (Commit commit in repo.Commits)
+                {
+                    if (commitsByAuthor.ContainsKey(commit.Author.Name))
+                    {
+                        commitsByAuthor[commit.Author.Name].Add(commit);
+                    }
+                    else
+                    {
+                        commitsByAuthor.Add(commit.Author.Name, new List<Commit> {commit});
+                    }
+                    
+                }
+                
+                foreach (var item in commitsByAuthor)
+                {
+                    //Key = Author
+                    //Value = List of commits
+                    Console.WriteLine(item.Key);
+                    
+                    Dictionary<string, int> commitsByDate = new Dictionary<string, int>();
+                    
+                    foreach (var commit in item.Value)
+                    {
+                        var whenFormatted = commit.Author.When.ToString(dateformat, CultureInfo.InvariantCulture);
+                        if (commitsByDate.ContainsKey(whenFormatted))
+                        {
+                            commitsByDate[whenFormatted]++;
+                        }
+                        else
+                        {
+                            commitsByDate.Add(whenFormatted, 1);
+                        }
+                    }
+                    foreach (var date in commitsByDate)
+                    {
+                        Console.WriteLine(date.Value + " " + date.Key);
+                    }
                 }
             }
         }
 
         //https://stackoverflow.com/questions/35769003/git-commit-count-per-day
+        
 
         public static void GitCommitFrequency()
         {
-            Console.WriteLine("hello");
-        }
-
-        public static void GitCommitAuthor()
-        {
-            Console.WriteLine("hello");
+            throw new NotImplementedException();
         }
     }
 }

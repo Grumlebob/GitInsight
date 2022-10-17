@@ -1,7 +1,5 @@
 ﻿using GitInsight;
 
-Console.WriteLine("Hello, World!");
-
 if (args.Length > 0)
 {
     if (args[0] == "commitfrequency")
@@ -11,11 +9,11 @@ if (args.Length > 0)
     }
     if (args[0] == "commitauthor") 
     {
-        GitCommands.GitCommitAuthor();
+        GitCommands.GitLogByDateAuthor("Jacob Grum");
         Console.WriteLine(args[0]); //dotnet run --args
     }
 }
 
-GitCommands.GitLog();
+GitCommands.GitLogByDateAllAuthor();
 
 
