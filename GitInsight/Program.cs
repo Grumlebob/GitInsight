@@ -14,8 +14,8 @@ if (args.Length > 0)
     }
 }
 
-//GitCommands.GitLogByAllAuthorsByDate();
-GitCommands.GetGitLocalFolder();
+GitCommands.GitLogByAllAuthorsByDate();
+//GitCommands.GetGitTestFolder();
 
 
 

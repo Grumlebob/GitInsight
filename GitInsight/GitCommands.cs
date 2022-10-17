@@ -19,6 +19,13 @@ namespace GitInsight
             
             return Path.Combine(rootFolder, ".git");
         }
+        public static string GetGitTestFolder()
+        {
+            var projectPath = Path.Combine(Directory.GetParent(typeof(GitCommands).GetTypeInfo().Assembly.Location).FullName);
+            var rootFolder = projectPath.Substring(0, projectPath.IndexOf("\\GitInsight\\") + 12);
+            
+            return Path.Combine(rootFolder, ".testgit");
+        }
         
         public static void GitLogByDateAuthor(string author)
         {
@@ -61,7 +68,7 @@ namespace GitInsight
         {
             var dateformat = "dd-MM-yyyy";
             
-            using (var repo = new Repository(GetGitLocalFolder()))
+            using (var repo = new Repository(GitCommands.GetGitTestFolder()))
             {
                 repo.Commits.QueryBy(new CommitFilter
                         { IncludeReachableFrom = repo.Head, SortBy = CommitSortStrategies.Time })
