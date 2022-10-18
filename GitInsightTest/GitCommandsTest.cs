@@ -94,7 +94,7 @@ namespace GitInsightTest
         [Fact]
         public void GitCommitFrequencyDateRfc2822FormatTest()
         {
-            var dateRfc2822Format = GitCommands.GitCommitFrequency(dateformat: DateRfc2822Format, testingMode: Testing);
+            var dateRfc2822Format = GitCommands.GitCommitFrequency(dateformat: DateFormatRfc2822, testingMode: Testing);
             dateRfc2822Format.Should().NotBeEmpty();
             
 
