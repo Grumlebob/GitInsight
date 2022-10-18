@@ -1,6 +1,4 @@
-﻿using static GitInsight.GitCommands;
-
-if (args.Length > 0)
+﻿if (args.Length > 0)
 {
     if (args[0].ToLower() == "commitfrequency")
     {
@@ -10,10 +8,9 @@ if (args.Length > 0)
     else if (args[0].ToLower() == "commitauthor")
     {
         Console.WriteLine($"{args[0]} mode:"); //dotnet run --args
-        GitLogByAllAuthorsByDate();
+        GitLogByAllAuthorsByDate(dateformat: DateFormatWithTime, testingMode: Testing);
     }
 }
-
 
 //Uncomment to check your git folder is located correctly:
 //Console.WriteLine(GitCommands.GetGitLocalFolder());

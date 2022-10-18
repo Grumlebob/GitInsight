@@ -2,13 +2,38 @@
 
 public static class GitCommands
 {
-    private const string DateFormatNoTime = "dd-MM-yyyy";
-    private const string DateRfc2822Format = "ddd dd MMM HH:mm:ss yyyy K";
-    private const string DateFormatWithTime = "dd-MM-yyyy HH:mm:ss";
-
-    public static Dictionary<string, List<Commit>> GitLogByAllAuthorsByDate(string dateformat = DateFormatNoTime)
+    
+    public enum TestingMode
     {
-        using var repo = new Repository(GetGitTestFolder());
+        None,
+        Testing,
+    }
+
+    private static string GetPath(TestingMode testingMode = None)
+    {
+        return testingMode == Testing ? GetGitTestFolder() : GetGitLocalFolder();
+    } 
+    
+    /*
+Marie Beaumin
+      1 2017-12-08
+      6 2017-12-26
+     12 2018-01-01
+     13 2018-01-02
+     10 2018-01-14
+      7 2018-01-17
+      5 2018-01-18 
+
+Maxime Kauta
+      5 2017-12-06
+      3 2017-12-07
+      1 2018-01-01
+     */
+    public static Dictionary<string, List<Commit>> GitLogByAllAuthorsByDate(string dateformat = DateFormatNoTime, TestingMode testingMode = None)
+    {
+        
+        using var repo = new Repository(GetPath(testingMode));
+        
         repo.Commits.QueryBy(new CommitFilter { IncludeReachableFrom = repo.Head, SortBy = CommitSortStrategies.Time });
 
         var commitsByAuthor = new Dictionary<string, List<Commit>>();
@@ -56,10 +81,20 @@ public static class GitCommands
 
         return commitsByAuthor;
     }
+    
+    /*
+      1 2017-12-08
+      6 2017-12-26
+     12 2018-01-01
+     13 2018-01-02
+     10 2018-01-14
+      7 2018-01-17
+      5 2018-01-18 
+     */
 
-    public static Dictionary<string, int> GitCommitFrequency(string dateformat = DateFormatNoTime)
+    public static Dictionary<string, int> GitCommitFrequency(string dateformat = DateFormatNoTime,TestingMode testingMode = None)
     {
-        using var repo = new Repository(GetGitTestFolder());
+        using var repo = new Repository(GetPath(testingMode));
 
         repo.Commits.QueryBy(new CommitFilter { IncludeReachableFrom = repo.Head, SortBy = CommitSortStrategies.Time });
 
