@@ -2,7 +2,6 @@
 
 public static class GitCommands
 {
-    
     public enum TestingMode
     {
         None,
@@ -12,8 +11,8 @@ public static class GitCommands
     private static string GetPath(TestingMode testingMode = None)
     {
         return testingMode == Testing ? GetGitTestFolder() : GetGitLocalFolder();
-    } 
-    
+    }
+
     /*
 Marie Beaumin
       1 2017-12-08
@@ -29,11 +28,11 @@ Maxime Kauta
       3 2017-12-07
       1 2018-01-01
      */
-    public static Dictionary<string, List<Commit>> GitLogByAllAuthorsByDate(string dateformat = DateFormatNoTime, TestingMode testingMode = None)
+    public static Dictionary<string, List<Commit>> GitLogByAllAuthorsByDate(string dateformat = DateFormatNoTime,
+        TestingMode testingMode = None)
     {
-        
         using var repo = new Repository(GetPath(testingMode));
-        
+
         repo.Commits.QueryBy(new CommitFilter { IncludeReachableFrom = repo.Head, SortBy = CommitSortStrategies.Time });
 
         var commitsByAuthor = new Dictionary<string, List<Commit>>();
@@ -81,7 +80,7 @@ Maxime Kauta
 
         return commitsByAuthor;
     }
-    
+
     /*
       1 2017-12-08
       6 2017-12-26
@@ -92,7 +91,8 @@ Maxime Kauta
       5 2018-01-18 
      */
 
-    public static Dictionary<string, int> GitCommitFrequency(string dateformat = DateFormatNoTime,TestingMode testingMode = None)
+    public static Dictionary<string, int> GitCommitFrequency(string dateformat = DateFormatNoTime,
+        TestingMode testingMode = None)
     {
         using var repo = new Repository(GetPath(testingMode));
 
