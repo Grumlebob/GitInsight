@@ -1,21 +1,24 @@
-﻿using GitInsight;
+﻿using static GitInsight.GitCommands;
 
 if (args.Length > 0)
 {
-    if (args[0] == "commitfrequency")
+    if (args[0].ToLower() == "commitfrequency")
     {
-        GitCommands.GitCommitFrequency();
-        Console.WriteLine(args[0]); //dotnet run --args
+        Console.WriteLine($"{args[0]} mode:"); //dotnet run --args
+        GitCommitFrequency();
     }
-    if (args[0] == "commitauthor") 
+    else if (args[0].ToLower() == "commitauthor")
     {
-        GitCommands.GitLogByDateAuthor("Jacob Grum");
-        Console.WriteLine(args[0]); //dotnet run --args
+        Console.WriteLine($"{args[0]} mode:"); //dotnet run --args
+        GitLogByAllAuthorsByDate();
     }
 }
 
-GitCommands.GitLogByAllAuthorsByDate();
-//GitCommands.GetGitTestFolder();
+
+//Uncomment to check your git folder is located correctly:
+//Console.WriteLine(GitCommands.GetGitLocalFolder());
+//Console.WriteLine(GitCommands.GetGitTestFolder());
+
 
 
 
