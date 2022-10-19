@@ -14,7 +14,6 @@
 
 using var repo = new Repository(GetGitTestFolder());
 
-
 var aTag = repo.Tags["refs/tags/e90810b"];
 var allTags = repo.Tags.ToList();
 
