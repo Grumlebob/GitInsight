@@ -20,7 +20,7 @@ namespace GitInsightTest
 
             // Object lookup
             var obj = _repo.Lookup("master^");
-            var commit = _repo.Lookup<Commit>("8496071c1b46c854b31185ea97743be6a8774479");
+            var commit = _repo.Lookup<Commit>("8496071c1b46c854b31185ea977");
             var tree = _repo.Lookup<Tree>("master^{tree}");
             var blob = _repo.Lookup<Blob>("master:new.txt");
 
