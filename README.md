@@ -6,4 +6,4 @@
 
 ## Badge 2
 
-![Megalinter Workflow](https://github.com/Grumlebob/GitInsight/actions/workflows/workflows/mega-linter.yml/badge.svg)
+![Megalinter Workflow](https://github.com/Grumlebob/GitInsight/actions/workflows/mega-linter.yml/badge.svg)
