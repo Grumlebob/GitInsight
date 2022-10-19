@@ -1,9 +1,7 @@
 # GitInsight
 
-## Badge 1
+## Latest repository status
 
-![Test Workflow](https://github.com/Grumlebob/GitInsight/actions/workflows/buildAndTest.yml/badge.svg)
-
-## Badge 2
+![Build & Test Workflow](https://github.com/Grumlebob/GitInsight/actions/workflows/buildAndTest.yml/badge.svg)
 
 ![Megalinter Workflow](https://github.com/Grumlebob/GitInsight/actions/workflows/mega-linter.yml/badge.svg)
