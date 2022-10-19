@@ -12,7 +12,9 @@
     }
 }
 
+string RunningPath = AppDomain.CurrentDomain.BaseDirectory;
 
+var projectPath =  Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName;
 
-
+Console.WriteLine(projectPath);
 
