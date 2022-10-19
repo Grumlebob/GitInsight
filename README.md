@@ -1,7 +1,9 @@
 # GitInsight
 
-Build and test for current version:
+## Badge 1
+
 ![Test Workflow](https://github.com/Grumlebob/GitInsight/blob/master/.github/workflows/buildAndTest.yml/badge.svg)
 
-Megalinter for current version:
+## Badge 2
+
 ![Megalinter Workflow](https://github.com/Grumlebob/GitInsight/blob/master/.github/workflows/mega-linter.yml/badge.svg)
