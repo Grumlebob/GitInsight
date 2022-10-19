@@ -20,7 +20,7 @@ namespace GitInsightTest
 
             // Object lookup
             var obj = _repo.Lookup("master^");
-            var commit = _repo.Lookup<Commit>("8496071c1b46c854b31185ea97743be6a8774479");
+            var commit = _repo.Lookup<Commit>("8496071c1b46c854b31185ea97");
             var tree = _repo.Lookup<Tree>("master^{tree}");
             var blob = _repo.Lookup<Blob>("master:new.txt");
 
@@ -71,11 +71,11 @@ namespace GitInsightTest
 
             testAuthor.Count.Should().BeGreaterThan(2);
             testAuthor[0].Author.Name.Should().Be("Scott Chacon");
-            testAuthor[0].Sha.Should().Be("be3563ae3f795b2b4353bcce3a527ad0a4f7f644");
+            testAuthor[0].Sha.Should().Contain("be3563ae3f795b2b");
 
             testAuthor2.Count.Should().Be(1);
             testAuthor2[0].Author.Name.Should().Be("gor");
-            testAuthor2[0].Sha.Should().Be("4c062a6361ae6959e06292c1fa5e2822d9c96345");
+            testAuthor2[0].Sha.Should().Contain("4c062a6361ae6959e");
         }
 
         [Fact]
