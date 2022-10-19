@@ -12,9 +12,13 @@
     }
 }
 
-string RunningPath = AppDomain.CurrentDomain.BaseDirectory;
+using var repo = new Repository(GetGitTestFolder());
 
-var projectPath =  Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName;
 
-Console.WriteLine(projectPath);
+var aTag = repo.Tags["refs/tags/e90810b"];
+var allTags = repo.Tags.ToList();
 
+foreach (var t in allTags)
+{
+    Console.WriteLine(t.CanonicalName);
+}

@@ -52,7 +52,7 @@ namespace GitInsightTest
             branch.Should().NotBeNull();
 
             // Tags
-            var aTag = _repo.Tags["refs/tags/e90810b"];
+            var aTag = _repo.Tags["refs/tags/tag_without_tagger"];
             var allTags = _repo.Tags.ToList();
             aTag.Should().NotBeNull();
             allTags.Should().NotBeEmpty();
