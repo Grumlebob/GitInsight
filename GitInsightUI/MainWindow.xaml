@@ -15,19 +15,18 @@
             <Setter Property="Margin" Value="1,0,10,0" />
         </Style>
     </Window.Resources>
-    
-        <ScrollViewer HorizontalScrollBarVisibility="Disabled">
-            <TabControl>
-                <TabItem>
-                    <TabItem.Header>
-                        <StackPanel>
-                            <Image Source="https://robohash.org/set1/2" Height="20"> </Image>
-                            <TextBlock Text="Commits by author"></TextBlock>
-                        </StackPanel>
-                    </TabItem.Header>
-                    <DockPanel>
-                        <ListBox DockPanel.Dock="Left" ItemsSource="{Binding AllCommits}" SelectionMode="Multiple"
-                                 DisplayMemberPath="AuthorName" Name="AuthorSelection" />
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+        <TabControl>
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel>
+                        <Image Source="https://robohash.org/set1/2" Height="20"> </Image>
+                        <TextBlock Text="Commits by author"></TextBlock>
+                    </StackPanel>
+                </TabItem.Header>
+                <DockPanel>
+                    <ListBox DockPanel.Dock="Left" ItemsSource="{Binding AllCommits}" SelectionMode="Multiple"
+                             DisplayMemberPath="AuthorName" Name="AuthorSelection" />
                     <ItemsControl ItemsSource="{Binding AllCommits}" VerticalContentAlignment="Stretch">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
@@ -48,41 +47,41 @@
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                     </ItemsControl>
-                    </DockPanel>
-                </TabItem>
-                <TabItem>
-                    <TabItem.Header>
-                        <StackPanel>
-                            <Image Source="https://robohash.org/set2/3" Height="20"> </Image>
-                            <TextBlock Text="Commits by date"></TextBlock>
-                        </StackPanel>
-                    </TabItem.Header>
-                    <DockPanel>
-                        <ListBox DockPanel.Dock="Left" ItemsSource="{Binding CommitCountPerDate}" SelectionMode="Multiple"
-                                 DisplayMemberPath="Date" Name="DateSelection" />
-                        <ItemsControl ItemsSource="{Binding CommitCountPerDate}" VerticalContentAlignment="Stretch">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel VerticalAlignment="Bottom">
-                                        <TextBlock Margin="1,1,10,1" HorizontalAlignment="Center"
-                                                   Text="{Binding NumberOfCommits}" IsHitTestVisible="False" />
-                                        <Rectangle Height="{Binding NumberOfCommits}" Width="30"
-                                                   Style="{StaticResource ChartBar}" VerticalAlignment="Bottom">
-                                        </Rectangle>
-                                        <TextBlock Margin="1,1,10,1" VerticalAlignment="Bottom" Text="{Binding Date}"
-                                                   IsHitTestVisible="False" />
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal" />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                        </ItemsControl>
-                    </DockPanel>
-                    </TabItem>
-            </TabControl>
-        </ScrollViewer>
-    
+                </DockPanel>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <StackPanel>
+                        <Image Source="https://robohash.org/set2/3" Height="20"> </Image>
+                        <TextBlock Text="Commits by date"></TextBlock>
+                    </StackPanel>
+                </TabItem.Header>
+                <DockPanel>
+                    <ListBox DockPanel.Dock="Left" ItemsSource="{Binding CommitCountPerDate}" SelectionMode="Multiple"
+                             DisplayMemberPath="Date" Name="DateSelection" />
+                    <ItemsControl ItemsSource="{Binding CommitCountPerDate}" VerticalContentAlignment="Stretch">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel VerticalAlignment="Bottom">
+                                    <TextBlock Margin="1,1,10,1" HorizontalAlignment="Center"
+                                               Text="{Binding NumberOfCommits}" IsHitTestVisible="False" />
+                                    <Rectangle Height="{Binding NumberOfCommits}" Width="30"
+                                               Style="{StaticResource ChartBar}" VerticalAlignment="Bottom">
+                                    </Rectangle>
+                                    <TextBlock Margin="1,1,10,1" VerticalAlignment="Bottom" Text="{Binding Date}"
+                                               IsHitTestVisible="False" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                </DockPanel>
+            </TabItem>
+        </TabControl>
+    </ScrollViewer>
+
 </Window>
