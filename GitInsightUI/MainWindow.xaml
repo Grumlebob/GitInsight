@@ -5,33 +5,84 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GitInsightUI"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" d:DataContext="{d:DesignInstance Type=local:MainWindow, IsDesignTimeCreatable=True}">
-   
+        Title="MainWindow" Height="450" Width="800"
+        d:DataContext="{d:DesignInstance Type=local:MainWindow, IsDesignTimeCreatable=True}">
+
     <Window.Resources>
         <Style TargetType="Rectangle" x:Key="ChartBar">
             <Setter Property="Fill" Value="Lime" />
             <Setter Property="VerticalAlignment" Value="Bottom" />
-            <Setter Property="Margin" Value="1,0,1,0" />
+            <Setter Property="Margin" Value="1,0,10,0" />
         </Style>
     </Window.Resources>
-    <DockPanel>
-        <ListBox DockPanel.Dock="Left" ItemsSource="{Binding AllCommits}" SelectionMode="Multiple"
-                 DisplayMemberPath="AuthorName" Name="AuthorSelection" />
-        
+    
         <ScrollViewer HorizontalScrollBarVisibility="Disabled">
-            <ItemsControl ItemsSource="{Binding AllCommits}" VerticalContentAlignment="Stretch">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Rectangle Height= "{Binding NumberOfCommits}" Width="20" Style="{StaticResource ChartBar}" VerticalAlignment="Bottom">
-                        </Rectangle>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ItemsControl>
+            <TabControl>
+                <TabItem>
+                    <TabItem.Header>
+                        <StackPanel>
+                            <Image Source="https://robohash.org/set1/2" Height="20"> </Image>
+                            <TextBlock Text="Commits by author"></TextBlock>
+                        </StackPanel>
+                    </TabItem.Header>
+                    <DockPanel>
+                        <ListBox DockPanel.Dock="Left" ItemsSource="{Binding AllCommits}" SelectionMode="Multiple"
+                                 DisplayMemberPath="AuthorName" Name="AuthorSelection" />
+                    <ItemsControl ItemsSource="{Binding AllCommits}" VerticalContentAlignment="Stretch">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel VerticalAlignment="Bottom">
+                                    <TextBlock Margin="1,1,10,1" HorizontalAlignment="Center"
+                                               Text="{Binding NumberOfCommits}" IsHitTestVisible="False" />
+                                    <Rectangle Height="{Binding NumberOfCommits}" Width="30"
+                                               Style="{StaticResource ChartBar}" VerticalAlignment="Bottom">
+                                    </Rectangle>
+                                    <TextBlock Margin="1,1,10,1" VerticalAlignment="Bottom" Text="{Binding AuthorName}"
+                                               IsHitTestVisible="False" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                    </DockPanel>
+                </TabItem>
+                <TabItem>
+                    <TabItem.Header>
+                        <StackPanel>
+                            <Image Source="https://robohash.org/set2/3" Height="20"> </Image>
+                            <TextBlock Text="Commits by date"></TextBlock>
+                        </StackPanel>
+                    </TabItem.Header>
+                    <DockPanel>
+                        <ListBox DockPanel.Dock="Left" ItemsSource="{Binding CommitCountPerDate}" SelectionMode="Multiple"
+                                 DisplayMemberPath="Date" Name="DateSelection" />
+                        <ItemsControl ItemsSource="{Binding CommitCountPerDate}" VerticalContentAlignment="Stretch">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel VerticalAlignment="Bottom">
+                                        <TextBlock Margin="1,1,10,1" HorizontalAlignment="Center"
+                                                   Text="{Binding NumberOfCommits}" IsHitTestVisible="False" />
+                                        <Rectangle Height="{Binding NumberOfCommits}" Width="30"
+                                                   Style="{StaticResource ChartBar}" VerticalAlignment="Bottom">
+                                        </Rectangle>
+                                        <TextBlock Margin="1,1,10,1" VerticalAlignment="Bottom" Text="{Binding Date}"
+                                                   IsHitTestVisible="False" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+                    </DockPanel>
+                    </TabItem>
+            </TabControl>
         </ScrollViewer>
-    </DockPanel>
+    
 </Window>

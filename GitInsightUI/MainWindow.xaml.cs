@@ -19,34 +19,29 @@ using LibGit2Sharp;
 
 namespace GitInsightUI
 {
-    /* complex stuff, trying to simplify before making work.
-    public record AuthorWithCommits(
-        string Author,
-        ObservableCollection<Commit> commits);
-        */
-    
     public record AuthorWithNumberOfCommits(
         string AuthorName,
+        int NumberOfCommits);
+    
+    public record NumberOfCommitsOnDate(
+        string Date,
         int NumberOfCommits);
     
 
     public partial class MainWindow : Window
     {
-        /* complex stuff, trying to simplify before making work.
-        public List<AuthorWithCommits> Authors { get; } = new();
-        */
 
         public List<AuthorWithNumberOfCommits> AllCommits { get; } = new();
 
+        public List<NumberOfCommitsOnDate> CommitCountPerDate { get; } = new();
+
+        
         public MainWindow()
         {
             InitializeComponent();
             DataContext = this;
             InitAuthorList();
-            foreach (var VARIABLE in AllCommits)
-            {
-                Console.WriteLine(VARIABLE);
-            }
+            InitCommitCountPerDateList();
         }
 
         public void InitAuthorList()
@@ -54,12 +49,17 @@ namespace GitInsightUI
             var dc = GitCommands.GitLogByAllAuthorsByDate();
             foreach (var author in dc)
             {
-                /* complex stuff, trying to simplify before making work.
-                var authorWithCommits = new AuthorWithCommits(author.Key, new(author.Value));
-                Authors.Add(authorWithCommits);
-                */
-
                 AllCommits.Add(new AuthorWithNumberOfCommits(AuthorName: author.Key, NumberOfCommits:author.Value.Count));
+            }
+            
+        }
+
+        public void InitCommitCountPerDateList()
+        {
+            var dc = GitCommands.GitCommitFrequency();
+            foreach (var date in dc)
+            {
+                CommitCountPerDate.Add(new NumberOfCommitsOnDate(Date: date.Key, NumberOfCommits: date.Value));
             }
         }
     }
