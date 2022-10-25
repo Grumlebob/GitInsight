@@ -7,11 +7,31 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" d:DataContext="{d:DesignInstance Type=local:MainWindow, IsDesignTimeCreatable=True}">
    
+    <Window.Resources>
+        <Style TargetType="Rectangle" x:Key="ChartBar">
+            <Setter Property="Fill" Value="Lime" />
+            <Setter Property="VerticalAlignment" Value="Bottom" />
+            <Setter Property="Margin" Value="1,0,1,0" />
+        </Style>
+    </Window.Resources>
     <DockPanel>
-        <ListBox DockPanel.Dock="Left" ItemsSource="{Binding Authors}" SelectionMode="Multiple"
-                 DisplayMemberPath="Author" Name="AuthorSelection" />
+        <ListBox DockPanel.Dock="Left" ItemsSource="{Binding AllCommits}" SelectionMode="Multiple"
+                 DisplayMemberPath="AuthorName" Name="AuthorSelection" />
         
         <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+            <ItemsControl ItemsSource="{Binding AllCommits}" VerticalContentAlignment="Stretch">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Rectangle Height= "{Binding NumberOfCommits}" Width="20" Style="{StaticResource ChartBar}" VerticalAlignment="Bottom">
+                        </Rectangle>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
         </ScrollViewer>
     </DockPanel>
 </Window>
