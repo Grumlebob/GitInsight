@@ -12,12 +12,12 @@
             CommandLineSpecifiedPath = args[0];
         }
     }
-    if (args[0].ToLower() == "commitfrequency" || args[1].ToLower() == "commitfrequency")
+    if (args.Contains("commitfrequency"))
     {
         Console.WriteLine($"{args[0]} mode:"); //dotnet run --args
         GitCommitFrequency(dateformat: DateFormatNoTime, testingMode: None);
     }
-    else if (args[0].ToLower() == "commitauthor" || args[1].ToLower() == "commitauthor" )
+    else if (args.Contains("commitauthor") )
     {
         Console.WriteLine($"{args[0]} mode:"); //dotnet run --args
         GitLogByAllAuthorsByDate(dateformat: DateFormatNoTime, testingMode: None);
