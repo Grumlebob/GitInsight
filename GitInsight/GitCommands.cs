@@ -2,6 +2,9 @@
 
 public static class GitCommands
 {
+
+    public static string CommandLineSpecifiedPath = string.Empty;
+    
     public enum TestingMode
     {
         None,
@@ -10,6 +13,11 @@ public static class GitCommands
 
     private static string GetPath(TestingMode testingMode = None)
     {
+        if (!string.IsNullOrEmpty(CommandLineSpecifiedPath))
+        {
+            return CommandLineSpecifiedPath;
+        }
+            
         return testingMode == Testing ? GetGitTestFolder() : GetGitLocalFolder();
     }
     
