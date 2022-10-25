@@ -11,4 +11,12 @@
       <ProjectReference Include="..\GitInsight\GitInsight.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Images\TabIcons" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Resource Include="Images\**\*.*" />
+    </ItemGroup>
+
 </Project>

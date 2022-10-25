@@ -20,9 +20,9 @@
             <TabItem>
                 <TabItem.Header>
                     <StackPanel>
-                        <Image Source="https://robohash.org/set1/2" Height="20"> </Image>
-                        <TextBlock Text="Commits by author"></TextBlock>
-                    </StackPanel>
+                        <Image Source="{Binding TabItem1Icon}" Height="20"> </Image>
+                        <TextBlock Text="Commits by Author"></TextBlock>
+                        </StackPanel>
                 </TabItem.Header>
                 <DockPanel>
                     <ListBox DockPanel.Dock="Left" ItemsSource="{Binding AllCommits}" SelectionMode="Multiple"
@@ -52,8 +52,8 @@
             <TabItem>
                 <TabItem.Header>
                     <StackPanel>
-                        <Image Source="https://robohash.org/set2/3" Height="20"> </Image>
-                        <TextBlock Text="Commits by date"></TextBlock>
+                        <Image Source="{Binding TabItem2Icon}" Height="20"> </Image>
+                        <TextBlock Text="Commits by Date"></TextBlock>
                     </StackPanel>
                 </TabItem.Header>
                 <DockPanel>

@@ -34,10 +34,15 @@ namespace GitInsightUI
         public List<AuthorWithNumberOfCommits> AllCommits { get; } = new();
 
         public List<NumberOfCommitsOnDate> CommitCountPerDate { get; } = new();
+        
+        public string TabItem1Icon { get; }
+        public string TabItem2Icon { get; }
 
         
         public MainWindow()
         {
+            TabItem1Icon = ImagePathBuilder.Build("TabIcons/Sample_User_Icon.png");
+            TabItem2Icon = ImagePathBuilder.Build("TabIcons/date.png");
             InitializeComponent();
             DataContext = this;
             InitAuthorList();
