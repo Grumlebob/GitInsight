@@ -1,0 +1,17 @@
+﻿<Window x:Class="GitInsightUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GitInsightUI"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800" d:DataContext="{d:DesignInstance Type=local:MainWindow, IsDesignTimeCreatable=True}">
+   
+    <DockPanel>
+        <ListBox DockPanel.Dock="Left" ItemsSource="{Binding Authors}" SelectionMode="Multiple"
+                 DisplayMemberPath="Author" Name="AuthorSelection" />
+        
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+        </ScrollViewer>
+    </DockPanel>
+</Window>

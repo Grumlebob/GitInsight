@@ -4,7 +4,7 @@ public static class GitCommands
 {
 
     public static string CommandLineSpecifiedPath = string.Empty;
-    
+
     public enum TestingMode
     {
         None,
