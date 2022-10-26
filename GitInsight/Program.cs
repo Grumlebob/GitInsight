@@ -5,22 +5,24 @@
     {
         if (args[0].StartsWith("commit"))
         {
-            CommandLineSpecifiedPath = args[1];
+            SpecifiedPath = args[1];
         }
         else
         {
-            CommandLineSpecifiedPath = args[0];
+            SpecifiedPath = args[0];
         }
     }
     if (args.Contains("commitfrequency"))
     {
         Console.WriteLine($"{args[0]} mode:"); //dotnet run --args
-        GitCommitFrequency(dateformat: DateFormatNoTime, testingMode: None);
+        // GitCommitFrequency(testingMode: None);
+        PrintCommitFrequency(dateformat: DateFormatNoTime);
     }
     else if (args.Contains("commitauthor") )
     {
         Console.WriteLine($"{args[0]} mode:"); //dotnet run --args
-        GitLogByAllAuthorsByDate(dateformat: DateFormatNoTime, testingMode: None);
+        PrintAuthorCommitsByDate();
+        // GitLogByAllAuthorsByDate(dateformat: DateFormatNoTime, testingMode: None);
     }
-}
 
+}

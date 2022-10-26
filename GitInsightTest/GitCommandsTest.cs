@@ -66,7 +66,7 @@ namespace GitInsightTest
 
             var testAuthor = dictionary["Scott Chacon"];
             var testAuthor2 = dictionary["gor"];
-            
+
             _repo.Commits.Count().Should().Be(testAuthor.Count + testAuthor2.Count);
 
             testAuthor.Count.Should().BeGreaterThan(2);
@@ -81,43 +81,43 @@ namespace GitInsightTest
         [Fact]
         public void GitCommitFrequencyDateFormatNoTimeTest()
         {
-            var dictionary = GitCommands.GitCommitFrequency(dateformat: DateFormatNoTime, testingMode: Testing);
+            var dictionary = GitCommands.GitCommitFrequency(testingMode: Testing);
             dictionary.Should().NotBeEmpty();
 
-            var commitsOnTestDate = dictionary["14-04-2011"];
-            var commitsOnTestDate2 = dictionary["25-05-2010"];
+            var commitsOnTestDate = dictionary[ new DateTimeOffset(new DateTime(2011,04,14))];
+            var commitsOnTestDate2 = dictionary[ new DateTimeOffset(new DateTime(2010,05,25))];
 
             commitsOnTestDate.Should().Be(1);
             commitsOnTestDate2.Should().Be(2);
         }
-        
-        [Fact]
-        public void GitCommitFrequencyDateRfc2822FormatTest()
-        {
-            var dateRfc2822Format = GitCommands.GitCommitFrequency(dateformat: DateFormatRfc2822, testingMode: Testing);
-            dateRfc2822Format.Should().NotBeEmpty();
-            
 
-            var commitsOnTestDate = dateRfc2822Format["Thu 14 Apr 18:44:16 2011 +03:00"];
-            var commitsOnTestDate2 = dateRfc2822Format["Tue 25 May 11:58:27 2010 -07:00"];
-
-            commitsOnTestDate.Should().Be(1);
-            commitsOnTestDate2.Should().Be(1);
-        }
-        
-        [Fact]
-        public void GitCommitFrequencyDateFormatWithTimeTest()
-        {
-            var dateRfc2822Format = GitCommands.GitCommitFrequency(dateformat: DateFormatWithTime, testingMode: Testing);
-            dateRfc2822Format.Should().NotBeEmpty();
-            
-
-            var commitsOnTestDate = dateRfc2822Format["14-04-2011 18:44:16"];
-            var commitsOnTestDate2 = dateRfc2822Format["14-04-2011 18:44:16"];
-
-            commitsOnTestDate.Should().Be(1);
-            commitsOnTestDate2.Should().Be(1);
-        }
+        // [Fact]
+        // public void GitCommitFrequencyDateRfc2822FormatTest()
+        // {
+        //     var dateRfc2822Format = GitCommands.GitCommitFrequency(dateformat: DateFormatRfc2822, testingMode: Testing);
+        //     dateRfc2822Format.Should().NotBeEmpty();
+        //
+        //
+        //     var commitsOnTestDate = dateRfc2822Format["Thu 14 Apr 18:44:16 2011 +03:00"];
+        //     var commitsOnTestDate2 = dateRfc2822Format["Tue 25 May 11:58:27 2010 -07:00"];
+        //
+        //     commitsOnTestDate.Should().Be(1);
+        //     commitsOnTestDate2.Should().Be(1);
+        // }
+        //
+        // [Fact]
+        // public void GitCommitFrequencyDateFormatWithTimeTest()
+        // {
+        //     var dateRfc2822Format = GitCommands.GitCommitFrequency(dateformat: DateFormatWithTime, testingMode: Testing);
+        //     dateRfc2822Format.Should().NotBeEmpty();
+        //
+        //
+        //     var commitsOnTestDate = dateRfc2822Format["14-04-2011 18:44:16"];
+        //     var commitsOnTestDate2 = dateRfc2822Format["14-04-2011 18:44:16"];
+        //
+        //     commitsOnTestDate.Should().Be(1);
+        //     commitsOnTestDate2.Should().Be(1);
+        // }
 
         public void Dispose()
         {
