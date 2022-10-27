@@ -58,42 +58,14 @@
                     </ItemsControl>
                 </DockPanel>
             </TabItem>
-            <TabItem>
+           <TabItem>
                 <TabItem.Header>
                     <StackPanel>
                         <Image Source="{Binding TabItem2Icon}" Height="20"> </Image>
                         <TextBlock Text="Commits by Date"></TextBlock>
                     </StackPanel>
                 </TabItem.Header>
-                <DockPanel>
-                    <ListBox DockPanel.Dock="Left" ItemsSource="{Binding CommitCountPerDate}" SelectionMode="Multiple"
-                             DisplayMemberPath="Date" Name="DateSelection" />
-                    <ItemsControl ItemsSource="{Binding CommitCountPerDate}" VerticalContentAlignment="Stretch">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel VerticalAlignment="Bottom">
-                                    <TextBlock Margin="1,1,10,1" HorizontalAlignment="Center"
-                                               Text="{Binding NumberOfCommits}" IsHitTestVisible="False" />
-                                    <Rectangle Height="{Binding NumberOfCommits}" Width="30"
-                                               Style="{StaticResource ChartBar}" VerticalAlignment="Bottom">
-                                    </Rectangle>
-                                    <TextBlock Margin="1,1,10,1" VerticalAlignment="Bottom" Text="{Binding Date}"
-                                               IsHitTestVisible="False" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                    </ItemsControl>
-                </DockPanel>
-            </TabItem>
-            <TabItem>
-                <StackPanel>
-                    <local:CommitsByDateChart ></local:CommitsByDateChart>
-                </StackPanel>
+                <local:CommitsByDateChart ></local:CommitsByDateChart>
             </TabItem>
         </TabControl>
     </ScrollViewer>

@@ -7,10 +7,8 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              d:DataContext="{d:DesignInstance Type=local:CommitsByDateChart, IsDesignTimeCreatable=True}">
-
     <UserControl.Resources>
         <local:BarHeightConverter x:Key="BarHeightConverter" />
-
         <Style TargetType="Rectangle" x:Key="ChartBar">
             <Setter Property="Fill" Value="Lime" />
             <Setter Property="VerticalAlignment" Value="Bottom" />
@@ -23,8 +21,14 @@
                 <StackPanel VerticalAlignment="Bottom">
                     <TextBlock Margin="1,1,10,1" HorizontalAlignment="Center"
                                Text="{Binding NumberOfCommits}" IsHitTestVisible="False" />
-                    <Rectangle Height="{Binding NumberOfCommits}" Width="30"
-                               Style="{StaticResource ChartBar}" VerticalAlignment="Bottom">
+                    <Rectangle  Width="30" Style="{StaticResource ChartBar}" VerticalAlignment="Bottom">
+                        <Rectangle.Height>
+                            <MultiBinding Converter="{StaticResource BarHeightConverter}"
+                                          ConverterParameter="{x:Static local:CommitsByDateChart.MaxCommitsPerDate}">
+                                <Binding Path="NumberOfCommits" />
+                                <Binding RelativeSource="{RelativeSource AncestorType=ItemsControl}" Path="ActualHeight" />
+                            </MultiBinding>
+                        </Rectangle.Height>
                     </Rectangle>
                     <TextBlock Margin="1,1,10,1" VerticalAlignment="Bottom" Text="{Binding Date}"
                                IsHitTestVisible="False" />
