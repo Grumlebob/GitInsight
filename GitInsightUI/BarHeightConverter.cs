@@ -8,13 +8,7 @@ public class BarHeightConverter : IMultiValueConverter
 {
     public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
-        /*
-        Console.WriteLine("HER ER VI");
-        Console.WriteLine("commits:" + values[0]);
-        Console.WriteLine("maxScreenHeight" + values[1]);
-        Console.WriteLine("maxHighestCommitCount"+parameter);
-        */
-       
+      
         if (
             //Actual number of commits
             values[0] is int commits
@@ -27,9 +21,7 @@ public class BarHeightConverter : IMultiValueConverter
         {
             // Note: *0.85d, is a trick to make it fit within screen and not add a scrollbar.
             // ReSharper disable once HeapView.BoxingAllocation
-            //Console.WriteLine("math inspect:" + ((double)commits / (double)maxHighestCommitCount));
-           Console.WriteLine("setHeight:" + (double)commits / (double)maxHighestCommitCount * maxScreenHeight * 0.98d);
-           return (double)commits / (double)maxHighestCommitCount * maxScreenHeight * 0.85d;
+            return (double)commits / (double)maxHighestCommitCount * maxScreenHeight * 0.85d;
         }
 
         throw new InvalidCastException();
