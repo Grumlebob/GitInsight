@@ -1,0 +1,52 @@
+﻿<UserControl x:Class="GitInsightUI.CommitsByAuthorChart"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:GitInsightUI"
+             xmlns:gitInsightUi="clr-namespace:GitInsightUI"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300"
+             d:DataContext="{d:DesignInstance Type=local:CommitsByAuthorChart, IsDesignTimeCreatable=True}">
+    <UserControl.Resources>
+        <local:BarHeightConverter x:Key="BarHeightConverter" />
+        <local:CommitsByDateChart x:Key="CommitsByDateChart" />
+
+        <Style TargetType="Rectangle" x:Key="ChartBar">
+            <Setter Property="Fill" Value="Lime" />
+            <Setter Property="VerticalAlignment" Value="Bottom" />
+            <Setter Property="Margin" Value="1,0,10,0" />
+        </Style>
+    </UserControl.Resources>
+    <DockPanel>
+        <ListBox DockPanel.Dock="Left" ItemsSource="{Binding CommitCountPerAuthor}" SelectionMode="Multiple"
+                 DisplayMemberPath="AuthorName" Name="AuthorSelection" />
+    <ItemsControl ItemsSource="{Binding ElementName=AuthorSelection, Path=SelectedItems}" VerticalContentAlignment="Stretch">
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <StackPanel VerticalAlignment="Bottom">
+                    <TextBlock Margin="1,1,10,1" HorizontalAlignment="Center"
+                               Text="{Binding NumberOfCommits}" IsHitTestVisible="False" />
+                    <Rectangle Width="30" Style="{StaticResource ChartBar}" VerticalAlignment="Bottom">
+                        <Rectangle.Height>
+                            <MultiBinding Converter="{StaticResource BarHeightConverter}"
+                                          ConverterParameter="{x:Static local:CommitsByAuthorChart.MaxCommitsPerAuthor}">
+                                <Binding Path="NumberOfCommits" />
+                                <Binding RelativeSource="{RelativeSource AncestorType=ItemsControl}"
+                                         Path="ActualHeight" />
+                            </MultiBinding>
+                        </Rectangle.Height>
+                    </Rectangle>
+                    <TextBlock Margin="1,1,10,1" VerticalAlignment="Bottom" Text="{Binding AuthorName}"
+                               IsHitTestVisible="False" />
+                </StackPanel>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <StackPanel Orientation="Horizontal" />
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+    </ItemsControl>
+    </DockPanel>
+</UserControl>
