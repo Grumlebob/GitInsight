@@ -15,30 +15,55 @@
             <Setter Property="Margin" Value="1,0,10,0" />
         </Style>
     </UserControl.Resources>
-    <ItemsControl ItemsSource="{Binding CommitCountPerDate}" VerticalContentAlignment="Stretch">
-        <ItemsControl.ItemTemplate>
-            <DataTemplate>
-                <StackPanel VerticalAlignment="Bottom">
-                    <TextBlock Margin="1,1,10,1" HorizontalAlignment="Center"
-                               Text="{Binding NumberOfCommits}" IsHitTestVisible="False" />
-                    <Rectangle  Width="30" Style="{StaticResource ChartBar}" VerticalAlignment="Bottom">
-                        <Rectangle.Height>
-                            <MultiBinding Converter="{StaticResource BarHeightConverter}"
-                                          ConverterParameter="{x:Static local:CommitsByDateChart.MaxCommitsPerDate}">
-                                <Binding Path="NumberOfCommits" />
-                                <Binding RelativeSource="{RelativeSource AncestorType=ItemsControl}" Path="ActualHeight" />
-                            </MultiBinding>
-                        </Rectangle.Height>
-                    </Rectangle>
-                    <TextBlock Margin="1,1,10,1" VerticalAlignment="Bottom" Text="{Binding Date}"
-                               IsHitTestVisible="False" />
-                </StackPanel>
-            </DataTemplate>
-        </ItemsControl.ItemTemplate>
-        <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-                <StackPanel Orientation="Horizontal" />
-            </ItemsPanelTemplate>
-        </ItemsControl.ItemsPanel>
-    </ItemsControl>
+    <Grid>
+        <Line
+            X1="0" 
+            X2="{Binding ActualWidth}" 
+            Stroke="Black"
+            StrokeThickness="2">
+            <Line.Y1>
+                <MultiBinding Converter="{StaticResource BarHeightConverter}"
+                              ConverterParameter="{x:Static local:CommitsByDateChart.MaxCommitsPerDate}">
+                    <Binding Path="MaxCommitsPerDate" />
+                    <Binding RelativeSource="{RelativeSource AncestorType=Grid}"
+                             Path="ActualHeight" />
+                </MultiBinding>
+            </Line.Y1>
+            <Line.Y2>
+                <MultiBinding Converter="{StaticResource BarHeightConverter}"
+                              ConverterParameter="{x:Static local:CommitsByDateChart.MaxCommitsPerDate}">
+                    <Binding Path="MaxCommitsPerDate" />
+                    <Binding RelativeSource="{RelativeSource AncestorType=Grid}"
+                             Path="ActualHeight" />
+                </MultiBinding>
+            </Line.Y2>
+        </Line>
+        <ItemsControl ItemsSource="{Binding CommitCountPerDate}" VerticalContentAlignment="Stretch">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel VerticalAlignment="Bottom">
+                        <TextBlock Margin="1,1,10,1" HorizontalAlignment="Center"
+                                   Text="{Binding NumberOfCommits}" IsHitTestVisible="False" />
+                        <Rectangle Width="30" Style="{StaticResource ChartBar}" VerticalAlignment="Bottom">
+                            <Rectangle.Height>
+                                <MultiBinding Converter="{StaticResource BarHeightConverter}"
+                                              ConverterParameter="{x:Static local:CommitsByDateChart.MaxCommitsPerDate}">
+                                    <Binding Path="NumberOfCommits" />
+                                    <Binding RelativeSource="{RelativeSource AncestorType=ItemsControl}"
+                                             Path="ActualHeight" />
+                                </MultiBinding>
+                            </Rectangle.Height>
+                        </Rectangle>
+                        <TextBlock Margin="1,1,10,1" VerticalAlignment="Bottom" Text="{Binding Date}"
+                                   IsHitTestVisible="False" />
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+    </Grid>
 </UserControl>
