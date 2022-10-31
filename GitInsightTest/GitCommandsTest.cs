@@ -1,6 +1,9 @@
+using System.Security.Cryptography;
 using GitInsight;
 using static GitInsight.DateFormats;
 using static GitInsight.GitCommands.TestingMode;
+using static GitInsight.GitCommands;
+
 
 namespace GitInsightTest
 {
@@ -11,6 +14,7 @@ namespace GitInsightTest
         public GitCommandsTest()
         {
             _repo = new Repository(GetGitTestFolder());
+            SetMode(Testing);
         }
 
         [Fact]
@@ -78,18 +82,79 @@ namespace GitInsightTest
             testAuthor2[0].Sha.Should().Contain("4c062a6361ae6959e");
         }
 
+
         [Fact]
-        public void GitCommitFrequencyDateFormatNoTimeTest()
+        public void FrequencyFormat_Dateformatnotime()
         {
-            var dictionary = GitCommands.GitCommitFrequency(testingMode: Testing);
+            var dictionary = GitFrequencyFormat();
             dictionary.Should().NotBeEmpty();
 
-            var commitsOnTestDate = dictionary[ new DateTimeOffset(new DateTime(2011,04,14))];
-            var commitsOnTestDate2 = dictionary[ new DateTimeOffset(new DateTime(2010,05,25))];
-
-            commitsOnTestDate.Should().Be(1);
-            commitsOnTestDate2.Should().Be(2);
+            var testCase = "14-04-2011";
+            var testResult = dictionary[testCase];
+            testResult.Contains("14-04-2011").Should().Be(true);
         }
+
+        [Fact]
+        public void FrequencyFormat_DateformatWithTime()
+        {
+            var dictionary = GitFrequencyFormat(DateFormatWithTime);
+            dictionary.Should().NotBeEmpty();
+            var testCase = "14-04-2011";
+            var testResult = dictionary[testCase];
+            testResult.Contains("14-04-2011 18:44:16").Should().Be(true);
+        }
+
+        [Fact]
+        public void FrequencyFormat_DateWithRFC()
+        {
+            var dictionary = GitFrequencyFormat(DateFormatRfc2822);
+            dictionary.Should().NotBeEmpty();
+            var testCase = "14-04-2011";
+            var testResult = dictionary[testCase];
+            testResult.Contains("Thu 14 Apr 18:44:16 2011 +03:00").Should().Be(true);
+        }
+
+        [Fact]
+        public void PrintAuthor_Test_console_output()
+        {
+
+
+        }
+
+
+
+
+
+
+
+
+        // public void GitCommitFrequencyDateFormatNoTimeTest()
+        // {
+        //     var dictionary = GitCommands.GitCommitFrequency(testingMode: Testing);
+        //     dictionary.Should().NotBeEmpty();
+        //
+        //     var commitsOnTestDate = dictionary[ new DateTimeOffset(new DateTime(2011,04,14))];
+        //     var commitsOnTestDate2 = dictionary[ new DateTimeOffset(new DateTime(2010,05,25))];
+        //
+        //     commitsOnTestDate.Should().Be(1);
+        //     commitsOnTestDate2.Should().Be(2);
+        // }
+        //
+        // [Fact]
+        // public void GitCommitFrequencyDateRfc2822FormatTest()
+        // {
+        //     var dateRfc2822Format = GitCommands.GitCommitFrequency(Testing);
+        //     dateRfc2822Format.Should().NotBeEmpty();
+        //
+        //     var formattedDate = GitCommands.FrequencyFormat(DateFormatRfc2822);
+        //
+        //
+        //     var commitsOnTestDate = dateRfc2822Format["Thu 14 Apr 18:44:16 2011 +03:00"];
+        //     var commitsOnTestDate2 = dateRfc2822Format["Tue 25 May 11:58:27 2010 -07:00"];
+        //
+        //     commitsOnTestDate.Should().Be(1);
+        //     commitsOnTestDate2.Should().Be(1);
+        // }
 
         // [Fact]
         // public void GitCommitFrequencyDateRfc2822FormatTest()
