@@ -12,19 +12,11 @@ public class BranchRepositoryTest
     
     public BranchRepositoryTest()
     {
-        var connection = new SqliteConnection("Filename=:memory:");
-        connection.Open();
-        var builder = new DbContextOptionsBuilder<InsightContext>();
-        builder.UseSqlite(connection);
-        var context = new InsightContext(builder.Options);
-        context.Database.EnsureCreated();
-        context.SaveChanges();
-
-        _context = context;
-        
+        _context = SetupTests.Setup();
     }
+    
     [Fact]
-    public void HowDoesItHandleIt()
+    public void SimpleBranchObject()
     {
         Branch a = new Branch();
         a.Id = 1; 

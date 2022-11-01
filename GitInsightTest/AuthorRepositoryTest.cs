@@ -11,26 +11,18 @@ public class AuthorRepositoryTest
     
     public AuthorRepositoryTest()
     {
-        var connection = new SqliteConnection("Filename=:memory:");
-        connection.Open();
-        var builder = new DbContextOptionsBuilder<InsightContext>();
-        builder.UseSqlite(connection);
-        var context = new InsightContext(builder.Options);
-        context.Database.EnsureCreated();
-        context.SaveChanges();
-
-        _context = context;
-        
+        _context = SetupTests.Setup();
     }
+    
     [Fact]
-    public void HowDoesItHandle()
+    public void ContextShouldBeEmpty()
     {
         var allAuthors = _context.Authors;
 
         allAuthors.Should().BeEmpty();
     }
     [Fact]
-    public void HowDoesItHandleIt()
+    public void SimpleAuthorObject()
     {
         Author a = new Author();
         a.Email = "a"; 

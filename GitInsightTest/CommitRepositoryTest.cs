@@ -12,20 +12,11 @@ public class CommitRepositoryTest
     
     public CommitRepositoryTest()
     {
-        var connection = new SqliteConnection("Filename=:memory:");
-        connection.Open();
-        var builder = new DbContextOptionsBuilder<InsightContext>();
-        builder.UseSqlite(connection);
-        var context = new InsightContext(builder.Options);
-        context.Database.EnsureCreated();
-        context.SaveChanges();
-
-        _context = context;
-        
+        _context = SetupTests.Setup();
     }
  
     [Fact]
-    public void HowDoesItHandleIt()
+    public void SimpleCommitObject()
     {
         GitInsight.Entities.Commit a = new GitInsight.Entities.Commit();
         a.Id = 1;

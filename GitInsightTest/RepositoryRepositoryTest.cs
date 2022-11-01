@@ -12,20 +12,11 @@ public class RepositoryRepositoryTest
     
     public RepositoryRepositoryTest()
     {
-        var connection = new SqliteConnection("Filename=:memory:");
-        connection.Open();
-        var builder = new DbContextOptionsBuilder<InsightContext>();
-        builder.UseSqlite(connection);
-        var context = new InsightContext(builder.Options);
-        context.Database.EnsureCreated();
-        context.SaveChanges();
-
-        _context = context;
-        
+        _context = SetupTests.Setup();
     }
  
     [Fact]
-    public void HowDoesItHandleIt()
+    public void SimpleRepoObject()
     {
         GitInsight.Entities.Repository a = new GitInsight.Entities.Repository();
         a.Id = 1;
