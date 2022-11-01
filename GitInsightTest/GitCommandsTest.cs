@@ -65,7 +65,7 @@ namespace GitInsightTest
         [Fact]
         public void GitLogByAllAuthorsByDateTest()
         {
-            var dictionary = GitCommands.GitLogByAllAuthorsByDate(testingMode: Testing);
+            var dictionary = GitLogByAllAuthorsByDate(testingMode: Testing);
             dictionary.Should().NotBeEmpty();
 
             var testAuthor = dictionary["Scott Chacon"];
@@ -115,10 +115,16 @@ namespace GitInsightTest
         }
 
         [Fact]
-        public void PrintAuthor_Test_console_output()
+        public void GetCommitsByDate_Test()
         {
+            var commits = _repo.Commits.ToList();
+            var dictionary = GetCommitsByDate(commits);
+            dictionary.Should().NotBeEmpty();
 
-
+            var date = new DateTimeOffset(new DateTime(2010, 5, 25));
+            var testResult = dictionary[date];
+            testResult.Count.Should().Be(2);
+            testResult[0].Sha.Should().Contain("be3563ae3f795b2b");
         }
 
 

@@ -79,7 +79,6 @@ public static class GitCommands
     public static Dictionary<string, List<string>> GitFrequencyFormat(string dateformat = DateFormatNoTime, TestingMode testingMode = None )
     {
         using var repo = new Repository(GetPath(testingMode));
-
         var formatted = new Dictionary<string, List<string>>();
         foreach (var item in CommitFrequency)
         {
@@ -99,31 +98,33 @@ public static class GitCommands
         }
     }
 
+   public static Dictionary<DateTimeOffset,List<Commit>> GetCommitsByDate(List<Commit> commits)
+    {
+        var commitsByDate = new Dictionary<DateTimeOffset, List<Commit>>();
+
+        foreach (var commit in commits)
+        {
+            var date = commit.Author.When.Date;
+            if (commitsByDate.ContainsKey(date))
+            {
+                commitsByDate[date].Add(commit);
+            }
+            else
+            {
+                commitsByDate.Add(date, new List<Commit> { commit });
+            }
+        }
+        return commitsByDate;
+    }
+
     public static void PrintAuthorCommitsByDate(string dateformat = DateFormatNoTime)
     {
         foreach (var item in AuthorLog)
         {
-            var commitsByDate = new Dictionary<DateTime, int>();
-            //they might already be sorted, but just in case
-            item.Value.Sort((q,p)=>q.Author.When.CompareTo(p.Author.When));
-
-            foreach (var commit in item.Value)
-            {
-                var date = commit.Author.When.Date;
-                if (commitsByDate.ContainsKey(date))
-                {
-                    commitsByDate[date]++;
-                }
-                else
-                {
-                    commitsByDate.Add(date, 1);
-                }
-            }
-
-            Console.WriteLine(item.Key);
+            var commitsByDate = GetCommitsByDate(item.Value);
             foreach (var res in commitsByDate)
             {
-                Console.WriteLine($"\t{res.Value} | {res.Key.ToString(dateformat)}");
+                Console.WriteLine($"\t{res.Value.Count} | {res.Key.ToString(dateformat)}");
             }
         }
     }
