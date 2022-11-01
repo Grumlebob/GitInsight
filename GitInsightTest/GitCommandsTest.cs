@@ -1,6 +1,6 @@
 using GitInsight;
 using static GitInsight.DateFormats;
-using static GitInsight.GitCommands.TestingMode;
+using static GitInsight.GitCommands.Pathing;
 
 namespace GitInsightTest
 {
@@ -61,7 +61,7 @@ namespace GitInsightTest
         [Fact]
         public void GitLogByAllAuthorsByDateTest()
         {
-            var dictionary = GitCommands.GitLogByAllAuthorsByDate(testingMode: Testing);
+            var dictionary = GitCommands.GitLogByAllAuthorsByDate(pathing: TestRepository);
             dictionary.Should().NotBeEmpty();
 
             var testAuthor = dictionary["Scott Chacon"];
@@ -81,7 +81,7 @@ namespace GitInsightTest
         [Fact]
         public void GitCommitFrequencyDateFormatNoTimeTest()
         {
-            var dictionary = GitCommands.GitCommitFrequency(dateformat: DateFormatNoTime, testingMode: Testing);
+            var dictionary = GitCommands.GitCommitFrequency(dateformat: DateFormatNoTime, pathing: TestRepository);
             dictionary.Should().NotBeEmpty();
 
             var commitsOnTestDate = dictionary["14-04-2011"];
@@ -94,7 +94,7 @@ namespace GitInsightTest
         [Fact]
         public void GitCommitFrequencyDateRfc2822FormatTest()
         {
-            var dateRfc2822Format = GitCommands.GitCommitFrequency(dateformat: DateFormatRfc2822, testingMode: Testing);
+            var dateRfc2822Format = GitCommands.GitCommitFrequency(dateformat: DateFormatRfc2822, pathing: TestRepository);
             dateRfc2822Format.Should().NotBeEmpty();
             
 
@@ -108,7 +108,7 @@ namespace GitInsightTest
         [Fact]
         public void GitCommitFrequencyDateFormatWithTimeTest()
         {
-            var dateRfc2822Format = GitCommands.GitCommitFrequency(dateformat: DateFormatWithTime, testingMode: Testing);
+            var dateRfc2822Format = GitCommands.GitCommitFrequency(dateformat: DateFormatWithTime, pathing: TestRepository);
             dateRfc2822Format.Should().NotBeEmpty();
             
 
