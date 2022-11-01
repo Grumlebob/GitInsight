@@ -2,7 +2,7 @@
 
 public static class GitCommands
 {
-    public static string SpecifiedPath = "";
+    public static string SpecifiedPath = string.Empty;
     public static Dictionary<string, List<Commit>> AuthorLog = GitLogByAllAuthorsByDate();
     public static Dictionary<DateTimeOffset, List<DateTimeOffset>> CommitFrequency = GitCommitFrequency();
     public static Dictionary<string, List<string>> FrequencyFormat = GitFrequencyFormat();
