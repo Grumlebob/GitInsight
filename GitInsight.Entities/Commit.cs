@@ -18,6 +18,12 @@ public class Commit
     
     public Repository Repository { get; set; }
     public int RepositoryId { get; set; }
+    
+    public Commit() 
+    {
+       
+    }
+    
 }
 
 public class CommitConfigurations : IEntityTypeConfiguration<Commit>

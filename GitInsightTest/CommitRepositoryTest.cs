@@ -1,15 +1,16 @@
 ﻿using GitInsight.Entities;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Branch = GitInsight.Entities.Branch;
 
 namespace GitInsightTest;
 
-public class AuthorRepositoryTests
+public class CommitRepositoryTest
 {
     
     private readonly InsightContext _context;
     
-    public AuthorRepositoryTests()
+    public CommitRepositoryTest()
     {
         var connection = new SqliteConnection("Filename=:memory:");
         connection.Open();
@@ -22,13 +23,12 @@ public class AuthorRepositoryTests
         _context = context;
         
     }
+ 
     [Fact]
-    public void HowDoesItHandle()
+    public void HowDoesItHandleIt()
     {
-        var allAuthors = _context.Authors;
-
-        allAuthors.Should().BeEmpty();
+        GitInsight.Entities.Commit a = new GitInsight.Entities.Commit();
+        a.Id = 1;
+        a.Sha = "wafwa";
     }
-    
-    
 }

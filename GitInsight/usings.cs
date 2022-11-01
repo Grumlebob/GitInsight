@@ -6,5 +6,5 @@ global using System.Reflection;
 global using static GitInsight.GitPathHelper;
 global using static GitInsight.GitCommands;
 global using static GitInsight.DateFormats;
-global using static GitInsight.GitCommands.TestingMode;
+global using static GitInsight.GitCommands.Pathing;
 

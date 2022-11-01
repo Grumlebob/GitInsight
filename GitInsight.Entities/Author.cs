@@ -12,6 +12,11 @@ public class Author
     public List<Commit> Commits  { get; set; }
     public List<Repository> Repositories { get; set; }
 
+    public Author()
+    {
+        Commits = new List<Commit>();
+        Repositories = new List<Repository>();
+    }
 }
 
 public class AuthorConfigurations : IEntityTypeConfiguration<Author>

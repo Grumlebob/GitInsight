@@ -5,26 +5,26 @@ public static class GitCommands
 
     public static string CommandLineSpecifiedPath = string.Empty;
     
-    public enum TestingMode
+    public enum Pathing
     {
-        None,
-        Testing,
+        SourceCode,
+        TestRepository,
     }
 
-    private static string GetPath(TestingMode testingMode = None)
+    private static string GetPath(Pathing pathing = SourceCode)
     {
         if (!string.IsNullOrEmpty(CommandLineSpecifiedPath))
         {
             return CommandLineSpecifiedPath;
         }
             
-        return testingMode == Testing ? GetGitTestFolder() : GetGitLocalFolder();
+        return pathing == TestRepository ? GetGitTestFolder() : GetGitLocalFolder();
     }
     
     public static Dictionary<string, List<Commit>> GitLogByAllAuthorsByDate(string dateformat = DateFormatNoTime,
-        TestingMode testingMode = None)
+        Pathing pathing = SourceCode)
     {
-        using var repo = new Repository(GetPath(testingMode));
+        using var repo = new Repository(GetPath(pathing));
 
         repo.Commits.QueryBy(new CommitFilter { IncludeReachableFrom = repo.Head, SortBy = CommitSortStrategies.Time });
         
@@ -76,9 +76,9 @@ public static class GitCommands
     }
 
     public static Dictionary<string, int> GitCommitFrequency(string dateformat = DateFormatNoTime,
-        TestingMode testingMode = None)
+        Pathing pathing = SourceCode)
     {
-        using var repo = new Repository(GetPath(testingMode));
+        using var repo = new Repository(GetPath(pathing));
 
         repo.Commits.QueryBy(new CommitFilter { IncludeReachableFrom = repo.Head, SortBy = CommitSortStrategies.Time });
 

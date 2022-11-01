@@ -12,6 +12,14 @@ public class Repository
     public List<Branch> Branches { get; set; }
     public List<Author> Authors { get; set; }
     public List<Commit> Commits { get; set; }
+
+    public Repository()
+    {
+        Branches = new List<Branch>();
+        Authors = new List<Author>();
+        Commits = new List<Commit>();
+        
+    }
 }
 
 public class RepositoryConfigurations : IEntityTypeConfiguration<Repository>

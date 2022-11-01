@@ -15,6 +15,11 @@ public class Branch
     
     public List<Commit> Commits { get; set; }
 
+    
+    public Branch()
+    {
+        Commits = new List<Commit>();
+    }
 }
 
 public class BranchConfigurations : IEntityTypeConfiguration<Branch>

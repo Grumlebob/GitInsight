@@ -15,11 +15,11 @@
     if (args.Contains("commitfrequency"))
     {
         Console.WriteLine($"{args[0]} mode:"); //dotnet run --args
-        GitCommitFrequency(dateformat: DateFormatNoTime, testingMode: None);
+        GitCommitFrequency(dateformat: DateFormatNoTime, pathing: SourceCode);
     }
     else if (args.Contains("commitauthor") )
     {
         Console.WriteLine($"{args[0]} mode:"); //dotnet run --args
-        GitLogByAllAuthorsByDate(dateformat: DateFormatNoTime, testingMode: None);
+        GitLogByAllAuthorsByDate(dateformat: DateFormatNoTime, pathing: SourceCode);
     }
 }
