@@ -1,6 +1,6 @@
-﻿namespace GitInsight.Entities;
+﻿
+namespace GitInsight.Entities;
 
-public class AuthorRepository
+public class AuthorRepository : IAuthorRepository
 {
-    public string n { get; set; } = "im";
 }
