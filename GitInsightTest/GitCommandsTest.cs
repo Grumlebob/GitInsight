@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using GitInsight;
 using static GitInsight.DateFormats;
-using static GitInsight.GitCommands.TestingMode;
+using static GitInsight.GitCommands.Pathing;
 using static GitInsight.GitCommands;
 
 
@@ -14,7 +14,7 @@ namespace GitInsightTest
         public GitCommandsTest()
         {
             _repo = new Repository(GetGitTestFolder());
-            SetMode(Testing);
+            SetMode(TestRepository);
         }
 
         [Fact]
@@ -65,7 +65,7 @@ namespace GitInsightTest
         [Fact]
         public void GitLogByAllAuthorsByDateTest()
         {
-            var dictionary = GitCommands.GitLogByAllAuthorsByDate(testingMode: Testing);
+            var dictionary = GitCommands.GitLogByAllAuthorsByDate(pathing: TestRepository);
             dictionary.Should().NotBeEmpty();
 
             var testAuthor = dictionary["Scott Chacon"];
@@ -114,6 +114,13 @@ namespace GitInsightTest
             testResult.Contains("Thu 14 Apr 18:44:16 2011 +03:00").Should().Be(true);
         }
 
+        [Fact]
+        public void CommitsByDate_Test()
+        {
+            var commits = _repo.Commits.ToList();
+            var commitsByDate = GetCommitsByDate(commits);
+
+        }
 
 
 

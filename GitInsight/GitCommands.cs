@@ -7,32 +7,32 @@ public static class GitCommands
     public static Dictionary<DateTimeOffset, List<DateTimeOffset>> CommitFrequency = GitCommitFrequency();
     public static Dictionary<string, List<string>> FrequencyFormat = GitFrequencyFormat();
 
-    public enum TestingMode
+    public enum Pathing
     {
-        None,
-        Testing,
+        SourceCode,
+        TestRepository,
     }
 
-    public static void SetMode(TestingMode testingMode = None)
+    public static void SetMode(Pathing pathing = SourceCode)
     {
-        AuthorLog = GitLogByAllAuthorsByDate(testingMode);
-        CommitFrequency = GitCommitFrequency(testingMode);
-        FrequencyFormat = GitFrequencyFormat(testingMode: testingMode);
+        AuthorLog = GitLogByAllAuthorsByDate(pathing);
+        CommitFrequency = GitCommitFrequency(pathing);
+        FrequencyFormat = GitFrequencyFormat(pathing: pathing);
     }
 
-    private static string GetPath(TestingMode testingMode = None)
+    private static string GetPath(Pathing pathing = SourceCode)
     {
         if (!string.IsNullOrEmpty(SpecifiedPath))
         {
             return SpecifiedPath;
         }
 
-        return testingMode == Testing ? GetGitTestFolder() : GetGitLocalFolder();
+        return pathing == TestRepository ? GetGitTestFolder() : GetGitLocalFolder();
     }
 
-    public static Dictionary<string, List<Commit>> GitLogByAllAuthorsByDate(TestingMode testingMode = None)
+    public static Dictionary<string, List<Commit>> GitLogByAllAuthorsByDate(Pathing pathing = SourceCode)
     {
-        using var repo = new Repository(GetPath(testingMode));
+        using var repo = new Repository(GetPath(pathing));
 
         repo.Commits.QueryBy(new CommitFilter { IncludeReachableFrom = repo.Head, SortBy = CommitSortStrategies.Time });
 
@@ -54,9 +54,9 @@ public static class GitCommands
     }
 
 
-    public static Dictionary<DateTimeOffset, List<DateTimeOffset>> GitCommitFrequency(TestingMode testingMode = None)
+    public static Dictionary<DateTimeOffset, List<DateTimeOffset>> GitCommitFrequency(Pathing pathing = SourceCode)
     {
-        using var repo = new Repository(GetPath(testingMode));
+        using var repo = new Repository(GetPath(pathing));
         var commitsByDate = new Dictionary<DateTimeOffset, List<DateTimeOffset>>();
 
         foreach (var commit in repo.Commits)
@@ -76,9 +76,9 @@ public static class GitCommands
         return commitsByDate;
     }
 
-    public static Dictionary<string, List<string>> GitFrequencyFormat(string dateformat = DateFormatNoTime, TestingMode testingMode = None )
+    public static Dictionary<string, List<string>> GitFrequencyFormat(string dateformat = DateFormatNoTime, Pathing pathing = SourceCode )
     {
-        using var repo = new Repository(GetPath(testingMode));
+        using var repo = new Repository(GetPath(pathing));
 
         var formatted = new Dictionary<string, List<string>>();
         foreach (var item in CommitFrequency)
@@ -103,7 +103,6 @@ public static class GitCommands
     {
         foreach (var item in AuthorLog)
         {
-            var commitsByDate = new Dictionary<DateTime, int>();
             //they might already be sorted, but just in case
             item.Value.Sort((q,p)=>q.Author.When.CompareTo(p.Author.When));
 
