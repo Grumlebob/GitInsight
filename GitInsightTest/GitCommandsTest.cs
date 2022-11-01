@@ -13,8 +13,8 @@ namespace GitInsightTest
 
         public GitCommandsTest()
         {
-            _repo = new Repository(GetGitTestFolder());
             SetMode(Testing);
+            _repo = new Repository(GetGitTestFolder());
         }
 
         [Fact]
