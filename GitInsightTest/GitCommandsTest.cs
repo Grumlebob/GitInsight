@@ -114,13 +114,6 @@ namespace GitInsightTest
             testResult.Contains("Thu 14 Apr 18:44:16 2011 +03:00").Should().Be(true);
         }
 
-        [Fact]
-        public void PrintAuthor_Test_console_output()
-        {
-
-
-        }
-
 
 
 
