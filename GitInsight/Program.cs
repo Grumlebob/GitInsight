@@ -23,4 +23,3 @@
         GitLogByAllAuthorsByDate(dateformat: DateFormatNoTime, testingMode: None);
     }
 }
-
