@@ -12,12 +12,16 @@ public class Branch
 
     public int RepositoryId { get; set; }
     public Repository Repository { get; set; }
-    
+
     public List<Commit> Commits { get; set; }
 
-    
-    public Branch()
+
+    public Branch(BranchCreateDto b)
     {
+        Sha = b.Sha;
+        Path = b.Path;
+        Name = b.Name;
+        RepositoryId = b.RepositoryId;
         Commits = new List<Commit>();
     }
 }
