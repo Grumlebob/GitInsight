@@ -16,12 +16,8 @@ public class Branch
     public List<Commit> Commits { get; set; }
 
 
-    public Branch(BranchCreateDto b)
+    public Branch()
     {
-        Sha = b.Sha;
-        Path = b.Path;
-        Name = b.Name;
-        RepositoryId = b.RepositoryId;
         Commits = new List<Commit>();
     }
 }

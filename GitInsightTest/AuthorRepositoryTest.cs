@@ -4,16 +4,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GitInsightTest;
 
-public class AuthorRepositoryTest
+public class AuthorRepositoryTest : IDisposable
 {
-    
+    private readonly SqliteConnection _connection;
     private readonly InsightContext _context;
-    
+
     public AuthorRepositoryTest()
     {
-        _context = SetupTests.Setup();
+        (_connection, _context) = SetupTests.Setup();
     }
-    
+
     [Fact]
     public void ContextShouldBeEmpty()
     {
@@ -21,12 +21,19 @@ public class AuthorRepositoryTest
 
         allAuthors.Should().BeEmpty();
     }
+
     [Fact]
     public void SimpleAuthorObject()
     {
         Author a = new Author();
-        a.Email = "a"; 
-        a.Id = 1; 
-        a.Name = "Joe"; 
+        a.Email = "a";
+        a.Id = 1;
+        a.Name = "Joe";
+    }
+
+    public void Dispose()
+    {
+        _connection.Dispose();
+        _context.Dispose();
     }
 }

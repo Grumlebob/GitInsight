@@ -2,11 +2,10 @@
 
 public enum Response
 {
-    Ok,
-    Created,
-    Deleted,
-    Updated,
-    NotFound,
-    Conflict,
-    UnMatchedForeignKey //may want to rename that 
+    Ok = 200,
+    Created = 201,
+    Deleted = 204,
+    BadRequest = 400,
+    NotFound = 404,
+    Conflict = 409,
 }
