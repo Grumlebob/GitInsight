@@ -62,9 +62,7 @@ public class CommitRepository : ICommitRepository
         } 
         
         //Check for no-existing branch, author, or repository
-        if (_context.Authors.FirstOrDefault(c => c.Id == commit.AuthorId) is null
-            || _context.Branches.FirstOrDefault(c => c.Id == commit.BranchId) is null
-            || _context.Repositories.FirstOrDefault(c => c.Id == commit.RepositoryId) is null)
+        if (!RelationsExists(commit))
         {
             return (Response.BadRequest,CommitToCommitDto(entity));
         }
@@ -110,4 +108,12 @@ public class CommitRepository : ICommitRepository
             commit.RepositoryId);
     }
     
+    private bool RelationsExists(CommitDTO commit)
+    {
+        return !(_context.Authors.FirstOrDefault(c => c.Id == commit.AuthorId) is null
+                 || _context.Branches.FirstOrDefault(c => c.Id == commit.BranchId) is null
+                 || _context.Repositories.FirstOrDefault(c => c.Id == commit.RepositoryId) is null);
+
+    }
+
 }
