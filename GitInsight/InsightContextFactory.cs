@@ -10,6 +10,7 @@ internal class InsightContextFactory : IDesignTimeDbContextFactory<InsightContex
     {
         var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
         var connectionString = configuration.GetConnectionString("ConnectionString");
+        
 
         var optionsBuilder = new DbContextOptionsBuilder<InsightContext>();
         optionsBuilder.UseNpgsql(connectionString);

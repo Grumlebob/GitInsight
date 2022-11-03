@@ -7,6 +7,7 @@ public class InsightContext : DbContext
 
     public InsightContext(DbContextOptions<InsightContext> options): base(options)
     {
+        
     }
 
     public DbSet<Author> Authors { get; set; }
@@ -17,7 +18,6 @@ public class InsightContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        
     }
     
 }
