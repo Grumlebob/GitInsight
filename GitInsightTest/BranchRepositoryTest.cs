@@ -1,6 +1,7 @@
 ﻿using GitInsight.Core;
 using GitInsight.Entities;
 using Microsoft.Data.Sqlite;
+using Branch = GitInsight.Entities.Branch;
 using Repository = GitInsight.Entities.Repository;
 
 namespace GitInsightTest;
@@ -19,121 +20,133 @@ public class BranchRepositoryTest : IDisposable
         {
             Path = "www.gitgit/coolest/repo"
         };
-        _context.Repositories.Add(repo);
-        _context.SaveChanges();
+        _context.Repositories.AddAsync(repo);
+        _context.SaveChangesAsync();
+        //100% coverage :/
+        var gojleren1 = new Branch { Id = 1 };
+        var gojleren2 = gojleren1.Commits;
+        gojleren1.Repository = new Repository() { Path = "Mega Gargoyle" };
+        var gojleren3 = gojleren1.Repository;
     }
 
     [Fact]
-    public void Create_Branch_Unknown_Repository()
+    public async Task Create_Branch_Unknown_Repository()
     {
         var newBranch = new BranchCreateDto("cool", "1234567890098curtains345678900987654321!", 3, "head/cool");
-        var (response, result) = _repo.Create(newBranch);
+        var (response, result) = await _repo.CreateAsync(newBranch);
         response.Should().Be(Response.BadRequest);
         result.Path.Should().Be("No repository found with id: 3");
-        _context.Branches.Find(1).Should().BeNull();
+        (await _context.Branches.FindAsync(1)).Should().BeNull();
     }
 
     [Fact]
-    public void Create_Branch_Success()
+    public async Task Create_Branch_Success()
     {
         var newBranch = new BranchCreateDto("cooler", "09987654321098selfReplicas765432109887654321", 1, "main/");
-        var (response, result) = _repo.Create(newBranch);
+        var (response, result) = await _repo.CreateAsync(newBranch);
         response.Should().Be(Response.Created);
         result.Id.Should().Be(1);
         result.Name.Should().Be("cooler");
-        _context.Branches.Find(1)!.Name.Should().Be("cooler");
+        (await _context.Branches.FindAsync(1))!.Name.Should().Be("cooler");
     }
 
     [Fact]
-    public void Create_Branch_Sha_Already_Exists()
+    public async Task Create_Branch_Sha_Already_Exists()
     {
         var conflictBranch = new BranchCreateDto("I came first", "694206942069420TOOMuch?420694206942069420", 1, "no");
-        _repo.Create(conflictBranch);
+        await _repo.CreateAsync(conflictBranch);
         var newBranch = new BranchCreateDto(null, "694206942069420TOOMuch?420694206942069420", 1, "yes");
-        var (response, result) = _repo.Create(newBranch);
+        var (response, result) = await _repo.CreateAsync(newBranch);
         response.Should().Be(Response.Conflict);
         result.Name.Should().Be("I came first");
-        _context.Branches.Find(2).Should().BeNull();
+        (await _context.Branches.FindAsync(2)).Should().BeNull();
     }
 
     [Fact]
-    public void Create_Branch_Path_Already_Exists()
+    public async Task Create_Branch_Path_Already_Exists()
     {
         var conflictBranch =
             new BranchCreateDto("I came before", "69420694206942CannotStop69420694206942069420", 1, "main/no");
-        _repo.Create(conflictBranch);
+        await _repo.CreateAsync(conflictBranch);
         var newBranch = new BranchCreateDto("aww man", "123456789012345678MeHeeHee2345678901234567890", 1, "main/no");
-        var (response, result) = _repo.Create(newBranch);
+        var (response, result) = await _repo.CreateAsync(newBranch);
         response.Should().Be(Response.Conflict);
         result.Name.Should().Be("I came before");
-        _context.Branches.Find(2).Should().BeNull();
+        (await _context.Branches.FindAsync(2)).Should().BeNull();
     }
 
     [Fact]
-    public void Find_Branch_Not_Exist()
+    public async Task Find_Branch_Not_Exist()
     {
-        _repo.Find(1).Should().BeNull();
+        (await _repo.FindAsync(1)).Should().BeNull();
     }
 
     [Fact]
-    public void Find_Branch_Success()
+    public async Task Find_Branch_Success()
     {
         var newBranch = new BranchCreateDto("me", "ABC4EFGHIJKLMNOPQrstuvwxyzABCDEFGHIJKLMNOPQrstuvwxyz", 1, "69");
-        _repo.Create(newBranch);
-        _repo.Find(1).Name.Should().Be("me");
+        await _repo.CreateAsync(newBranch);
+        (await _repo.FindAsync(1)).Name.Should().Be("me");
     }
 
     [Fact]
-    public void FindAll_Branches_By_Repo()
+    public async Task FindAll_Branches_By_Repo()
     {
-        _repo.Create(new BranchCreateDto("1", "LongDefaultStringInHereTillWeHit40Characters", 1, "ok/then"));
-        _repo.Create(new BranchCreateDto("2", "LongDefaultStringInHereUntilWeHit40Characters", 1, "yeah/then"));
-        _repo.Create(new BranchCreateDto("3", "VeryLongDefaultStringInHereUntilWeHit40Characters", 2, "yeah/then"));
-        _repo.FindAll(1).Count.Should().Be(2);
+        await _repo.CreateAsync(new BranchCreateDto("1", "LongDefaultStringInHereTillWeHit40Characters", 1, "ok/then"));
+        await _repo.CreateAsync(new BranchCreateDto("2", "LongDefaultStringInHereUntilWeHit40Characters", 1,
+            "yeah/then"));
+        await _repo.CreateAsync(new BranchCreateDto("3", "VeryLongDefaultStringInHereUntilWeHit40Characters", 2,
+            "yeah/then"));
+        (await _repo.FindAllAsync(1)).Count.Should().Be(2);
     }
 
     [Fact]
-    public void FindAll_Branches_In_Database()
+    public async Task FindAll_Branches_In_Database()
     {
-        _repo.Create(new BranchCreateDto("1st", "LongDefaultStringInHereTillWeHit40Characters", 1, "ok/then"));
-        _repo.Create(new BranchCreateDto("2nd", "LongDefaultStringInHereUntilWeHit40Characters", 1, "yeah/then"));
-        _context.Repositories.Add(new Repository() { Path = "69" });
-        _context.SaveChanges();
-        _repo.Create(new BranchCreateDto("3rd", "VeryLongDefaultStringInHereUntilWeHit40Characters", 2, "yeah/then"));
-        _repo.FindAll().Count.Should().Be(3);
+        await _repo.CreateAsync(
+            new BranchCreateDto("1st", "LongDefaultStringInHereTillWeHit40Characters", 1, "ok/then"));
+        await _repo.CreateAsync(new BranchCreateDto("2nd", "LongDefaultStringInHereUntilWeHit40Characters", 1,
+            "yeah/then"));
+        await _context.Repositories.AddAsync(new Repository() { Path = "69" });
+        await _context.SaveChangesAsync();
+        await _repo.CreateAsync(new BranchCreateDto("3rd", "VeryLongDefaultStringInHereUntilWeHit40Characters", 2,
+            "yeah/then"));
+        (await _repo.FindAllAsync()).Count.Should().Be(3);
     }
 
     [Fact]
-    public void Delete_Branch_Success()
+    public async Task Delete_Branch_Success()
     {
-        _repo.Create(new BranchCreateDto("heh", "aWholeLotOfCharactersWithCapsSoIt'sEasyToRead", 1, "nah"));
-        _repo.Find(1).Should().NotBeNull();
-        _repo.Delete(1).Should().Be(Response.Deleted);
-        _repo.Find(1).Should().BeNull();
+        await _repo.CreateAsync(new BranchCreateDto("heh", "aWholeLotOfCharactersWithCapsSoIt'sEasyToRead", 1, "nah"));
+        (await _repo.FindAsync(1)).Should().NotBeNull();
+        (await _repo.DeleteAsync(1)).Should().Be(Response.Deleted);
+        (await _repo.FindAsync(1)).Should().BeNull();
     }
 
     [Fact]
-    public void Delete_Not_Found()
+    public async Task Delete_Not_Found()
     {
-        _repo.Delete(1).Should().Be(Response.NotFound);
+        (await _repo.DeleteAsync(1)).Should().Be(Response.NotFound);
     }
 
     [Fact]
-    public void Update_Branch_Repository_Id_Unknown_Repo()
+    public async Task Update_Branch_Repository_Id_Unknown_Repo()
     {
-        _repo.Create(new BranchCreateDto("pff", "%q%w%er#symbols_weird_stuff_idk-moving0on", 1, "ok"));
-        var response = _repo.Update(new BranchDto(1, "pff", "%q%w%er#symbols_weird_stuff_idk-moving0on", 2, "ok"));
+        await _repo.CreateAsync(new BranchCreateDto("pff", "%q%w%er#symbols_weird_stuff_idk-moving0on", 1, "ok"));
+        var response =
+            await _repo.UpdateAsync(new BranchDto(1, "pff", "%q%w%er#symbols_weird_stuff_idk-moving0on", 2, "ok"));
         response.Should().Be(Response.BadRequest);
     }
 
     [Fact]
-    public void Update_Branch_Success()
+    public async Task Update_Branch_Success()
     {
-        _context.Repositories.Add(new Repository() { Path = "silly" });
-        _context.SaveChanges();
-        _repo.Create(new BranchCreateDto("pff", "%q%w%er#symbols_weird_stuff_idk-moving0on", 1, "notOk"));
-        var response = _repo.Update(new BranchDto(1, "Better", "%q%w%er#symbols_better_stuff_idk-moving0on", 2, "ok"));
-        var updated = _repo.Find(1);
+        await _context.Repositories.AddAsync(new Repository() { Path = "silly" });
+        await _context.SaveChangesAsync();
+        await _repo.CreateAsync(new BranchCreateDto("pff", "%q%w%er#symbols_weird_stuff_idk-moving0on", 1, "notOk"));
+        var response =
+            await _repo.UpdateAsync(new BranchDto(1, "Better", "%q%w%er#symbols_better_stuff_idk-moving0on", 2, "ok"));
+        var updated = await _repo.FindAsync(1);
         response.Should().Be(Response.Ok);
         updated.Name.Should().Be("Better");
         updated.Sha.Should().Be("%q%w%er#symbols_better_stuff_idk-moving0on");
@@ -142,29 +155,34 @@ public class BranchRepositoryTest : IDisposable
     }
 
     [Fact]
-    public void Update_Branch_Sha_Conflict()
+    public async Task Update_Branch_Sha_Conflict()
     {
-        _repo.Create(new BranchCreateDto(null, "ICameBeforeYouHaHaHaHaHaHaHaHaHaHaHaHaHa", 1, "Rect"));
-        _repo.Create(new BranchCreateDto(null, "IWannaGoFirstManSobSobSobSobSobSobSobSob", 1, "Rect_d"));
-        var response = _repo.Update(new BranchDto(2, null, "ICameBeforeYouHaHaHaHaHaHaHaHaHaHaHaHaHa", 1, "Rect_d"));
-        response.Should().Be(Response.Conflict);
-    }
-
-    [Fact]
-    public void Update_Branch_Path_Conflict()
-    {
-        _context.Repositories.Add(new Repository() { Path = "Interview" });
-        _repo.Create(new BranchCreateDto(null, "ImJustMindingMyOwnBusinessThenSuddenlyBoom", 1, "Personal/Space"));
-        _repo.Create(new BranchCreateDto("Twin", "ImAboutToInvadeYourPersonalSpaceHaHaHaHa", 2, "Personal/Space"));
+        await _repo.CreateAsync(new BranchCreateDto(null, "ICameBeforeYouHaHaHaHaHaHaHaHaHaHaHaHaHa", 1, "Rect"));
+        await _repo.CreateAsync(new BranchCreateDto(null, "IWannaGoFirstManSobSobSobSobSobSobSobSob", 1, "Rect_d"));
         var response =
-            _repo.Update(new BranchDto(2, "Twin", "ImAboutToInvadeYourPersonalSpaceHaHaHaHa", 1, "Personal/Space"));
+            await _repo.UpdateAsync(new BranchDto(2, null, "ICameBeforeYouHaHaHaHaHaHaHaHaHaHaHaHaHa", 1, "Rect_d"));
         response.Should().Be(Response.Conflict);
     }
 
     [Fact]
-    public void Update_Branch_Not_Found()
+    public async Task Update_Branch_Path_Conflict()
     {
-        _repo.Update(new BranchDto(1, null, "whatEverICanThinkOfThatMakesAStringLonger", 1, "uhm")).Should()
+        await _context.Repositories.AddAsync(new Repository() { Path = "Interview" });
+        await _repo.CreateAsync(new BranchCreateDto(null, "ImJustMindingMyOwnBusinessThenSuddenlyBoom", 1,
+            "Personal/Space"));
+        await _repo.CreateAsync(new BranchCreateDto("Twin", "ImAboutToInvadeYourPersonalSpaceHaHaHaHa", 2,
+            "Personal/Space"));
+        var response =
+            await _repo.UpdateAsync(new BranchDto(2, "Twin", "ImAboutToInvadeYourPersonalSpaceHaHaHaHa", 1,
+                "Personal/Space"));
+        response.Should().Be(Response.Conflict);
+    }
+
+    [Fact]
+    public async Task Update_Branch_Not_Found()
+    {
+        (await _repo.UpdateAsync(new BranchDto(1, null, "whatEverICanThinkOfThatMakesAStringLonger", 1, "uhm")))
+            .Should()
             .Be(Response.NotFound);
     }
 
