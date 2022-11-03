@@ -8,19 +8,34 @@ public class AuthorRepositoryTest
 {
     
     private readonly InsightContext _context;
-    
+
     public AuthorRepositoryTest()
     {
         _context = SetupTests.Setup();
+
+        var sampleAuthorOne = new Author
+        {
+            Name = "First Author",
+            Email = "First Email",
+        };
+        
+        var sampleAuthorTwo = new Author
+        {
+            Name = "Second Author",
+            Email = "Second Email",
+        };
+        
+        _context.AddRange(sampleAuthorOne, sampleAuthorTwo);
+        _context.SaveChanges();
     }
-    
+
     [Fact]
-    public void ContextShouldBeEmpty()
+    public void ContextShouldNotBeEmpty()
     {
         var allAuthors = _context.Authors;
-
-        allAuthors.Should().BeEmpty();
+        allAuthors.Should().NotBeEmpty();
     }
+    
     [Fact]
     public void SimpleAuthorObject()
     {
