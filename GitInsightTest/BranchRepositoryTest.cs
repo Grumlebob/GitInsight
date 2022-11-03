@@ -149,22 +149,24 @@ public class BranchRepositoryTest : IDisposable
         var response = _repo.Update(new BranchDto(2, null, "ICameBeforeYouHaHaHaHaHaHaHaHaHaHaHaHaHa", 1, "Rect_d"));
         response.Should().Be(Response.Conflict);
     }
-    
+
     [Fact]
     public void Update_Branch_Path_Conflict()
     {
         _context.Repositories.Add(new Repository() { Path = "Interview" });
         _repo.Create(new BranchCreateDto(null, "ImJustMindingMyOwnBusinessThenSuddenlyBoom", 1, "Personal/Space"));
         _repo.Create(new BranchCreateDto("Twin", "ImAboutToInvadeYourPersonalSpaceHaHaHaHa", 2, "Personal/Space"));
-        var response = _repo.Update(new BranchDto(2, "Twin", "ImAboutToInvadeYourPersonalSpaceHaHaHaHa", 1, "Personal/Space"));
+        var response =
+            _repo.Update(new BranchDto(2, "Twin", "ImAboutToInvadeYourPersonalSpaceHaHaHaHa", 1, "Personal/Space"));
         response.Should().Be(Response.Conflict);
     }
 
     [Fact]
     public void Update_Branch_Not_Found()
     {
-        _repo.Update(new BranchDto(1, null, "whatEverICanThinkOfThatMakesAStringLonger", 1, "uhmm")).Should().Be(Response.NotFound);
-    } 
+        _repo.Update(new BranchDto(1, null, "whatEverICanThinkOfThatMakesAStringLonger", 1, "uhm")).Should()
+            .Be(Response.NotFound);
+    }
 
     public void Dispose()
     {
