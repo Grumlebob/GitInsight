@@ -1,8 +1,8 @@
 {
     "recommendations": [
+        "Bridgecrew.checkov",
         "streetsidesoftware.code-spell-checker",
         "MS-CST-E.vscode-devskim",
-        "Bridgecrew.checkov",
         "esbenp.prettier-vscode",
         "AquaSecurityOfficial.trivy-vulnerability-scanner"
     ]

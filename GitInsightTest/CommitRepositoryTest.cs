@@ -39,7 +39,7 @@ public class CommitRepositoryTest
         _context.Commits.Add(new GitInsight.Entities.Commit { Sha = "treg", Tag = "1.2.3", AuthorId = 1, BranchId = 1, RepositoryId = 1, Date = DateTimeOffset.Now });
         _context.Commits.Add(new GitInsight.Entities.Commit { Sha = "heck", Tag = "1.1.2", AuthorId = 2, BranchId = 2, RepositoryId = 2, Date = DateTimeOffset.Now });
         _context.Commits.Add(new GitInsight.Entities.Commit { Sha = "tger", Tag = "1.1.4", AuthorId = 1, BranchId = 2, RepositoryId = 2, Date = DateTimeOffset.Now });
-        
+
         _context.SaveChanges();
     }
 
