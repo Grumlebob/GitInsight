@@ -10,20 +10,20 @@ public class AuthorRepository : IAuthorRepository
     {
         _context = context;
     }
-    
-    public static AuthorDto AuthorToAuthorDto(Author author) =>  
-        new AuthorDto(Id: author.Id, Name: author.Name, Email: author.Email, 
-            CommitIds: author.Commits.Select(c => c.Id).ToList(), 
+
+    public static AuthorDto AuthorToAuthorDto(Author author) =>
+        new(Id: author.Id, Name: author.Name, Email: author.Email,
+            CommitIds: author.Commits.Select(c => c.Id).ToList(),
             RepositoryIds: author.Repositories.Select(r => r.Id).ToList());
 
     public async Task<(AuthorDto?, Response)> FindAuthorAsync(int id)
     {
-        var response = new Response();
-        
+        Response response;
+
         var author = await _context.Authors
             .Include(a => a.Commits)
             .Include(a => a.Repositories)
-            .FirstOrDefaultAsync(a =>  a.Id == id);
+            .FirstOrDefaultAsync(a => a.Id == id);
 
         if (author is null)
         {
@@ -36,35 +36,35 @@ public class AuthorRepository : IAuthorRepository
             return (AuthorToAuthorDto(author), response);
         }
     }
-    
-    
+
+
     public async Task<(List<AuthorDto>?, Response response)> FindAllAuthorsAsync()
     {
         var authors = await _context.Authors
             .Include(a => a.Commits)
             .Include(a => a.Repositories)
             .ToListAsync();
-        
-        return authors.Count > 0 
+
+        return authors.Count > 0
             ? (authors.Select(a => AuthorToAuthorDto(a)).ToList(), Response.Ok)
             : (null, Response.NotFound);
     }
-    
+
     public async Task<(AuthorDto?, Response)> CreateAuthorAsync(AuthorCreateDto authorCreateDto)
     {
-        var response = new Response();
+        Response response;
 
-        if (authorCreateDto.RepositoryIds.Any(repo => EnsureRepoisitoryExists(repo).Result == false))
+        if (authorCreateDto.RepositoryIds.Any(repo => EnsureRepositoryExists(repo).Result == false))
         {
-            response = Response.Conflict;
+            response = Response.BadRequest;
             return (null, response);
         }
-        
+
         var author = new Author
         {
             Name = authorCreateDto.Name,
             Email = authorCreateDto.Email,
-            Commits = authorCreateDto.CommitIds.Select(c => new Commit {Id = c}).ToList(),
+            Commits = await CreateOrUpdateCommits(authorCreateDto.CommitIds),
             Repositories = await CreateOrUpdateRepositories(authorCreateDto.RepositoryIds),
         };
 
@@ -72,223 +72,119 @@ public class AuthorRepository : IAuthorRepository
         await _context.SaveChangesAsync();
 
         response = Response.Created;
-        return (new AuthorDto(Id: author.Id, Name: author.Name, Email: author.Email, CommitIds: author.Commits.Select(c => c.Id).ToList(), RepositoryIds: author.Repositories.Select(r => r.Id).ToList()), response);
+        return (
+            new AuthorDto(Id: author.Id, Name: author.Name, Email: author.Email,
+                CommitIds: author.Commits.Select(c => c.Id).ToList(),
+                RepositoryIds: author.Repositories.Select(r => r.Id).ToList()), response);
     }
-    
-    private async Task<bool> EnsureRepoisitoryExists(int id)
+
+    public async Task<Response> DeleteAuthorAsync(int id)
     {
-        var repository = await _context.Repositories.FindAsync(id);
-        if (repository is null)
-        {
-            return false;
-        }
-        return true;
+        var author = await _context.Authors.FindAsync(id);
+
+        if (author is null) return Response.NotFound;
+
+        _context.Authors.Remove(author);
+        await _context.SaveChangesAsync();
+
+        return Response.Deleted;
     }
-    
-    private async Task<List<Repository>> CreateOrUpdateRepositories(IEnumerable<int> repoIds)
+
+    public async Task<Response> UpdateAuthorAsync(AuthorDto authorDto)
     {
-        var existing = _context.Repositories.Where(r => repoIds.Contains(r.Id));
-        return new List<Repository>(existing);
-        
-    }
-    
-    /*
-    public async Task<(AuthorDto?, Response)> UpdateAuthorAsync(AuthorDto authorDto)
-    {
-        var response = new Response();
-        
+        Response response;
+
         var author = await _context.Authors
-            .Include(a => a.Commits)
-            .Include(a => a.Repositories)
             .FirstOrDefaultAsync(a => a.Id == authorDto.Id);
 
         if (author is null)
         {
             response = Response.NotFound;
-            return (null, response);
         }
         else
         {
             author.Name = authorDto.Name;
             author.Email = authorDto.Email;
-            author.Commits = authorDto.CommitIds.Select(c => new Commit {Id = c}).ToList();
-            author.Repositories = authorDto.RepositoryIds.Select(r => new Repository {Id = r}).ToList();
+            author.Commits = await CreateOrUpdateCommits(authorDto.CommitIds);
+            author.Repositories = await CreateOrUpdateRepositories(authorDto.RepositoryIds);
 
+            _context.Authors.Update(author);
             await _context.SaveChangesAsync();
 
             response = Response.Ok;
-            return (new AuthorDto(Id: author.Id, Name: author.Name, Email: author.Email, CommitIds: author.Commits.Select(c => c.Id).ToList(), RepositoryIds: author.Repositories.Select(r => r.Id).ToList()), response);
         }
-    }
-    
-    public async Task<Response> DeleteAuthorAsync(int id)
-    {
-        var response = new Response();
-        
-        var author = await _context.Authors
-            .Include(a => a.Commits)
-            .Include(a => a.Repositories)
-            .FirstOrDefaultAsync(a => a.Id == id);
 
-        if (author is null)
-        {
-            response = Response.NotFound;
-            return response;
-        }
-        else
-        {
-            _context.Authors.Remove(author);
-            await _context.SaveChangesAsync();
-
-            response = Response.Ok;
-            return response;
-        }
+        return response;
     }
-    
-    public async Task<(List<AuthorDto>?, Response)> FindAuthorsByRepositoryIdAsync(int repositoryId)
-    {
-        var authors = await _context.Authors
-            .Include(a => a.Commits)
-            .Include(a => a.Repositories)
-            .Where(a => a.Repositories.Any(r => r.Id == repositoryId))
-            .ToListAsync();
 
-        return authors.Count > 0 
-            ? (authors.Select(a => new AuthorDto(Id: a.Id, Name: a.Name, Email: a.Email,
-                CommitIds: a.Commits.Select(c=>c.Id).ToList(),
-                RepositoryIds: a.Repositories.Select(r => r.Id).ToList())).ToList(), 
-                Response.Ok) 
-            : (null, Response.NotFound);
-    }
-    
-    public async Task<(List<AuthorDto>?, Response)> FindAuthorsByCommitIdAsync(int commitId)
-    {
-        var authors = await _context.Authors
-            .Include(a => a.Commits)
-            .Include(a => a.Repositories)
-            .Where(a => a.Commits.Any(c => c.Id == commitId))
-            .ToListAsync();
-
-        return authors.Count > 0 
-            ? (authors.Select(a => new AuthorDto(Id: a.Id, Name: a.Name, Email: a.Email,
-                CommitIds: a.Commits.Select(c=>c.Id).ToList(),
-                RepositoryIds: a.Repositories.Select(r => r.Id).ToList())).ToList(), 
-                Response.Ok) 
-            : (null, Response.NotFound);
-    }
-    
     public async Task<(List<AuthorDto>?, Response)> FindAuthorsByNameAsync(string name)
     {
         var authors = await _context.Authors
-            .Include(a => a.Commits)
-            .Include(a => a.Repositories)
             .Where(a => a.Name.Contains(name))
             .ToListAsync();
 
-        return authors.Count > 0 
-            ? (authors.Select(a => new AuthorDto(Id: a.Id, Name: a.Name, Email: a.Email,
-                CommitIds: a.Commits.Select(c=>c.Id).ToList(),
-                RepositoryIds: a.Repositories.Select(r => r.Id).ToList())).ToList(), 
-                Response.Ok) 
+        return authors.Count > 0
+            ? (authors.Select(a => AuthorToAuthorDto(a)).ToList(), Response.Ok)
             : (null, Response.NotFound);
     }
     
     public async Task<(List<AuthorDto>?, Response)> FindAuthorsByEmailAsync(string email)
     {
         var authors = await _context.Authors
-            .Include(a => a.Commits)
-            .Include(a => a.Repositories)
             .Where(a => a.Email.Contains(email))
             .ToListAsync();
 
-        return authors.Count > 0 
-            ? (authors.Select(a => new AuthorDto(Id: a.Id, Name: a.Name, Email: a.Email,
-                CommitIds: a.Commits.Select(c=>c.Id).ToList(),
-                RepositoryIds: a.Repositories.Select(r => r.Id).ToList())).ToList(), 
-                Response.Ok) 
+        return authors.Count > 0
+            ? (authors.Select(a => AuthorToAuthorDto(a)).ToList(), Response.Ok)
             : (null, Response.NotFound);
     }
     
-    public async Task<(List<AuthorDto>?, Response)> FindAuthorsByCommitIdAndRepositoryIdAsync(int commitId, int repositoryId)
+    public async Task<(List<AuthorDto>?, Response)> FindAuthorsByRepositoryIdAsync(int repositoryId)
     {
         var authors = await _context.Authors
-            .Include(a => a.Commits)
-            .Include(a => a.Repositories)
-            .Where(a => a.Commits.Any(c => c.Id == commitId) && a.Repositories.Any(r => r.Id == repositoryId))
+            .Where(a => a.Repositories.Any(r => r.Id == repositoryId))
             .ToListAsync();
 
-        return authors.Count > 0 
-            ? (authors.Select(a => new AuthorDto(Id: a.Id, Name: a.Name, Email: a.Email,
-                CommitIds: a.Commits.Select(c=>c.Id).ToList(),
-                RepositoryIds: a.Repositories.Select(r => r.Id).ToList())).ToList(), 
-                Response.Ok) 
+        return authors.Count > 0
+            ? (authors.Select(a => AuthorToAuthorDto(a)).ToList(), Response.Ok)
             : (null, Response.NotFound);
     }
     
-    public async Task<(List<AuthorDto>?, Response)> FindAuthorsByNameAndEmailAsync(string name, string email)
+   
+    public async Task<(List<AuthorDto>?, Response)> FindAuthorsByCommitIdAsync(int commitId)
     {
         var authors = await _context.Authors
-            .Include(a => a.Commits)
-            .Include(a => a.Repositories)
-            .Where(a => a.Name.Contains(name) && a.Email.Contains(email))
+            .Where(a => a.Commits.Any(c => c.Id == commitId))
             .ToListAsync();
 
-        return authors.Count > 0 
-            ? (authors.Select(a => new AuthorDto(Id: a.Id, Name: a.Name, Email: a.Email,
-                CommitIds: a.Commits.Select(c=>c.Id).ToList(),
-                RepositoryIds: a.Repositories.Select(r => r.Id).ToList())).ToList(), 
-                Response.Ok) 
+        return authors.Count > 0
+            ? (authors.Select(a => AuthorToAuthorDto(a)).ToList(), Response.Ok)
             : (null, Response.NotFound);
     }
     
-    public async Task<(List<AuthorDto>?, Response)> FindAuthorsByNameAndRepositoryIdAsync(string name, int repositoryId)
+
+    private async Task<bool> EnsureRepositoryExists(int id)
     {
-        var authors = await _context.Authors
-            .Include(a => a.Commits)
-            .Include(a => a.Repositories)
-            .Where(a => a.Name.Contains(name) && a.Repositories.Any(r => r.Id == repositoryId))
-            .ToListAsync();
+        var repository = await _context.Repositories.FindAsync(id);
+        if (repository is null)
+        {
+            return false;
+        }
 
-        return authors.Count > 0 
-            ? (authors.Select(a => new AuthorDto(Id: a.Id, Name: a.Name, Email: a.Email,
-                CommitIds: a.Commits.Select(c=>c.Id).ToList(),
-                RepositoryIds: a.Repositories.Select(r => r.Id).ToList())).ToList(), 
-                Response.Ok) 
-            : (null, Response.NotFound);
+        return true;
     }
-    
-    public async Task<(List<AuthorDto>?, Response)> FindAuthorsByEmailAndRepositoryIdAsync(string email, int repositoryId)
+
+    private async Task<List<Repository>> CreateOrUpdateRepositories(IEnumerable<int> repoIds)
     {
-        var authors = await _context.Authors
-            .Include(a => a.Commits)
-            .Include(a => a.Repositories)
-            .Where(a => a.Email.Contains(email) && a.Repositories.Any(r => r.Id == repositoryId))
-            .ToListAsync();
-
-        return authors.Count > 0 
-            ? (authors.Select(a => new AuthorDto(Id: a.Id, Name: a.Name, Email: a.Email,
-                CommitIds: a.Commits.Select(c=>c.Id).ToList(),
-                RepositoryIds: a.Repositories.Select(r => r.Id).ToList())).ToList(), 
-                Response.Ok) 
-            : (null, Response.NotFound);
+        var existing = _context.Repositories.Where(r => repoIds.Contains(r.Id)).ToListAsync();
+        return await existing;
     }
-    
-    public async Task<(List<AuthorDto>?, Response)> FindAuthorsByCommitIdAndNameAndEmailAsync(int commitId, string name, string email)
+
+    private async Task<List<Commit>> CreateOrUpdateCommits(IEnumerable<int> commitIds)
     {
-        var authors = await _context.Authors
-            .Include(a => a.Commits)
-            .Include(a => a.Repositories)
-            .Where(a => a.Commits.Any(c => c.Id == commitId) && a.Name.Contains(name) && a.Email.Contains(email))
-            .ToListAsync();
-
-        return authors.Count > 0 
-            ? (authors.Select(a => new AuthorDto(Id: a.Id, Name: a.Name, Email: a.Email,
-                CommitIds: a.Commits.Select(c=>c.Id).ToList(),
-                RepositoryIds: a.Repositories.Select(r => r.Id).ToList())).ToList(), 
-                Response.Ok) 
-            : (null, Response.NotFound);
+        var existing = _context.Commits.Where(r => commitIds.Contains(r.Id)).ToListAsync();
+        return await existing;
     }
     
-    */
 
 }
