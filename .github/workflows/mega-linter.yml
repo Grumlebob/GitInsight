@@ -16,6 +16,7 @@ env: # Comment env block if you do not want to apply fixes
   #APPLY_FIXES_MODE: commit # If APPLY_FIXES is used, defines if the fixes are directly committed (commit) or posted in a PR (pull_request)
   SPELL_CSPELL_DISABLE_ERRORS: true
   REPOSITORY_GITLEAKS_DISABLE_ERRORS: true
+  COPYPASTE_JSCPD_DISABLE_ERRORS: true
   DISABLE_LINTERS: ACTION_ACTIONLINT
 
 concurrency:
