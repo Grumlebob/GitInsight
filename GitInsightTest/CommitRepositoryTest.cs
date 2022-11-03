@@ -35,7 +35,7 @@ public class CommitRepositoryTest
         _context.Branches.Add(new Branch { Name = "branch1", Sha = "huhu", Path = "origin/idk", RepositoryId = 1 });
         _context.Branches.Add(new Branch { Name = "branch2", Sha = "hihi", Path = "origin/idc", RepositoryId = 2 });
         _context.SaveChanges();
-
+        
         _context.Commits.Add(new GitInsight.Entities.Commit { Id=1, Sha = "treg", Tag = "1.2.3", AuthorId = 1, BranchId = 1, RepositoryId = 1, Date = DateTimeOffset.Now, Repository = null, Author = null, Branch = null});
         _context.Commits.Add(new GitInsight.Entities.Commit {Id=2, Sha = "heck", Tag = "1.1.2", AuthorId = 2, BranchId = 2, RepositoryId = 2, Date = DateTimeOffset.Now });
         _context.Commits.Add(new GitInsight.Entities.Commit { Id=3, Sha = "tger", Tag = "1.1.4", AuthorId = 1, BranchId = 2, RepositoryId = 2, Date = DateTimeOffset.Now });

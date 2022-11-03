@@ -22,7 +22,7 @@ public class CommitRepository : ICommitRepository
     }
     public async Task<(IReadOnlyCollection<CommitDTO> commits, Response response)> FindAllAsync()
     {
-        return  ( await _context.Commits.Select(entity => CommitToCommitDto(entity)).ToListAsync()
+        return (await _context.Commits.Select(entity => CommitToCommitDto(entity)).ToListAsync()
             , Response.Ok);
     }
 
