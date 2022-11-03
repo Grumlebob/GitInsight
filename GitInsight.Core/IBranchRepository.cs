@@ -2,10 +2,10 @@
 
 public interface IBranchRepository
 {
-    public (Response, BranchDto) Create(BranchCreateDto newBranch);
-    public BranchDto Find(int id);
-    public IReadOnlyCollection<BranchDto> FindAll(int repositoryId);
-    public IReadOnlyCollection<BranchDto> FindAll();
-    public Response Delete(int id);
-    public Response Update(BranchDto b);
+    public Task<(Response, BranchDto)> CreateAsync(BranchCreateDto newBranch);
+    public Task<BranchDto> FindAsync(int id);
+    public Task<IReadOnlyCollection<BranchDto>> FindAllAsync(int repositoryId);
+    public Task<IReadOnlyCollection<BranchDto>> FindAllAsync();
+    public Task<Response> DeleteAsync(int id);
+    public Task<Response> UpdateAsync(BranchDto b);
 }
