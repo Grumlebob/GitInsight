@@ -12,10 +12,10 @@ public class Branch
 
     public int RepositoryId { get; set; }
     public Repository Repository { get; set; }
-    
+
     public List<Commit> Commits { get; set; }
 
-    
+
     public Branch()
     {
         Commits = new List<Commit>();
