@@ -26,7 +26,7 @@ public class BranchRepositoryTest : IDisposable
     [Fact]
     public void Create_Branch_Unknown_Repository()
     {
-        var newBranch = new BranchCreateDto("cool", "1234567890098765432112345678900987654321", 3, "head/cool");
+        var newBranch = new BranchCreateDto("cool", "1234567890098curtains345678900987654321!", 3, "head/cool");
         var (response, result) = _repo.Create(newBranch);
         response.Should().Be(Response.BadRequest);
         result.Path.Should().Be("No repository found with id: 3");
@@ -36,7 +36,7 @@ public class BranchRepositoryTest : IDisposable
     [Fact]
     public void Create_Branch_Success()
     {
-        var newBranch = new BranchCreateDto("cooler", "09987654321098876543210998765432109887654321", 1, "main/");
+        var newBranch = new BranchCreateDto("cooler", "09987654321098selfReplicas765432109887654321", 1, "main/");
         var (response, result) = _repo.Create(newBranch);
         response.Should().Be(Response.Created);
         result.Id.Should().Be(1);
@@ -47,9 +47,9 @@ public class BranchRepositoryTest : IDisposable
     [Fact]
     public void Create_Branch_Sha_Already_Exists()
     {
-        var conflictBranch = new BranchCreateDto("I came first", "6942069420694206942069420694206942069420", 1, "no");
+        var conflictBranch = new BranchCreateDto("I came first", "694206942069420TOOMuch?420694206942069420", 1, "no");
         _repo.Create(conflictBranch);
-        var newBranch = new BranchCreateDto(null, "6942069420694206942069420694206942069420", 1, "yes");
+        var newBranch = new BranchCreateDto(null, "694206942069420TOOMuch?420694206942069420", 1, "yes");
         var (response, result) = _repo.Create(newBranch);
         response.Should().Be(Response.Conflict);
         result.Name.Should().Be("I came first");
@@ -60,9 +60,9 @@ public class BranchRepositoryTest : IDisposable
     public void Create_Branch_Path_Already_Exists()
     {
         var conflictBranch =
-            new BranchCreateDto("I came before", "6942069420694206942069420694206942069420", 1, "main/no");
+            new BranchCreateDto("I came before", "69420694206942CannotStop69420694206942069420", 1, "main/no");
         _repo.Create(conflictBranch);
-        var newBranch = new BranchCreateDto("aww man", "1234567890123456789012345678901234567890", 1, "main/no");
+        var newBranch = new BranchCreateDto("aww man", "123456789012345678MeHeeHee2345678901234567890", 1, "main/no");
         var (response, result) = _repo.Create(newBranch);
         response.Should().Be(Response.Conflict);
         result.Name.Should().Be("I came before");
