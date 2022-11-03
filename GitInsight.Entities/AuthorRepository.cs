@@ -4,6 +4,7 @@ namespace GitInsight.Entities;
 
 public class AuthorRepository : IAuthorRepository
 {
+
     private readonly InsightContext _context;
 
     public AuthorRepository(InsightContext context)

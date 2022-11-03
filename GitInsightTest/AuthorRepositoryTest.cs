@@ -7,8 +7,9 @@ using Repository = GitInsight.Entities.Repository;
 
 namespace GitInsightTest;
 
-public class AuthorRepositoryTest
+public class AuthorRepositoryTest : IDisposable
 {
+
     private readonly InsightContext _context;
     private readonly AuthorRepository _authorRepository;
 
@@ -253,4 +254,5 @@ public class AuthorRepositoryTest
         var updatedAuthorDto = await _authorRepository.UpdateAuthorAsync(updateDto);
         updatedAuthorDto.Should().Be(Response.NotFound);
     }
+
 }

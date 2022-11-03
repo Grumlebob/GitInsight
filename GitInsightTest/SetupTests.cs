@@ -6,7 +6,7 @@ namespace GitInsightTest;
 
 public class SetupTests
 {
-    public static InsightContext Setup()
+    public static (SqliteConnection, InsightContext) Setup()
     {
         var connection = new SqliteConnection("Filename=:memory:");
         connection.Open();
@@ -15,6 +15,6 @@ public class SetupTests
         var context = new InsightContext(builder.Options);
         context.Database.EnsureCreated();
         context.SaveChanges();
-        return context;
+        return (connection, context);
     }
 }
