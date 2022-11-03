@@ -7,7 +7,7 @@ using Repository = GitInsight.Entities.Repository;
 
 namespace GitInsightTest;
 
-public class AuthorRepositoryTest : IDisposable
+public class AuthorRepositoryTest
 {
 
     private readonly InsightContext _context;
