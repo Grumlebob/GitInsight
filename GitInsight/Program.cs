@@ -25,7 +25,7 @@ if (args.Length > 0)
         GitLogByAllAuthorsByDate(dateformat: DateFormatNoTime, pathing: SourceCode);
     }
 }
-
+/*
 var insightContextFactory = new InsightContextFactory();
 AuthorRepository ap = new AuthorRepository(insightContextFactory.CreateDbContext(args));
 
@@ -33,3 +33,4 @@ AuthorRepository ap = new AuthorRepository(insightContextFactory.CreateDbContext
 var (authorDto, response) = await ap.FindAuthorAsync(5);
 
 Console.WriteLine("res: "+ authorDto +"response:" + response);
+*/
