@@ -62,6 +62,7 @@ public class CommitRepositoryTest
         var (commit,response) = _repository.Find(4);
 
         response.Should().Be(Response.NotFound);
+        commit.Should().BeNull();
     }
     
     
@@ -78,9 +79,9 @@ public class CommitRepositoryTest
     [Fact]
     public void Create_return_created()
     {
-        var response = _repository.Create(new GitInsight.Entities.Commit{Sha= "heyuo", Tag = "3.2.5", AuthorId = 2, BranchId = 1, RepositoryId = 1, Date = DateTimeOffset.Now});
+        var result = _repository.Create(new CommitCreateDTO("heyuo",DateTimeOffset.Now, "3.2.5", 2,  1, 1));
 
-        response.Should().Be(Response.Created);
+        result.response.Should().Be(Response.Created);
         _repository.Find(4).commit.Sha.Should().Be("heyuo");
     }
     
@@ -88,18 +89,18 @@ public class CommitRepositoryTest
     [Fact]
     public void Create_return_conflict_because_duplicate_sha()
     {
-        var response = _repository.Create(new GitInsight.Entities.Commit{Sha= "treg", Tag = "3.2.5", AuthorId = 2, BranchId = 1, RepositoryId = 1, Date = DateTimeOffset.Now});
+        var result = _repository.Create(new CommitCreateDTO("treg", DateTimeOffset.Now , "3.2.5",  2, 1, 1));
 
-        response.Should().Be(Response.Conflict);
+        result.response.Should().Be(Response.Conflict);
         _repository.FindAll().Item1.Count.Should().Be(3);
     }
     
     [Fact]
     public void Create_return_badRequest_because_nonExisting_author()
     {
-        var response = _repository.Create(new GitInsight.Entities.Commit{Sha= "heyuo", Tag = "3.2.5", AuthorId = 3, BranchId = 1, RepositoryId = 1, Date = DateTimeOffset.Now});
+        var result = _repository.Create(new CommitCreateDTO("heyuo",DateTimeOffset.Now, "3.2.5", 3, 1, 1));
 
-        response.Should().Be(Response.BadRequest);
+        result.response.Should().Be(Response.BadRequest);
         _repository.FindAll().Item1.Count.Should().Be(3);
     }
     
@@ -107,9 +108,9 @@ public class CommitRepositoryTest
     [Fact]
     public void Update_id_1_return_ok()
     {
-        var response = _repository.Update(new GitInsight.Entities.Commit{Id=1, Sha= "treg", Tag = "1.2.5", AuthorId = 1, BranchId = 1, RepositoryId = 1, Date = DateTimeOffset.Now});
+        var result = _repository.Update(new CommitDTO(1, "treg",DateTimeOffset.Now, "1.2.5", 1, 1, 1));
 
-        response.Should().Be(Response.Ok);
+        result.response.Should().Be(Response.Ok);
         _repository.Find(1).commit.Tag.Should().Be("1.2.5");
     }
     
@@ -117,26 +118,26 @@ public class CommitRepositoryTest
     [Fact]
     public void Update_id_4_return_notfound()
     {
-        var response = _repository.Update(new GitInsight.Entities.Commit{Id=4, Sha= "hjgk", Tag = "1.2.5", AuthorId = 2, BranchId = 1, RepositoryId = 1, Date = DateTimeOffset.Now});
+        var result = _repository.Update(new CommitDTO(4, "hjgk",DateTimeOffset.Now, "1.2.5",  2, 1, 1));
 
-        response.Should().Be(Response.NotFound);
+        result.response.Should().Be(Response.NotFound);
     }
     
     [Fact]
     public void Update_return_badRequest_because_nonExisting_repo()
     {
-        var response = _repository.Update(new GitInsight.Entities.Commit{Id = 2, Sha= "heck", Tag = "1.1.2", AuthorId = 2, BranchId = 2, RepositoryId = 3, Date = DateTimeOffset.Now});
+        var result = _repository.Update(new CommitDTO(2,  "heck",DateTimeOffset.Now, "1.1.2",  2,  2,  3));
 
-        response.Should().Be(Response.BadRequest);
+        result.response.Should().Be(Response.BadRequest);
         _repository.Find(2).commit.RepositoryId.Should().Be(2);
     }
     
     [Fact]
     public void Update_return_badRequest_because_nothing_is_changed()
     {
-        var response = _repository.Update(new GitInsight.Entities.Commit{Id=3 ,Sha= "tger", Tag = "1.1.4", AuthorId = 1, BranchId = 2, RepositoryId = 2, Date = _repository.Find(3).commit.Date});
+        var result = _repository.Update(new CommitDTO(3 ,"tger", _repository.Find(3).commit.Date, "1.1.4", 1, 2, 2 ));
 
-        response.Should().Be(Response.BadRequest);
+            result.response.Should().Be(Response.BadRequest);
     }
     
     [Fact]

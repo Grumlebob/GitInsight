@@ -9,25 +9,32 @@ public class CommitRepository : ICommitRepository
         _context = context;
     }
     
-    public (Commit? commit,Response response) Find(int id)
+    public (CommitDTO? commit,Response response) Find(int id)
     {
         var entity = _context.Commits.FirstOrDefault(c => c.Id == id);
         
-        return entity==null ? (null, Response.NotFound) : (entity, Response.Ok);
+        return entity==null ? (null, Response.NotFound) : 
+            (CommitToCommitDto(entity), Response.Ok);
+    }
+    public (IReadOnlyCollection<CommitDTO> commits, Response response) FindAll()
+    {
+        return (_context.Commits.Select(entity=>CommitToCommitDto(entity)).ToList()
+            ,Response.Ok);
     }
     
-    public (IReadOnlyCollection<Commit>,Response) FindAll()
+    public (Response response, CommitDTO? commit) Create(CommitCreateDTO DTO)
     {
-        return (_context.Commits.ToList(),Response.Ok);
-    }
-    
-    public Response Create(Commit commit)
-    {
+        var commit = new Commit
+        {
+            Sha = DTO.Sha, Date = DTO.Date, Tag = DTO.Tag, AuthorId = DTO.AuthorId, BranchId = DTO.BranchId,
+            RepositoryId = DTO.RepositoryId
+        };
+        
         
         //Check if commit with that Sha already exists
         if (_context.Commits.FirstOrDefault(c => c.Sha == commit.Sha) != null)
         {
-            return Response.Conflict;
+            return (Response.Conflict,null);
         } 
         
         //Check for no-existing branch, author, or repository
@@ -35,23 +42,23 @@ public class CommitRepository : ICommitRepository
                    || _context.Branches.FirstOrDefault(c => c.Id == commit.BranchId) is null
                    || _context.Repositories.FirstOrDefault(c => c.Id == commit.RepositoryId) is null)
         {
-            return Response.BadRequest;
+            return (Response.BadRequest,null);
         }
         
         _context.Commits.Add(commit);
         _context.SaveChanges();
         
-        return Response.Created;
+        return (Response.Created,CommitToCommitDto(commit));
     }
     
-    public Response Update(Commit commit)
+    public (Response response, CommitDTO? commit) Update(CommitDTO commit)
     {
         var entity = _context.Commits.FirstOrDefault(c => c.Id == commit.Id);
         
         //Check if commit exits
         if (entity == null)
         {
-            return Response.NotFound;
+            return (Response.NotFound, null);
         } 
         
         //Check for no-existing branch, author, or repository
@@ -59,7 +66,7 @@ public class CommitRepository : ICommitRepository
             || _context.Branches.FirstOrDefault(c => c.Id == commit.BranchId) is null
             || _context.Repositories.FirstOrDefault(c => c.Id == commit.RepositoryId) is null)
         {
-            return Response.BadRequest;
+            return (Response.BadRequest,CommitToCommitDto(entity));
         }
         
         //Check if any information actually have been updated
@@ -70,7 +77,7 @@ public class CommitRepository : ICommitRepository
             && entity.Date==commit.Date
             && entity.Tag==commit.Tag)
         {
-            return Response.BadRequest;
+            return (Response.BadRequest,CommitToCommitDto(entity));
         }
 
         //Update commit
@@ -82,7 +89,7 @@ public class CommitRepository : ICommitRepository
         entity.Tag = commit.Tag;
         _context.SaveChanges();
         
-        return Response.Ok;
+        return (Response.Ok,CommitToCommitDto(entity));
     }
     
     public Response Delete(int id)
@@ -96,4 +103,11 @@ public class CommitRepository : ICommitRepository
 
         return Response.Deleted;
     }
+
+    public static CommitDTO CommitToCommitDto(Commit commit)
+    {
+        return new CommitDTO(commit.Id, commit.Sha, commit.Date, commit.Tag, commit.AuthorId, commit.BranchId,
+            commit.RepositoryId);
+    }
+    
 }
