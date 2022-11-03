@@ -2,9 +2,9 @@
 
 public interface ICommitRepository
 {
-    (CommitDTO? commit, Response response) Find(int id);
-    (IReadOnlyCollection<CommitDTO> commits, Response response) FindAll();
-    (Response response, CommitDTO? commit) Create(CommitCreateDTO DTO);
-    (Response response, CommitDTO? commit) Update(CommitDTO commit);
-    Response Delete(int id);
+    Task<(CommitDTO? commit, Response response)> FindAsync(int id);
+    Task<(IReadOnlyCollection<CommitDTO> commits, Response response)> FindAllAsync();
+    Task<(Response response, CommitDTO? commit)> CreateAsync(CommitCreateDTO DTO);
+    Task<(Response response, CommitDTO? commit)> UpdateAsync(CommitDTO commit);
+    Task<Response> DeleteAsync(int id);
 }

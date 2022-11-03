@@ -1,4 +1,8 @@
-﻿namespace GitInsight.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace GitInsight.Entities;
+
+
 
 public class CommitRepository : ICommitRepository
 {
@@ -9,20 +13,20 @@ public class CommitRepository : ICommitRepository
         _context = context;
     }
 
-    public (CommitDTO? commit, Response response) Find(int id)
+    public async Task<(CommitDTO? commit, Response response)> FindAsync(int id)
     {
-        var entity = _context.Commits.FirstOrDefault(c => c.Id == id);
+        var entity = await _context.Commits.FirstOrDefaultAsync(c => c.Id == id);
 
         return entity == null ? (null, Response.NotFound) :
             (CommitToCommitDto(entity), Response.Ok);
     }
-    public (IReadOnlyCollection<CommitDTO> commits, Response response) FindAll()
+    public async Task<(IReadOnlyCollection<CommitDTO> commits, Response response)> FindAllAsync()
     {
-        return (_context.Commits.Select(entity => CommitToCommitDto(entity)).ToList()
+        return  ( await _context.Commits.Select(entity => CommitToCommitDto(entity)).ToListAsync()
             , Response.Ok);
     }
 
-    public (Response response, CommitDTO? commit) Create(CommitCreateDTO DTO)
+    public async Task<(Response response, CommitDTO? commit)> CreateAsync(CommitCreateDTO DTO)
     {
         var commit = new Commit
         {
@@ -36,28 +40,28 @@ public class CommitRepository : ICommitRepository
 
 
         //Check if commit with that Sha already exists
-        if (_context.Commits.FirstOrDefault(c => c.Sha == commit.Sha) != null)
+        if (await _context.Commits.FirstOrDefaultAsync(c => c.Sha == commit.Sha) != null)
         {
             return (Response.Conflict, null);
         }
 
         //Check for no-existing branch, author, or repository
-        if (_context.Authors.FirstOrDefault(c => c.Id == commit.AuthorId) is null
-                   || _context.Branches.FirstOrDefault(c => c.Id == commit.BranchId) is null
-                   || _context.Repositories.FirstOrDefault(c => c.Id == commit.RepositoryId) is null)
+        if (await _context.Authors.FirstOrDefaultAsync(c => c.Id == commit.AuthorId) is null
+                   || await _context.Branches.FirstOrDefaultAsync(c => c.Id == commit.BranchId) is null
+                   || await _context.Repositories.FirstOrDefaultAsync(c => c.Id == commit.RepositoryId) is null)
         {
             return (Response.BadRequest, null);
         }
 
         _context.Commits.Add(commit);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
         return (Response.Created, CommitToCommitDto(commit));
     }
 
-    public (Response response, CommitDTO? commit) Update(CommitDTO commit)
+    public async Task<(Response response, CommitDTO? commit)> UpdateAsync(CommitDTO commit)
     {
-        var entity = _context.Commits.FirstOrDefault(c => c.Id == commit.Id);
+        var entity = await _context.Commits.FirstOrDefaultAsync(c => c.Id == commit.Id);
 
         //Check if commit exits
         if (entity == null)
@@ -66,7 +70,7 @@ public class CommitRepository : ICommitRepository
         }
 
         //Check for no-existing branch, author, or repository
-        if (!RelationsExists(commit))
+        if (!await RelationsExists(commit))
         {
             return (Response.BadRequest, CommitToCommitDto(entity));
         }
@@ -89,19 +93,19 @@ public class CommitRepository : ICommitRepository
         entity.Sha = commit.Sha;
         entity.Date = commit.Date;
         entity.Tag = commit.Tag;
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
         return (Response.Ok, CommitToCommitDto(entity));
     }
 
-    public Response Delete(int id)
+    public async Task<Response> DeleteAsync(int id)
     {
-        var entity = _context.Commits.FirstOrDefault(c => c.Id == id);
+        var entity = await _context.Commits.FirstOrDefaultAsync(c => c.Id == id);
 
         if (entity == null) return Response.NotFound;
 
         _context.Commits.Remove(entity);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
         return Response.Deleted;
     }
@@ -112,11 +116,11 @@ public class CommitRepository : ICommitRepository
             commit.RepositoryId);
     }
 
-    private bool RelationsExists(CommitDTO commit)
+    private async Task<bool> RelationsExists(CommitDTO commit)
     {
-        return !(_context.Authors.FirstOrDefault(c => c.Id == commit.AuthorId) is null
-                 || _context.Branches.FirstOrDefault(c => c.Id == commit.BranchId) is null
-                 || _context.Repositories.FirstOrDefault(c => c.Id == commit.RepositoryId) is null);
+        return !(await _context.Authors.FirstOrDefaultAsync(c => c.Id == commit.AuthorId) is null
+                 || await _context.Branches.FirstOrDefaultAsync(c => c.Id == commit.BranchId) is null
+                 || await _context.Repositories.FirstOrDefaultAsync(c => c.Id == commit.RepositoryId) is null);
 
     }
 
