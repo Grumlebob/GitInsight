@@ -35,11 +35,11 @@ public class CommitRepositoryTest
         _context.Branches.Add(new Branch { Name = "branch1", Sha = "huhu", Path = "origin/idk", RepositoryId = 1 });
         _context.Branches.Add(new Branch { Name = "branch2", Sha = "hihi", Path = "origin/idc", RepositoryId = 2 });
         _context.SaveChanges();
-        
-        _context.Commits.Add(new GitInsight.Entities.Commit { Id=1, Sha = "treg", Tag = "1.2.3", AuthorId = 1, BranchId = 1, RepositoryId = 1, Date = DateTimeOffset.Now, Repository = null, Author = null, Branch = null});
-        _context.Commits.Add(new GitInsight.Entities.Commit {Id=2, Sha = "heck", Tag = "1.1.2", AuthorId = 2, BranchId = 2, RepositoryId = 2, Date = DateTimeOffset.Now });
-        _context.Commits.Add(new GitInsight.Entities.Commit { Id=3, Sha = "tger", Tag = "1.1.4", AuthorId = 1, BranchId = 2, RepositoryId = 2, Date = DateTimeOffset.Now });
-        
+
+        _context.Commits.Add(new GitInsight.Entities.Commit { Id = 1, Sha = "treg", Tag = "1.2.3", AuthorId = 1, BranchId = 1, RepositoryId = 1, Date = DateTimeOffset.Now, Repository = null, Author = null, Branch = null });
+        _context.Commits.Add(new GitInsight.Entities.Commit { Id = 2, Sha = "heck", Tag = "1.1.2", AuthorId = 2, BranchId = 2, RepositoryId = 2, Date = DateTimeOffset.Now });
+        _context.Commits.Add(new GitInsight.Entities.Commit { Id = 3, Sha = "tger", Tag = "1.1.4", AuthorId = 1, BranchId = 2, RepositoryId = 2, Date = DateTimeOffset.Now });
+
         _context.SaveChanges();
     }
 
@@ -51,8 +51,8 @@ public class CommitRepositoryTest
         response.Should().Be(Response.Ok);
 
         commit.Sha.Should().Be("treg");
-        
-        
+
+
     }
 
     [Fact]
@@ -76,12 +76,12 @@ public class CommitRepositoryTest
     [Fact]
     public async Task Create_return_created()
     {
-        var expectedCommitDTO= new CommitDTO(4, "heyuo", DateTimeOffset.Now, "3.2.5", 2, 1, 1);
-        
+        var expectedCommitDTO = new CommitDTO(4, "heyuo", DateTimeOffset.Now, "3.2.5", 2, 1, 1);
+
         var result = await _repository.CreateAsync(new CommitCreateDTO(expectedCommitDTO.Sha, expectedCommitDTO.Date, expectedCommitDTO.Tag, expectedCommitDTO.AuthorId, expectedCommitDTO.BranchId, expectedCommitDTO.RepositoryId));
-        
+
         result.response.Should().Be(Response.Created);
-        
+
         _repository.FindAsync(4).Result.commit.Should().BeEquivalentTo(expectedCommitDTO);
         result.commit.Should().BeEquivalentTo(expectedCommitDTO);
     }
@@ -116,14 +116,14 @@ public class CommitRepositoryTest
 
         result.commit.Should().BeEquivalentTo(commitDTO);
         _repository.FindAsync(1).Result.commit.Should().BeEquivalentTo(commitDTO);
-        
+
     }
 
     [Fact]
     public async Task Update_id_4_return_notfound()
     {
         var result = await _repository.UpdateAsync(new CommitDTO(4, "hjgk", DateTimeOffset.Now, "1.2.5", 2, 1, 1));
-        
+
         result.response.Should().Be(Response.NotFound);
         result.commit.Should().BeNull();
     }
@@ -161,7 +161,7 @@ public class CommitRepositoryTest
 
         response.Should().Be(Response.NotFound);
     }
-    
+
     [Fact]
     public async Task Test_Relations()
     {
