@@ -54,7 +54,7 @@ public class CommitRepositoryTest : IDisposable
 
 
     }
-    
+
     [Fact]
     public async Task Find_id_4_return_not_found()
     {

@@ -6,7 +6,7 @@ using Branch = GitInsight.Entities.Branch;
 
 namespace GitInsightTest;
 
-public class CommitRepositoryTest
+public class CommitRepositoryTest : IDisposable
 {
     private readonly InsightContext _context;
     private readonly CommitRepository _repository;
@@ -168,6 +168,10 @@ public class CommitRepositoryTest
         _context.Commits.FirstOrDefaultAsync(c => c.Id == 1).Result.Author.Name.Should().Be("Søren");
         _context.Commits.FirstOrDefaultAsync(c => c.Id == 2).Result.Branch.Sha.Should().Be("hihi");
         _context.Commits.FirstOrDefaultAsync(c => c.Id == 3).Result.Repository.Name.Should().Be("repo2");
+    }
+    public void Dispose()
+    {
+        _context.Dispose();
     }
 
 }
