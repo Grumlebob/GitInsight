@@ -1,11 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using static GitInsight.Entities.ExistingCollectionHelper;
 
 namespace GitInsight.Entities;
 
-
 public class AuthorRepository : IAuthorRepository
 {
-
     private readonly InsightContext _context;
 
     public AuthorRepository(InsightContext context)
@@ -66,8 +65,8 @@ public class AuthorRepository : IAuthorRepository
         {
             Name = authorCreateDto.Name,
             Email = authorCreateDto.Email,
-            Commits = await UpdateCommitsIfExist(authorCreateDto.CommitIds),
-            Repositories = await UpdateRepositoriesIfExist(authorCreateDto.RepositoryIds),
+            Commits = await UpdateCommitsIfExist(_context, authorCreateDto.CommitIds),
+            Repositories = await UpdateRepositoriesIfExist(_context, authorCreateDto.RepositoryIds),
         };
 
         await _context.Authors.AddAsync(author);
@@ -107,8 +106,8 @@ public class AuthorRepository : IAuthorRepository
         {
             author.Name = authorDto.Name;
             author.Email = authorDto.Email;
-            author.Commits = await UpdateCommitsIfExist(authorDto.CommitIds);
-            author.Repositories = await UpdateRepositoriesIfExist(authorDto.RepositoryIds);
+            author.Commits = await UpdateCommitsIfExist(_context,authorDto.CommitIds);
+            author.Repositories = await UpdateRepositoriesIfExist(_context,authorDto.RepositoryIds);
 
             _context.Authors.Update(author);
             await _context.SaveChangesAsync();
@@ -129,7 +128,7 @@ public class AuthorRepository : IAuthorRepository
             ? (authors.Select(a => AuthorToAuthorDto(a)).ToList(), Response.Ok)
             : (null, Response.NotFound);
     }
-    
+
     public async Task<(List<AuthorDto>?, Response)> FindAuthorsByEmailAsync(string email)
     {
         var authors = await _context.Authors
@@ -140,7 +139,7 @@ public class AuthorRepository : IAuthorRepository
             ? (authors.Select(a => AuthorToAuthorDto(a)).ToList(), Response.Ok)
             : (null, Response.NotFound);
     }
-    
+
     public async Task<(List<AuthorDto>?, Response)> FindAuthorsByRepositoryIdAsync(int repositoryId)
     {
         var authors = await _context.Authors
@@ -151,8 +150,8 @@ public class AuthorRepository : IAuthorRepository
             ? (authors.Select(a => AuthorToAuthorDto(a)).ToList(), Response.Ok)
             : (null, Response.NotFound);
     }
-    
-   
+
+
     public async Task<(List<AuthorDto>?, Response)> FindAuthorsByCommitIdAsync(int commitId)
     {
         var authors = await _context.Authors
@@ -163,7 +162,7 @@ public class AuthorRepository : IAuthorRepository
             ? (authors.Select(a => AuthorToAuthorDto(a)).ToList(), Response.Ok)
             : (null, Response.NotFound);
     }
-    
+
 
     private async Task<bool> EnsureRepositoryExists(int id)
     {
@@ -175,18 +174,4 @@ public class AuthorRepository : IAuthorRepository
 
         return true;
     }
-
-    private async Task<List<Repository>> UpdateRepositoriesIfExist(IEnumerable<int> repoIds)
-    {
-        var existing = _context.Repositories.Where(r => repoIds.Contains(r.Id)).ToListAsync();
-        return await existing;
-    }
-
-    private async Task<List<Commit>> UpdateCommitsIfExist(IEnumerable<int> commitIds)
-    {
-        var existing = _context.Commits.Where(r => commitIds.Contains(r.Id)).ToListAsync();
-        return await existing;
-    }
-    
-
 }
