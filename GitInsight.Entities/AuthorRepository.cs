@@ -66,8 +66,8 @@ public class AuthorRepository : IAuthorRepository
         {
             Name = authorCreateDto.Name,
             Email = authorCreateDto.Email,
-            Commits = await CreateOrUpdateCommits(authorCreateDto.CommitIds),
-            Repositories = await CreateOrUpdateRepositories(authorCreateDto.RepositoryIds),
+            Commits = await UpdateCommitsIfExist(authorCreateDto.CommitIds),
+            Repositories = await UpdateRepositoriesIfExist(authorCreateDto.RepositoryIds),
         };
 
         await _context.Authors.AddAsync(author);
@@ -107,8 +107,8 @@ public class AuthorRepository : IAuthorRepository
         {
             author.Name = authorDto.Name;
             author.Email = authorDto.Email;
-            author.Commits = await CreateOrUpdateCommits(authorDto.CommitIds);
-            author.Repositories = await CreateOrUpdateRepositories(authorDto.RepositoryIds);
+            author.Commits = await UpdateCommitsIfExist(authorDto.CommitIds);
+            author.Repositories = await UpdateRepositoriesIfExist(authorDto.RepositoryIds);
 
             _context.Authors.Update(author);
             await _context.SaveChangesAsync();
@@ -176,13 +176,13 @@ public class AuthorRepository : IAuthorRepository
         return true;
     }
 
-    private async Task<List<Repository>> CreateOrUpdateRepositories(IEnumerable<int> repoIds)
+    private async Task<List<Repository>> UpdateRepositoriesIfExist(IEnumerable<int> repoIds)
     {
         var existing = _context.Repositories.Where(r => repoIds.Contains(r.Id)).ToListAsync();
         return await existing;
     }
 
-    private async Task<List<Commit>> CreateOrUpdateCommits(IEnumerable<int> commitIds)
+    private async Task<List<Commit>> UpdateCommitsIfExist(IEnumerable<int> commitIds)
     {
         var existing = _context.Commits.Where(r => commitIds.Contains(r.Id)).ToListAsync();
         return await existing;
