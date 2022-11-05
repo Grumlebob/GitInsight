@@ -194,7 +194,7 @@ public class AuthorRepositoryTest : IDisposable
         response.Should().Be(Response.Ok);
     }
 
-    //find authors reponse not found
+    //find authors response not found
     [Fact]
     public async Task FindAuthorsByCommitIdFalse()
     {
