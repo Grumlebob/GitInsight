@@ -104,7 +104,7 @@ public class RepositoryRepositoryTest : IDisposable
     [Fact]
     public async Task FindAllRepositories_test()
     {
-        var (dtoList,response) = await _repositoryRepository.FindAllRepositoriesAsync();
+        var (dtoList, response) = await _repositoryRepository.FindAllRepositoriesAsync();
         dtoList.Count.Should().Be(1);
         response.Should().Be(Response.Ok);
     }
@@ -175,7 +175,7 @@ public class RepositoryRepositoryTest : IDisposable
     }
 
     [Fact]
-    public async Task CreateRepository_Test()
+    public async Task CreateRepository_should_return_created()
     {
         var create = new RepositoryCreateDto(
             "Second Repo",
@@ -185,9 +185,25 @@ public class RepositoryRepositoryTest : IDisposable
             new List<int>()
         );
 
-        var (_,response) = await _repositoryRepository.CreateRepositoryAsync(create);
+        var (_, response) = await _repositoryRepository.CreateRepositoryAsync(create);
 
         response.Should().Be(Response.Created);
+    }
+
+    [Fact]
+    public async Task CreateRepository_Duplicate_should_return_conflict()
+    {
+        var create = new RepositoryCreateDto(
+            "First RepoPath",
+            "First Repo",
+            new List<int>(),
+            new List<int>(),
+            new List<int>()
+        );
+
+        var (_, response) = await _repositoryRepository.CreateRepositoryAsync(create);
+
+        response.Should().Be(Response.Conflict);
     }
 
 

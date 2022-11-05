@@ -29,9 +29,10 @@ public class RepositoryRepository : IRepositoryRepository
 
         var repoDto = RepositoryToRepositoryDto(repository);
 
-        if (_context.Repositories.Contains(repository))
+        //if the new repository has the same path return conflict
+        if (await _context.Repositories.AnyAsync(r => r.Path == repository.Path))
         {
-            return (repoDto, Response.Conflict);
+            return (RepositoryToRepositoryDto(repository), Response.Conflict);
         }
 
         _context.Repositories.Add(repository);
@@ -56,6 +57,8 @@ public class RepositoryRepository : IRepositoryRepository
     public async Task<(List<RepositoryDto>?, Response)> FindAllRepositoriesAsync()
     {
         var result = await _context.Repositories.Select(entity => RepositoryToRepositoryDto(entity)).ToListAsync();
+        // if (result == null || result.Count == 0)
+        //     return (new List<RepositoryDto>(), Response.NotFound);
         var count = result.Count;
         var more = count > 0;
         return more ? (result, Response.Ok) : (null, Response.NotFound);
