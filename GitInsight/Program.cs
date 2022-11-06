@@ -29,6 +29,5 @@ if (args.Length > 0)
     
 }
 
-DataManager dm = new DataManager(new InsightContextFactory().CreateDbContext(args),
-    GetRelativeGitFolder(".git"));
-    await dm.Analyze();
+DataManager dm = new DataManager(new InsightContextFactory().CreateDbContext(args));
+    await dm.Analyze( GetGitLocalFolder(),GetRelativeGitFolder(".git"));

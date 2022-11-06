@@ -8,53 +8,33 @@ using LibGit2Sharp;
 public class DataManager
 {
     private InsightContext _context;
-    private string _relPath;
     private bool _shouldReanalyze = false;
     
 
-    public DataManager(InsightContext context, string relPath)
+    public DataManager(InsightContext context)
     {
         _context = context;
-        _relPath = relPath;
     }
 
-    public async Task AnalyzeRepo()
-    {
-        using var repo = new Repository(GitPathHelper.GetGitLocalFolder());
-
-        //repo
-        var repos = new RepositoryRepository(_context);
-        var repoName = repo.Info.WorkingDirectory.Split('\\').Last();
-        var dto = new RepositoryCreateDto(_relPath, repoName, null, null, null);
-        var (result, response) = await repos.CreateRepositoryAsync(dto);
-    }
-
-    public async Task Analyze()
+    public async Task Analyze(string fullPath, string relPath)
     {
         await _context.Database.EnsureCreatedAsync();
         await _context.SaveChangesAsync();
         
-        await CheckIfReanalyzeNeeded();
+        await CheckIfReanalyzeNeeded(fullPath);
         if (!_shouldReanalyze)
         {
             Console.WriteLine("No analyze was needed");
             return;
         }
 
-        
-        
-        using var repo = new Repository(GitPathHelper.GetGitLocalFolder());
+        using var repo = new Repository(fullPath);
 
         //repo
         var repos = new RepositoryRepository(_context);
         var repoName = repo.Info.WorkingDirectory.Split('\\').Last();
-        var dto = new RepositoryCreateDto(_relPath, repoName, null, null, null);
-        var (result, response) = await repos.CreateRepositoryAsync(dto);
-
-        var createdRepo = await repos.FindRepositoryAsync(result.Id);
-
-        
-        
+        var dto = new RepositoryCreateDto(relPath, repoName, null, null, null);
+        var (result, _) = await repos.CreateRepositoryAsync(dto);
         
         //branches
         var branches = new BranchRepository(_context);
@@ -63,13 +43,11 @@ public class DataManager
         foreach (var b in repo.Branches)
         {
             var branchDto = new BranchCreateDto(b.FriendlyName, result.Id, b.UpstreamBranchCanonicalName);
-            var (branchResponse, branchResult) = await branches.CreateAsync(branchDto);
+            var (_, branchResult) = await branches.CreateAsync(branchDto);
             foreach (var c in b.Commits)
             {
                 var authorDto = new AuthorCreateDto(c.Author.Name, c.Author.Email, null, new List<int> { result.Id });
-                var (authResult, authResponse) = await authors.CreateAuthorAsync(authorDto);
-                Console.WriteLine(authResult);
-                Console.WriteLine(branchResult);
+                var (authResult, _) = await authors.CreateAuthorAsync(authorDto);
                 var commitDto = new CommitCreateDTO(c.Sha, c.Author.When, authResult.Id, branchResult.Id, result.Id);
                 await commits.CreateAsync(commitDto);
             }
@@ -79,9 +57,9 @@ public class DataManager
 
     }
 
-    private async Task CheckIfReanalyzeNeeded()
+    private async Task CheckIfReanalyzeNeeded(string fullPath)
     {
-        using var repo = new Repository(GitPathHelper.GetGitLocalFolder());
+        using var repo = new Repository(fullPath);
         var commits = new CommitRepository(_context);
 
         var queryFilter = repo.Commits.QueryBy(new CommitFilter
