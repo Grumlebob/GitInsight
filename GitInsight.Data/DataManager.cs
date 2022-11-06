@@ -91,7 +91,7 @@ public class DataManager
         });
         var actualLastCommit = queryFilter.FirstOrDefault();
         var (res, response) = await commits.FindByShaAsync(actualLastCommit.Sha);
-        Console.WriteLine(res.Sha);
+        //Console.WriteLine(res.Sha);
         Console.WriteLine(actualLastCommit.Sha);
         if (response == Response.NotFound)
         {
