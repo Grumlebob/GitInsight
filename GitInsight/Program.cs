@@ -16,18 +16,21 @@ if (args.Length > 0)
             CommandLineSpecifiedPath = args[0];
         }
     }
+
     if (args.Contains("commitfrequency"))
     {
         Console.WriteLine($"{args[0]} mode:"); //dotnet run --args
         GitCommitFrequency(dateformat: DateFormatNoTime, pathing: SourceCode);
     }
-    else if (args.Contains("commitauthor") )
+    else if (args.Contains("commitauthor"))
     {
         Console.WriteLine($"{args[0]} mode:"); //dotnet run --args
         GitLogByAllAuthorsByDate(dateformat: DateFormatNoTime, pathing: SourceCode);
     }
-    
 }
 
 DataManager dm = new DataManager(new InsightContextFactory().CreateDbContext(args));
-    await dm.Analyze( GetGitLocalFolder(),GetRelativeGitFolder(".git"));
+await dm.Analyze( GetGitTestFolder(),GetRelativeGitFolder(@"GitInsightTest\Testrepo.git"));
+//await dm.Analyze(GetGitLocalFolder(), GetRelativeGitFolder(".git"));
+
+//TODO: Opdater database når kommandoer bliver kørt. Test db manager. Opdater deletions. Print når ingen changes.

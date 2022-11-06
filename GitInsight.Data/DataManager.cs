@@ -34,14 +34,13 @@ public class DataManager
         var commits = new CommitRepository(_context);
 
         //repo
-        var repoName = repo.Info.WorkingDirectory.Split('\\').Last();
-        var dto = new RepositoryCreateDto(relPath, repoName, null!, null!, null!);
+        var dto = new RepositoryCreateDto(relPath, relPath, null!, null!, null!);
         var (result, _) = await repos.CreateRepositoryAsync(dto);
         
         //branches
         foreach (var b in repo.Branches)
         {
-            var branchDto = new BranchCreateDto(b.FriendlyName, result.Id, b.UpstreamBranchCanonicalName);
+            var branchDto = new BranchCreateDto(b.FriendlyName, result.Id, b.CanonicalName);
             var (_, branchResult) = await branches.CreateAsync(branchDto);
             foreach (var c in b.Commits)
             {
@@ -52,7 +51,7 @@ public class DataManager
             }
         }
 
-        await UpdateLatestCommit(result.Id);
+        await UpdateLatestCommit(result.Id, fullPath);
 
     }
 
@@ -77,9 +76,9 @@ public class DataManager
         }
     }
 
-    private async Task UpdateLatestCommit(int id)
+    private async Task UpdateLatestCommit(int id, string fullPath)
     {
-        using var repo = new Repository(GitPathHelper.GetGitLocalFolder());
+        using var repo = new Repository(fullPath);
         var commits = new CommitRepository(_context);
         var repository = new RepositoryRepository(_context);
 

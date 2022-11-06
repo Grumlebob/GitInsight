@@ -17,6 +17,6 @@ public static class GitPathHelper
     public static string GetGitTestFolder()
     {
         var projectPath =  Directory.GetParent(Directory.GetCurrentDirectory())?.Parent!.Parent!.Parent!.FullName;
-        return Path.Combine(projectPath!, "GitInsightTest/Testrepo.git");
+        return Path.Combine(projectPath!, @"GitInsightTest\Testrepo.git");
     }
 }
