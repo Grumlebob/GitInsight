@@ -6,7 +6,6 @@ namespace GitInsight.Entities;
 public class Branch
 {
     public int Id { get; set; }
-    public string Sha { get; set; } = string.Empty;
     public string Path { get; set; } = string.Empty;
     public string? Name { get; set; } = string.Empty;
 
@@ -27,5 +26,7 @@ public class BranchConfigurations : IEntityTypeConfiguration<Branch>
     public void Configure(EntityTypeBuilder<Branch> builder)
     {
         builder.HasKey(a => a.Id);
+        builder.HasKey(a => new { a.RepositoryId, a.Path });
+
     }
 }

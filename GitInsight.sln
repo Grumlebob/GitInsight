@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitInsight.Entities", "GitI
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitInsight.Core", "GitInsight.Core\GitInsight.Core.csproj", "{63503705-7754-41C8-B6E6-3A567EF6D262}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitInsight.Data", "GitInsight.Data\GitInsight.Data.csproj", "{548EA3BA-BB4E-4C8B-8046-E70C798E1C27}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{63503705-7754-41C8-B6E6-3A567EF6D262}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{63503705-7754-41C8-B6E6-3A567EF6D262}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{63503705-7754-41C8-B6E6-3A567EF6D262}.Release|Any CPU.Build.0 = Release|Any CPU
+		{548EA3BA-BB4E-4C8B-8046-E70C798E1C27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{548EA3BA-BB4E-4C8B-8046-E70C798E1C27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{548EA3BA-BB4E-4C8B-8046-E70C798E1C27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{548EA3BA-BB4E-4C8B-8046-E70C798E1C27}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

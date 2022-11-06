@@ -32,8 +32,8 @@ public class CommitRepositoryTest : IDisposable
         _context.Repositories.Add(new GitInsight.Entities.Repository { Name = "repo2", Path = "idc/idc" });
         _context.SaveChanges();
 
-        _context.Branches.Add(new Branch { Name = "branch1", Sha = "huhu", Path = "origin/idk", RepositoryId = 1 });
-        _context.Branches.Add(new Branch { Name = "branch2", Sha = "hihi", Path = "origin/idc", RepositoryId = 2 });
+        _context.Branches.Add(new Branch { Name = "branch1", Path = "origin/idk", RepositoryId = 1 });
+        _context.Branches.Add(new Branch { Name = "branch2", Path = "origin/idc", RepositoryId = 2 });
         _context.SaveChanges();
 
         _context.Commits.Add(new GitInsight.Entities.Commit { Id = 1, Sha = "treg", Tag = "1.2.3", AuthorId = 1, BranchId = 1, RepositoryId = 1, Date = DateTimeOffset.Now, Repository = null, Author = null, Branch = null });
@@ -166,7 +166,6 @@ public class CommitRepositoryTest : IDisposable
     public async Task Test_Relations()
     {
         _context.Commits.FirstOrDefaultAsync(c => c.Id == 1).Result.Author.Name.Should().Be("Søren");
-        _context.Commits.FirstOrDefaultAsync(c => c.Id == 2).Result.Branch.Sha.Should().Be("hihi");
         _context.Commits.FirstOrDefaultAsync(c => c.Id == 3).Result.Repository.Name.Should().Be("repo2");
     }
     public void Dispose()
