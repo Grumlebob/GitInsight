@@ -7,9 +7,8 @@ using LibGit2Sharp;
 
 public class DataManager
 {
-    private InsightContext _context;
-    private bool _shouldReanalyze = false;
-    
+    private readonly InsightContext _context;
+    private bool _shouldReanalyze;
 
     public DataManager(InsightContext context)
     {
@@ -29,17 +28,17 @@ public class DataManager
         }
 
         using var repo = new Repository(fullPath);
-
-        //repo
         var repos = new RepositoryRepository(_context);
-        var repoName = repo.Info.WorkingDirectory.Split('\\').Last();
-        var dto = new RepositoryCreateDto(relPath, repoName, null, null, null);
-        var (result, _) = await repos.CreateRepositoryAsync(dto);
-        
-        //branches
         var branches = new BranchRepository(_context);
         var authors = new AuthorRepository(_context);
         var commits = new CommitRepository(_context);
+
+        //repo
+        var repoName = repo.Info.WorkingDirectory.Split('\\').Last();
+        var dto = new RepositoryCreateDto(relPath, repoName, null!, null!, null!);
+        var (result, _) = await repos.CreateRepositoryAsync(dto);
+        
+        //branches
         foreach (var b in repo.Branches)
         {
             var branchDto = new BranchCreateDto(b.FriendlyName, result.Id, b.UpstreamBranchCanonicalName);
@@ -48,7 +47,7 @@ public class DataManager
             {
                 var authorDto = new AuthorCreateDto(c.Author.Name, c.Author.Email, null, new List<int> { result.Id });
                 var (authResult, _) = await authors.CreateAuthorAsync(authorDto);
-                var commitDto = new CommitCreateDTO(c.Sha, c.Author.When, authResult.Id, branchResult.Id, result.Id);
+                var commitDto = new CommitCreateDTO(c.Sha, c.Author.When, authResult!.Id, branchResult!.Id, result.Id);
                 await commits.CreateAsync(commitDto);
             }
         }
@@ -68,9 +67,7 @@ public class DataManager
             //IncludeReachableFrom = repo.Branches["master"].Tip
         });
         var actualLastCommit = queryFilter.FirstOrDefault();
-        var (res, response) = await commits.FindByShaAsync(actualLastCommit.Sha);
-        //Console.WriteLine(res.Sha);
-        Console.WriteLine(actualLastCommit.Sha);
+        var (_, response) = await commits.FindByShaAsync(actualLastCommit!.Sha);
         if (response == Response.NotFound)
         {
             _shouldReanalyze = true;
@@ -83,18 +80,17 @@ public class DataManager
     private async Task UpdateLatestCommit(int id)
     {
         using var repo = new Repository(GitPathHelper.GetGitLocalFolder());
+        var commits = new CommitRepository(_context);
+        var repository = new RepositoryRepository(_context);
 
         var queryFilter = repo.Commits.QueryBy(new CommitFilter
         {
             SortBy = CommitSortStrategies.Topological | CommitSortStrategies.Time,
             //IncludeReachableFrom = repo.Branches["master"].Tip
         });
-        var lastCommit = queryFilter.FirstOrDefault();
-        var commits = new CommitRepository(_context);
-        var (c, x) = await commits.FindByShaAsync(lastCommit.Sha);
-        var repository = new RepositoryRepository(_context);
-        var (found, r) = await repository.FindRepositoryAsync(id);
-        var withlatest = new RepositoryLatestCommitUpdate(id, c.Id);
-        await repository.UpdateLatestCommitAsync(withlatest);
+        var actualLastCommit = queryFilter.FirstOrDefault();
+        var (latestDbCommit, _) = await commits.FindByShaAsync(actualLastCommit!.Sha);
+        var withLatest = new RepositoryLatestCommitUpdate(id, latestDbCommit!.Id);
+        await repository.UpdateLatestCommitAsync(withLatest);
     }
 }
