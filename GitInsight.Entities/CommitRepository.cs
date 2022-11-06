@@ -20,6 +20,14 @@ public class CommitRepository : ICommitRepository
         return entity == null ? (null, Response.NotFound) :
             (CommitToCommitDto(entity), Response.Ok);
     }
+    
+    public async Task<(CommitDTO? commit, Response response)> FindByShaAsync(string sha)
+    {
+        var entity = await _context.Commits.FirstOrDefaultAsync(c => c.Sha == sha);
+        return entity == null ? (null, Response.NotFound) :
+            (CommitToCommitDto(entity), Response.Ok);
+    }
+    
     public async Task<(IReadOnlyCollection<CommitDTO> commits, Response response)> FindAllAsync()
     {
         return (await _context.Commits.Select(entity => CommitToCommitDto(entity)).ToListAsync()
@@ -89,7 +97,7 @@ public class CommitRepository : ICommitRepository
         entity.BranchId = commit.BranchId;
         entity.RepositoryId = commit.RepositoryId;
         entity.Sha = commit.Sha;
-        entity.Date = commit.Date;
+        entity.Date = commit.Date.UtcDateTime;
         await _context.SaveChangesAsync();
 
         return (Response.Ok, CommitToCommitDto(entity));

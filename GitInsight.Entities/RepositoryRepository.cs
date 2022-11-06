@@ -67,6 +67,13 @@ public class RepositoryRepository : IRepositoryRepository
 
         return entity == null ? (null, Response.NotFound) : (RepositoryToRepositoryDto(entity), Response.Ok);
     }
+    
+    public async Task<(RepositoryDto?, Response)> FindRepositoryByPathAsync(string path)
+    {
+        var entity = await _context.Repositories.FirstOrDefaultAsync(c => c.Path == path);
+
+        return entity == null ? (null, Response.NotFound) : (RepositoryToRepositoryDto(entity), Response.Ok);
+    }
 
     public async Task<Response> UpdateRepositoryAsync(RepositoryDto repositoryDto)
     {
@@ -95,6 +102,17 @@ public class RepositoryRepository : IRepositoryRepository
         }
 
         return response;
+    }
+
+    public async Task<Response> UpdateLatestCommitAsync(RepositoryLatestCommitUpdate dto)
+    {
+        var toUpdate = await _context.Repositories.FirstOrDefaultAsync(r => r.Id == dto.Id);
+        if (toUpdate is null) return Response.NotFound;
+        toUpdate.LatestCommitId = dto.latestCommitId;
+        _context.Repositories.Update(toUpdate);
+        await _context.SaveChangesAsync();
+
+        return Response.Ok;
     }
 
 

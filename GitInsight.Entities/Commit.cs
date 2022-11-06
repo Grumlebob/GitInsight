@@ -6,7 +6,7 @@ public class Commit
 {
     public int Id { get; set; }
     public string Sha { get; set; }
-    public DateTimeOffset Date { get; set; }
+    public DateTime Date { get; set; }
 
     public Author Author { get; set; }
     public int AuthorId { get; set; }
@@ -27,6 +27,8 @@ public class CommitConfigurations : IEntityTypeConfiguration<Commit>
         
         builder.HasOne(a => a.Repository)
             .WithMany(a => a.Commits);
+        
+        
         
         builder.HasOne(a => a.Author)
             .WithMany(a => a.Commits);
