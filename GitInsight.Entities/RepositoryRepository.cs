@@ -14,25 +14,22 @@ public class RepositoryRepository : IRepositoryRepository
     public async Task<(RepositoryDto repo, Response response)> CreateRepositoryAsync(
         RepositoryCreateDto repositoryCreateDto)
     {
-        var commits = await _context.Commits.Where(c => repositoryCreateDto.CommitIds.Contains(c.Id)).ToListAsync();
-        var branches = await _context.Branches.Where(c => repositoryCreateDto.BranchIds.Contains(c.Id)).ToListAsync();
-        var authors = await _context.Authors.Where(c => repositoryCreateDto.AuthorIds.Contains(c.Id)).ToListAsync();
-
         var repository = new Repository
         {
             Name = repositoryCreateDto.Name,
             Path = repositoryCreateDto.Path,
-            Commits = commits,
-            Branches = branches,
-            Authors = authors
+            Commits = new List<Commit?>(),//await UpdateCommitsIfExist(_context, repositoryCreateDto.CommitIds),
+            Branches = new List<Branch?>(),//await UpdateBranchesIfExist(_context, repositoryCreateDto.BranchIds),
+            Authors = new List<Author?>()//await UpdateAuthorsIfExist(_context, repositoryCreateDto.AuthorIds)
         };
 
         var repoDto = RepositoryToRepositoryDto(repository);
 
         //if the new repository has the same path return conflict
-        if (await _context.Repositories.AnyAsync(r => r.Path == repository.Path))
+        var existing = _context.Repositories.FirstOrDefault(r => r.Path == repository.Path);
+        if (existing is not null)
         {
-            return (RepositoryToRepositoryDto(repository), Response.Conflict);
+            return (RepositoryToRepositoryDto(existing), Response.Conflict);
         }
 
         _context.Repositories.Add(repository);

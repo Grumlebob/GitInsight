@@ -26,5 +26,8 @@ public class RepositoryConfigurations : IEntityTypeConfiguration<Repository>
     public void Configure(EntityTypeBuilder<Repository> builder)
     {
         builder.HasKey(a => a.Id);
+        builder.HasMany(a => a.Branches)
+            .WithOne(b => b!.Repository)
+            .OnDelete(DeleteBehavior.ClientCascade);
     }
 }

@@ -24,13 +24,17 @@ public class AuthorConfigurations : IEntityTypeConfiguration<Author>
     public void Configure(EntityTypeBuilder<Author> builder)
     {
         builder.HasKey(a => a.Id);
+
+        builder.HasIndex(a => a.Email).IsUnique();
         
         builder.HasMany(a => a.Commits)
             .WithOne(c => c.Author)
-            .HasForeignKey(c => c.AuthorId);
+            .HasForeignKey(c => c.AuthorId)
+            .OnDelete(DeleteBehavior.ClientCascade);
 
         builder.HasMany(a => a.Repositories)
             .WithMany(a => a.Authors);
+        
        
     }
 }

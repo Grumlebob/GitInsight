@@ -31,8 +31,7 @@ public class CommitRepository : ICommitRepository
         var commit = new Commit
         {
             Sha = DTO.Sha,
-            Date = DTO.Date,
-            Tag = DTO.Tag,
+            Date = DTO.Date.UtcDateTime,
             AuthorId = DTO.AuthorId,
             BranchId = DTO.BranchId,
             RepositoryId = DTO.RepositoryId
@@ -80,8 +79,7 @@ public class CommitRepository : ICommitRepository
             && entity.BranchId == commit.BranchId
             && entity.RepositoryId == commit.RepositoryId
             && entity.Sha == commit.Sha
-            && entity.Date == commit.Date
-            && entity.Tag == commit.Tag)
+            && entity.Date == commit.Date)
         {
             return (Response.BadRequest, CommitToCommitDto(entity));
         }
@@ -92,7 +90,6 @@ public class CommitRepository : ICommitRepository
         entity.RepositoryId = commit.RepositoryId;
         entity.Sha = commit.Sha;
         entity.Date = commit.Date;
-        entity.Tag = commit.Tag;
         await _context.SaveChangesAsync();
 
         return (Response.Ok, CommitToCommitDto(entity));
@@ -112,7 +109,7 @@ public class CommitRepository : ICommitRepository
 
     public static CommitDTO CommitToCommitDto(Commit commit)
     {
-        return new CommitDTO(commit.Id, commit.Sha, commit.Date, commit.Tag, commit.AuthorId, commit.BranchId,
+        return new CommitDTO(commit.Id, commit.Sha, commit.Date, commit.AuthorId, commit.BranchId,
             commit.RepositoryId);
     }
 

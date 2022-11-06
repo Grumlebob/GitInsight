@@ -13,7 +13,7 @@ public class BranchRepository : IBranchRepository
         _context = context;
     }
 
-    public async Task<(Response, BranchDto)> CreateAsync(BranchCreateDto newBranch)
+    public async Task<(Response, BranchDto?)> CreateAsync(BranchCreateDto newBranch)
     {
         var conflict = from b in _context.Branches
             where newBranch.RepositoryId == b.RepositoryId && newBranch.Path == b.Path
@@ -29,9 +29,7 @@ public class BranchRepository : IBranchRepository
 
         if (repo is null)
         {
-            return (Response.BadRequest,
-                new BranchDto(-1, newBranch.Name, newBranch.RepositoryId,
-                    "No repository found with id: " + newBranch.RepositoryId));
+            return (Response.BadRequest, null);
         }
 
         var created = new Branch

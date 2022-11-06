@@ -27,6 +27,8 @@ public class BranchConfigurations : IEntityTypeConfiguration<Branch>
     {
         builder.HasKey(a => a.Id);
         builder.HasKey(a => new { a.RepositoryId, a.Path });
-
+        builder.HasMany(a => a.Commits)
+            .WithOne(b => b!.Branch)
+            .OnDelete(DeleteBehavior.ClientCascade);
     }
 }

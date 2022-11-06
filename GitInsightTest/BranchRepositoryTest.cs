@@ -35,7 +35,7 @@ public class BranchRepositoryTest : IDisposable
         var newBranch = new BranchCreateDto("cool", 3, "head/cool");
         var (response, result) = await _repo.CreateAsync(newBranch);
         response.Should().Be(Response.BadRequest);
-        result.Path.Should().Be("No repository found with id: 3");
+        result.Should().BeNull();
         (await _context.Branches.FindAsync(1)).Should().BeNull();
     }
 

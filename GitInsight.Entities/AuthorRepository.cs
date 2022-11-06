@@ -61,6 +61,13 @@ public class AuthorRepository : IAuthorRepository
             return (null, response);
         }
 
+        var (existing, authorResponse) = await FindAuthorsByEmailAsync(authorCreateDto.Email);
+        if (authorResponse != Response.NotFound)
+        {
+            response = Response.Conflict;
+            return (existing!.FirstOrDefault(), response);
+        }
+
         var author = new Author
         {
             Name = authorCreateDto.Name,

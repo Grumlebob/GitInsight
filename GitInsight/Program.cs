@@ -1,4 +1,6 @@
-﻿using GitInsight.Entities;
+﻿using GitInsight;
+using GitInsight.Data;
+using GitInsight.Entities;
 
 if (args.Length > 0)
 {
@@ -24,13 +26,9 @@ if (args.Length > 0)
         Console.WriteLine($"{args[0]} mode:"); //dotnet run --args
         GitLogByAllAuthorsByDate(dateformat: DateFormatNoTime, pathing: SourceCode);
     }
+    
 }
-/*
-var insightContextFactory = new InsightContextFactory();
-AuthorRepository ap = new AuthorRepository(insightContextFactory.CreateDbContext(args));
 
-
-var (authorDto, response) = await ap.FindAuthorAsync(5);
-
-Console.WriteLine("res: "+ authorDto +"response:" + response);
-*/
+DataManager dm = new DataManager(new InsightContextFactory().CreateDbContext(args),
+    GetRelativeGitFolder(".git"));
+    await dm.Analyze();

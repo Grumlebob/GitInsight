@@ -7,7 +7,6 @@ public class Commit
     public int Id { get; set; }
     public string Sha { get; set; }
     public DateTimeOffset Date { get; set; }
-    public string? Tag { get; set; }
 
     public Author Author { get; set; }
     public int AuthorId { get; set; }
