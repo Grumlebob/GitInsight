@@ -6,8 +6,8 @@ namespace GitInsight.Entities;
 public class Repository
 {
     public int Id { get; set; }
-    public string Path { get; set; }
-    public string? Name { get; set; }
+    public string Path { get; set; } = string.Empty;
+    public string? Name { get; set; } = string.Empty;
 
     public List<Branch> Branches { get; set; }
     public List<Author> Authors { get; set; }
@@ -18,7 +18,6 @@ public class Repository
         Branches = new List<Branch>();
         Authors = new List<Author>();
         Commits = new List<Commit>();
-        
     }
 }
 

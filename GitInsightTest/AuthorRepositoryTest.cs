@@ -194,7 +194,7 @@ public class AuthorRepositoryTest : IDisposable
         response.Should().Be(Response.Ok);
     }
 
-    //find authors reponse not found
+    //find authors response not found
     [Fact]
     public async Task FindAuthorsByCommitIdFalse()
     {
@@ -207,7 +207,7 @@ public class AuthorRepositoryTest : IDisposable
     public async Task CreateAuthorReturnsCreated()
     {
         var (authorDto, response) = await _authorRepository.CreateAuthorAsync(new AuthorCreateDto("Third Author",
-            "Third Email", new List<int>() { }, new List<int>() { 1 }));
+            "Third Email", new List<int>() {}, new List<int>() { 1 }));
         authorDto.Should().BeEquivalentTo(new AuthorDto(3, "Third Author", "Third Email", new List<int>() { },
             new List<int>() { 1 }));
         response.Should().Be(Response.Created);
