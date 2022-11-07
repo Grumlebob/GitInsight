@@ -32,7 +32,6 @@ public class RepositoryRepositoryTest : IDisposable
         {
             Id = 1,
             Name = "First Branch",
-            Sha = "First Sha",
             Path = "First BranchPath",
             Repository = testRepo,
             RepositoryId = 1,

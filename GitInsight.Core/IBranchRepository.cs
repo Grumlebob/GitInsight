@@ -2,7 +2,7 @@
 
 public interface IBranchRepository
 {
-    public Task<(Response, BranchDto)> CreateAsync(BranchCreateDto newBranch);
+    public Task<(Response, BranchDto?)> CreateAsync(BranchCreateDto newBranch);
     public Task<BranchDto> FindAsync(int id);
     public Task<IReadOnlyCollection<BranchDto>> FindAllAsync(int repositoryId);
     public Task<IReadOnlyCollection<BranchDto>> FindAllAsync();

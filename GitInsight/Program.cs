@@ -1,4 +1,7 @@
-﻿using GitInsight.Entities;
+﻿using GitInsight;
+using GitInsight.Data;
+using GitInsight.Entities;
+using Microsoft.EntityFrameworkCore;
 
 if (args.Length > 0)
 {
@@ -14,23 +17,25 @@ if (args.Length > 0)
             CommandLineSpecifiedPath = args[0];
         }
     }
+
     if (args.Contains("commitfrequency"))
     {
         Console.WriteLine($"{args[0]} mode:"); //dotnet run --args
         GitCommitFrequency(dateformat: DateFormatNoTime, pathing: SourceCode);
     }
-    else if (args.Contains("commitauthor") )
+    else if (args.Contains("commitauthor"))
     {
         Console.WriteLine($"{args[0]} mode:"); //dotnet run --args
         GitLogByAllAuthorsByDate(dateformat: DateFormatNoTime, pathing: SourceCode);
     }
 }
-/*
-var insightContextFactory = new InsightContextFactory();
-AuthorRepository ap = new AuthorRepository(insightContextFactory.CreateDbContext(args));
 
 
-var (authorDto, response) = await ap.FindAuthorAsync(5);
+InsightContext context = new InsightContextFactory().CreateDbContext(args);
 
-Console.WriteLine("res: "+ authorDto +"response:" + response);
-*/
+DataManager dm = new DataManager(context);
+
+await dm.Analyze( GetGitTestFolder(),GetRelativeGitFolder(@"GitInsightTest\Testrepo.git"));
+await dm.Analyze(GetGitLocalFolder(), GetRelativeGitFolder(".git"));
+
+//TODO: Opdater database når kommandoer bliver kørt. Test db manager. Opdater deletions. Print når ingen changes.

@@ -1,6 +1,4 @@
-﻿using static GitInsight.Entities.ExistingCollectionHelper;
-
-namespace GitInsight.Entities;
+﻿namespace GitInsight.Entities;
 
 public class RepositoryRepository : IRepositoryRepository
 {
@@ -14,31 +12,27 @@ public class RepositoryRepository : IRepositoryRepository
     public async Task<(RepositoryDto repo, Response response)> CreateRepositoryAsync(
         RepositoryCreateDto repositoryCreateDto)
     {
-        var commits = await _context.Commits.Where(c => repositoryCreateDto.CommitIds.Contains(c.Id)).ToListAsync();
-        var branches = await _context.Branches.Where(c => repositoryCreateDto.BranchIds.Contains(c.Id)).ToListAsync();
-        var authors = await _context.Authors.Where(c => repositoryCreateDto.AuthorIds.Contains(c.Id)).ToListAsync();
-
         var repository = new Repository
         {
             Name = repositoryCreateDto.Name,
             Path = repositoryCreateDto.Path,
-            Commits = commits,
-            Branches = branches,
-            Authors = authors
+            Commits = await UpdateCommitsIfExist(_context, repositoryCreateDto.CommitIds),
+            Branches = await UpdateBranchesIfExist(_context, repositoryCreateDto.BranchIds),
+            Authors = await UpdateAuthorsIfExist(_context, repositoryCreateDto.AuthorIds)
         };
-
-        var repoDto = RepositoryToRepositoryDto(repository);
-
+        
         //if the new repository has the same path return conflict
-        if (await _context.Repositories.AnyAsync(r => r.Path == repository.Path))
+        var existing = _context.Repositories.FirstOrDefault(r => r.Path == repository.Path);
+        if (existing is not null)
         {
-            return (RepositoryToRepositoryDto(repository), Response.Conflict);
+            return (RepositoryToRepositoryDto(existing), Response.Conflict);
         }
 
-        _context.Repositories.Add(repository);
-
+        await _context.Repositories.AddAsync(repository);
         await _context.SaveChangesAsync();
 
+        var repoDto = RepositoryToRepositoryDto(repository);
+        
         return (repoDto, Response.Created);
     }
 
@@ -67,6 +61,13 @@ public class RepositoryRepository : IRepositoryRepository
     public async Task<(RepositoryDto?, Response)> FindRepositoryAsync(int id)
     {
         var entity = await _context.Repositories.FirstOrDefaultAsync(c => c.Id == id);
+
+        return entity == null ? (null, Response.NotFound) : (RepositoryToRepositoryDto(entity), Response.Ok);
+    }
+    
+    public async Task<(RepositoryDto?, Response)> FindRepositoryByPathAsync(string path)
+    {
+        var entity = await _context.Repositories.FirstOrDefaultAsync(c => c.Path == path);
 
         return entity == null ? (null, Response.NotFound) : (RepositoryToRepositoryDto(entity), Response.Ok);
     }
@@ -100,12 +101,23 @@ public class RepositoryRepository : IRepositoryRepository
         return response;
     }
 
+    public async Task<Response> UpdateLatestCommitAsync(RepositoryLatestCommitUpdate dto)
+    {
+        var toUpdate = await _context.Repositories.FirstOrDefaultAsync(r => r.Id == dto.Id);
+        if (toUpdate is null) return Response.NotFound;
+        toUpdate.LatestCommitId = dto.LatestCommitId;
+        _context.Repositories.Update(toUpdate);
+        await _context.SaveChangesAsync();
+
+        return Response.Ok;
+    }
+
 
     public static RepositoryDto RepositoryToRepositoryDto(Repository repository)
     {
         return new RepositoryDto(repository.Id,
             repository.Path,
-            repository.Name,
+            repository.Name!,
             repository.Branches.Select(b => b.Id),
             repository.Commits.Select(c => c.Id),
             repository.Authors.Select(a => a.Id));
