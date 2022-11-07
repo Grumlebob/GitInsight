@@ -14,7 +14,9 @@ internal class InsightContextFactory : IDesignTimeDbContextFactory<InsightContex
         
         var optionsBuilder = new DbContextOptionsBuilder<InsightContext>();
         optionsBuilder.UseNpgsql(connectionString);
-
+        
+        var context = new InsightContext(optionsBuilder.Options);
+        context.Database.Migrate();
         return new InsightContext(optionsBuilder.Options);
     }
 }

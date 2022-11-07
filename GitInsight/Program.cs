@@ -1,5 +1,7 @@
 ﻿using GitInsight;
 using GitInsight.Data;
+using GitInsight.Entities;
+using Microsoft.EntityFrameworkCore;
 
 if (args.Length > 0)
 {
@@ -28,7 +30,11 @@ if (args.Length > 0)
     }
 }
 
-DataManager dm = new DataManager(new InsightContextFactory().CreateDbContext(args));
+
+InsightContext context = new InsightContextFactory().CreateDbContext(args);
+
+DataManager dm = new DataManager(context);
+
 await dm.Analyze( GetGitTestFolder(),GetRelativeGitFolder(@"GitInsightTest\Testrepo.git"));
 await dm.Analyze(GetGitLocalFolder(), GetRelativeGitFolder(".git"));
 

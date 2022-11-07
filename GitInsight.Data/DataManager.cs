@@ -1,5 +1,6 @@
 ﻿using GitInsight.Core;
 using GitInsight.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace GitInsight.Data;
 
@@ -18,9 +19,6 @@ public class DataManager
     //Returns true if analyze completed, false if analyse was not needed.
     public async Task<bool> Analyze(string fullPath, string relPath)
     {
-        await _context.Database.EnsureCreatedAsync();
-        await _context.SaveChangesAsync();
-        
         await CheckIfReanalyzeNeeded(fullPath);
         if (!_shouldReanalyze)
         {
