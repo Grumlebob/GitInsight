@@ -418,6 +418,7 @@ obj/
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
+.idea/**/efCoreCommonOptions.xml
 
 # AWS User-specific
 .idea/**/aws.xml
