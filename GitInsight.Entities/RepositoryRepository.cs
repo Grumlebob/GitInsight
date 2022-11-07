@@ -20,7 +20,8 @@ public class RepositoryRepository : IRepositoryRepository
             Path = repositoryCreateDto.Path,
             Commits = new List<Commit?>(),//await UpdateCommitsIfExist(_context, repositoryCreateDto.CommitIds),
             Branches = new List<Branch?>(),//await UpdateBranchesIfExist(_context, repositoryCreateDto.BranchIds),
-            Authors = new List<Author?>()//await UpdateAuthorsIfExist(_context, repositoryCreateDto.AuthorIds)
+            Authors = new List<Author?>(),//await UpdateAuthorsIfExist(_context, repositoryCreateDto.AuthorIds)
+            LatestCommitId = 0,
         };
 
         var repoDto = RepositoryToRepositoryDto(repository);
@@ -108,7 +109,7 @@ public class RepositoryRepository : IRepositoryRepository
     {
         var toUpdate = await _context.Repositories.FirstOrDefaultAsync(r => r.Id == dto.Id);
         if (toUpdate is null) return Response.NotFound;
-        toUpdate.LatestCommitId = dto.latestCommitId;
+        toUpdate.LatestCommitId = dto.LatestCommitId;
         _context.Repositories.Update(toUpdate);
         await _context.SaveChangesAsync();
 

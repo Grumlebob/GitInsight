@@ -44,15 +44,17 @@ public class DataManager
             var (_, branchResult) = await branches.CreateAsync(branchDto);
             foreach (var c in b.Commits)
             {
+                
                 var authorDto = new AuthorCreateDto(c.Author.Name, c.Author.Email, null, new List<int> { result.Id });
                 var (authResult, _) = await authors.CreateAuthorAsync(authorDto);
-                var commitDto = new CommitCreateDTO(c.Sha, c.Author.When, authResult!.Id, branchResult!.Id, result.Id);
+                
+                var commitDto = new CommitCreateDto(c.Sha, c.Author.When, authResult!.Id, branchResult!.Id, result.Id);
                 await commits.CreateAsync(commitDto);
             }
         }
 
         await UpdateLatestCommit(result.Id, fullPath);
-
+        Console.WriteLine("Analyze finished");
     }
 
     private async Task CheckIfReanalyzeNeeded(string fullPath)

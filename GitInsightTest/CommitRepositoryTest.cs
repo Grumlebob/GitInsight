@@ -76,9 +76,9 @@ public class CommitRepositoryTest : IDisposable
     [Fact]
     public async Task Create_return_created()
     {
-        var expectedCommitDTO = new CommitDTO(4, "heyuo", DateTimeOffset.Now, 2, 1, 1);
+        var expectedCommitDTO = new CommitDto(4, "heyuo", DateTimeOffset.Now, 2, 1, 1);
 
-        var result = await _repository.CreateAsync(new CommitCreateDTO(expectedCommitDTO.Sha, expectedCommitDTO.Date, expectedCommitDTO.AuthorId, expectedCommitDTO.BranchId, expectedCommitDTO.RepositoryId));
+        var result = await _repository.CreateAsync(new CommitCreateDto(expectedCommitDTO.Sha, expectedCommitDTO.Date, expectedCommitDTO.AuthorId, expectedCommitDTO.BranchId, expectedCommitDTO.RepositoryId));
 
         result.response.Should().Be(Response.Created);
 
@@ -89,7 +89,7 @@ public class CommitRepositoryTest : IDisposable
     [Fact]
     public async Task Create_return_conflict_because_duplicate_sha()
     {
-        var result = await _repository.CreateAsync(new CommitCreateDTO("treg", DateTimeOffset.Now, 2, 1, 1));
+        var result = await _repository.CreateAsync(new CommitCreateDto("treg", DateTimeOffset.Now, 2, 1, 1));
 
         result.response.Should().Be(Response.Conflict);
         result.commit.Should().BeNull();
@@ -99,7 +99,7 @@ public class CommitRepositoryTest : IDisposable
     [Fact]
     public async Task Create_return_badRequest_because_nonExisting_author()
     {
-        var result = await _repository.CreateAsync(new CommitCreateDTO("heyuo", DateTimeOffset.Now, 3, 1, 1));
+        var result = await _repository.CreateAsync(new CommitCreateDto("heyuo", DateTimeOffset.Now, 3, 1, 1));
 
         result.response.Should().Be(Response.BadRequest);
         result.commit.Should().BeNull();
@@ -109,7 +109,7 @@ public class CommitRepositoryTest : IDisposable
     [Fact]
     public async Task Update_id_1_return_ok()
     {
-        var commitDTO = new CommitDTO(1, "treg", DateTimeOffset.Now, 1, 1, 1);
+        var commitDTO = new CommitDto(1, "treg", DateTimeOffset.Now, 1, 1, 1);
         var result = await _repository.UpdateAsync(commitDTO);
 
         result.response.Should().Be(Response.Ok);
@@ -122,7 +122,7 @@ public class CommitRepositoryTest : IDisposable
     [Fact]
     public async Task Update_id_4_return_notfound()
     {
-        var result = await _repository.UpdateAsync(new CommitDTO(4, "hjgk", DateTimeOffset.Now, 2, 1, 1));
+        var result = await _repository.UpdateAsync(new CommitDto(4, "hjgk", DateTimeOffset.Now, 2, 1, 1));
 
         result.response.Should().Be(Response.NotFound);
         result.commit.Should().BeNull();
@@ -131,7 +131,7 @@ public class CommitRepositoryTest : IDisposable
     [Fact]
     public async Task Update_return_badRequest_because_nonExisting_repo()
     {
-        var result = await _repository.UpdateAsync(new CommitDTO(2, "heck", DateTimeOffset.Now, 2, 2, 3));
+        var result = await _repository.UpdateAsync(new CommitDto(2, "heck", DateTimeOffset.Now, 2, 2, 3));
 
         result.response.Should().Be(Response.BadRequest);
         _repository.FindAsync(2).Result.commit.RepositoryId.Should().Be(2);
@@ -140,7 +140,7 @@ public class CommitRepositoryTest : IDisposable
     [Fact]
     public async Task Update_return_badRequest_because_nothing_is_changed()
     {
-        var result = await _repository.UpdateAsync(new CommitDTO(3, "tger", _repository.FindAsync(3).Result.commit.Date, 1, 2, 2));
+        var result = await _repository.UpdateAsync(new CommitDto(3, "tger", _repository.FindAsync(3).Result.commit.Date, 1, 2, 2));
 
         result.response.Should().Be(Response.BadRequest);
     }

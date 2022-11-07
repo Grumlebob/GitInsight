@@ -13,7 +13,7 @@ public class CommitRepository : ICommitRepository
         _context = context;
     }
 
-    public async Task<(CommitDTO? commit, Response response)> FindAsync(int id)
+    public async Task<(CommitDto? commit, Response response)> FindAsync(int id)
     {
         var entity = await _context.Commits.FirstOrDefaultAsync(c => c.Id == id);
 
@@ -21,21 +21,36 @@ public class CommitRepository : ICommitRepository
             (CommitToCommitDto(entity), Response.Ok);
     }
     
-    public async Task<(CommitDTO? commit, Response response)> FindByShaAsync(string sha)
+    public async Task<(CommitDto? commit, Response response)> FindByShaAsync(string sha)
     {
         var entity = await _context.Commits.FirstOrDefaultAsync(c => c.Sha == sha);
         return entity == null ? (null, Response.NotFound) :
             (CommitToCommitDto(entity), Response.Ok);
     }
     
-    public async Task<(IReadOnlyCollection<CommitDTO> commits, Response response)> FindAllAsync()
+    public async Task<(IReadOnlyCollection<CommitDto> commits, Response response)> FindAllAsync()
     {
         return (await _context.Commits.Select(entity => CommitToCommitDto(entity)).ToListAsync()
             , Response.Ok);
     }
 
-    public async Task<(Response response, CommitDTO? commit)> CreateAsync(CommitCreateDTO DTO)
+    public async Task<(Response response, CommitDto? commit)> CreateAsync(CommitCreateDto DTO)
     {
+
+        //Check if commit with that Sha already exists
+        if (await _context.Commits.FirstOrDefaultAsync(c => c.Sha == DTO.Sha) != null)
+        {
+            return (Response.Conflict, null);
+        }
+
+        //Check for no-existing branch, author, or repository
+        if (await _context.Authors.FirstOrDefaultAsync(c => c.Id == DTO.AuthorId) is null
+                   || await _context.Branches.FirstOrDefaultAsync(c => c.Id == DTO.BranchId) is null
+                   || await _context.Repositories.FirstOrDefaultAsync(c => c.Id == DTO.RepositoryId) is null)
+        {
+            return (Response.BadRequest, null);
+        }
+
         var commit = new Commit
         {
             Sha = DTO.Sha,
@@ -44,29 +59,14 @@ public class CommitRepository : ICommitRepository
             BranchId = DTO.BranchId,
             RepositoryId = DTO.RepositoryId
         };
-
-
-        //Check if commit with that Sha already exists
-        if (await _context.Commits.FirstOrDefaultAsync(c => c.Sha == commit.Sha) != null)
-        {
-            return (Response.Conflict, null);
-        }
-
-        //Check for no-existing branch, author, or repository
-        if (await _context.Authors.FirstOrDefaultAsync(c => c.Id == commit.AuthorId) is null
-                   || await _context.Branches.FirstOrDefaultAsync(c => c.Id == commit.BranchId) is null
-                   || await _context.Repositories.FirstOrDefaultAsync(c => c.Id == commit.RepositoryId) is null)
-        {
-            return (Response.BadRequest, null);
-        }
-
+        
         _context.Commits.Add(commit);
         await _context.SaveChangesAsync();
 
         return (Response.Created, CommitToCommitDto(commit));
     }
 
-    public async Task<(Response response, CommitDTO? commit)> UpdateAsync(CommitDTO commit)
+    public async Task<(Response response, CommitDto? commit)> UpdateAsync(CommitDto commit)
     {
         var entity = await _context.Commits.FirstOrDefaultAsync(c => c.Id == commit.Id);
 
@@ -115,13 +115,13 @@ public class CommitRepository : ICommitRepository
         return Response.Deleted;
     }
 
-    public static CommitDTO CommitToCommitDto(Commit commit)
+    public static CommitDto CommitToCommitDto(Commit commit)
     {
-        return new CommitDTO(commit.Id, commit.Sha, commit.Date, commit.AuthorId, commit.BranchId,
+        return new CommitDto(commit.Id, commit.Sha, commit.Date, commit.AuthorId, commit.BranchId,
             commit.RepositoryId);
     }
 
-    private async Task<bool> RelationsExists(CommitDTO commit)
+    private async Task<bool> RelationsExists(CommitDto commit)
     {
         return !(await _context.Authors.FirstOrDefaultAsync(c => c.Id == commit.AuthorId) is null
                  || await _context.Branches.FirstOrDefaultAsync(c => c.Id == commit.BranchId) is null

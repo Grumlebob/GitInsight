@@ -11,7 +11,7 @@ public class Repository
     public string? Name { get; set; } = string.Empty;
     
     
-    public int? LatestCommitId { get; set; }
+    public int LatestCommitId { get; set; }
 
 
     public List<Branch?> Branches { get; set; }
