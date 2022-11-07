@@ -15,7 +15,8 @@ public class DataManager
         _context = context;
     }
 
-    public async Task Analyze(string fullPath, string relPath)
+    //Returns true if analyze completed, false if analyse was not needed.
+    public async Task<bool> Analyze(string fullPath, string relPath)
     {
         await _context.Database.EnsureCreatedAsync();
         await _context.SaveChangesAsync();
@@ -24,7 +25,7 @@ public class DataManager
         if (!_shouldReanalyze)
         {
             Console.WriteLine("No analyze was needed");
-            return;
+            return false;
         }
 
         using var repo = new Repository(fullPath);
@@ -52,6 +53,7 @@ public class DataManager
         }
         await UpdateLatestCommit(result.Id, fullPath);
         Console.WriteLine("Analyze finished");
+        return true;
     }
 
     private async Task CheckIfReanalyzeNeeded(string fullPath)

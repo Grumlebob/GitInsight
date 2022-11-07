@@ -1,4 +1,5 @@
-﻿using GitInsight.Entities;
+﻿using GitInsight.Data;
+using GitInsight.Entities;
 using Microsoft.Data.Sqlite;
 
 namespace GitInsightTest;
@@ -88,9 +89,23 @@ public class DataManagerTest : IDisposable
     }
 
     [Fact]
-    public void DatabaseShouldBeUpdated()
+    public async Task AnalyzeShouldBeCompletedReturnsTrue()
     {
         true.Should().BeTrue();
+        DataManager dataManager = new DataManager(_context);
+        var res = await dataManager.Analyze( GetGitTestFolder(),GetRelativeGitFolder(@"GitInsightTest\Testrepo.git"));
+        res.Should().BeTrue();
+    }
+    
+    [Fact]
+    public async Task AnalyzeShouldBeCompletedReturnsFalse()
+    {
+        true.Should().BeTrue();
+        DataManager dataManager = new DataManager(_context);
+        //Run twice:
+        await dataManager.Analyze( GetGitTestFolder(),GetRelativeGitFolder(@"GitInsightTest\Testrepo.git"));
+        var res = await dataManager.Analyze( GetGitTestFolder(),GetRelativeGitFolder(@"GitInsightTest\Testrepo.git"));
+        res.Should().BeFalse();
     }
     
     public void Dispose()
