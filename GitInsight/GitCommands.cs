@@ -1,5 +1,4 @@
 ﻿namespace GitInsight;
-
 public static class GitCommands
 {
 

@@ -1,8 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-namespace GitInsight.Entities;
+﻿namespace GitInsight.Entities;
 
 public class Repository
 {
@@ -10,19 +6,17 @@ public class Repository
     public string Path { get; set; } = string.Empty;
     public string? Name { get; set; } = string.Empty;
     
-    
     public int LatestCommitId { get; set; }
-
-
-    public List<Branch?> Branches { get; set; }
-    public List<Author?> Authors { get; set; }
-    public List<Commit?> Commits { get; set; }
+    
+    public List<Branch> Branches { get; set; }
+    public List<Author> Authors { get; set; }
+    public List<Commit> Commits { get; set; }
 
     public Repository()
     {
-        Branches = new List<Branch?>();
-        Authors = new List<Author?>();
-        Commits = new List<Commit?>();
+        Branches = new List<Branch>();
+        Authors = new List<Author>();
+        Commits = new List<Commit>();
     }
 }
 
@@ -32,7 +26,7 @@ public class RepositoryConfigurations : IEntityTypeConfiguration<Repository>
     {
         builder.HasKey(a => a.Id);
         builder.HasMany(a => a.Branches)
-            .WithOne(b => b!.Repository)
+            .WithOne(b => b.Repository)
             .OnDelete(DeleteBehavior.ClientCascade);
         builder.HasMany(a => a.Commits)
             .WithOne(a => a.Repository);

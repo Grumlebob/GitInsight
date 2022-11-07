@@ -1,6 +1,4 @@
-﻿using static GitInsight.Entities.ExistingCollectionHelper;
-
-namespace GitInsight.Entities;
+﻿namespace GitInsight.Entities;
 
 public class RepositoryRepository : IRepositoryRepository
 {
@@ -18,10 +16,9 @@ public class RepositoryRepository : IRepositoryRepository
         {
             Name = repositoryCreateDto.Name,
             Path = repositoryCreateDto.Path,
-            Commits = new List<Commit?>(),//await UpdateCommitsIfExist(_context, repositoryCreateDto.CommitIds),
-            Branches = new List<Branch?>(),//await UpdateBranchesIfExist(_context, repositoryCreateDto.BranchIds),
-            Authors = new List<Author?>(),//await UpdateAuthorsIfExist(_context, repositoryCreateDto.AuthorIds)
-            LatestCommitId = 0,
+            Commits = await UpdateCommitsIfExist(_context, repositoryCreateDto.CommitIds),
+            Branches = await UpdateBranchesIfExist(_context, repositoryCreateDto.BranchIds),
+            Authors = await UpdateAuthorsIfExist(_context, repositoryCreateDto.AuthorIds)
         };
         
         //if the new repository has the same path return conflict
@@ -120,7 +117,7 @@ public class RepositoryRepository : IRepositoryRepository
     {
         return new RepositoryDto(repository.Id,
             repository.Path,
-            repository.Name,
+            repository.Name!,
             repository.Branches.Select(b => b.Id),
             repository.Commits.Select(c => c.Id),
             repository.Authors.Select(a => a.Id));

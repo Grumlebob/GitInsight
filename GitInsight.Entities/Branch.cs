@@ -10,7 +10,7 @@ public class Branch
     public string? Name { get; set; } = string.Empty;
 
     public int RepositoryId { get; set; }
-    public Repository Repository { get; set; }
+    public Repository Repository { get; set; } = null!;
 
     public List<Commit> Commits { get; set; }
 

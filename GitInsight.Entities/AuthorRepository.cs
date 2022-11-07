@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using static GitInsight.Entities.ExistingCollectionHelper;
-
-namespace GitInsight.Entities;
+﻿namespace GitInsight.Entities;
 
 public class AuthorRepository : IAuthorRepository
 {
@@ -72,7 +69,7 @@ public class AuthorRepository : IAuthorRepository
         {
             Name = authorCreateDto.Name,
             Email = authorCreateDto.Email,
-            Commits = await UpdateCommitsIfExist(_context, authorCreateDto.CommitIds),
+            Commits = await UpdateCommitsIfExist(_context, authorCreateDto.CommitIds!),
             Repositories = await UpdateRepositoriesIfExist(_context, authorCreateDto.RepositoryIds),
         };
 

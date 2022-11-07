@@ -1,6 +1,5 @@
 ﻿using GitInsight;
 using GitInsight.Data;
-using GitInsight.Entities;
 
 if (args.Length > 0)
 {
@@ -30,7 +29,7 @@ if (args.Length > 0)
 }
 
 DataManager dm = new DataManager(new InsightContextFactory().CreateDbContext(args));
-//await dm.Analyze( GetGitTestFolder(),GetRelativeGitFolder(@"GitInsightTest\Testrepo.git"));
+await dm.Analyze( GetGitTestFolder(),GetRelativeGitFolder(@"GitInsightTest\Testrepo.git"));
 await dm.Analyze(GetGitLocalFolder(), GetRelativeGitFolder(".git"));
 
 //TODO: Opdater database når kommandoer bliver kørt. Test db manager. Opdater deletions. Print når ingen changes.

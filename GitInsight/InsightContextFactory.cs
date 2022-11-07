@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using GitInsight.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
-namespace GitInsight.Entities;
+namespace GitInsight;
 
 internal class InsightContextFactory : IDesignTimeDbContextFactory<InsightContext>
 {
@@ -11,7 +12,6 @@ internal class InsightContextFactory : IDesignTimeDbContextFactory<InsightContex
         var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
         var connectionString = configuration.GetConnectionString("ConnectionString");
         
-
         var optionsBuilder = new DbContextOptionsBuilder<InsightContext>();
         optionsBuilder.UseNpgsql(connectionString);
 

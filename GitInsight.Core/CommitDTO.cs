@@ -1,6 +1,4 @@
-﻿using System.Data.Common;
-
-namespace GitInsight.Core;
+﻿namespace GitInsight.Core;
 
 public record CommitDto(int Id, string Sha, DateTimeOffset Date, int AuthorId, int BranchId, int RepositoryId);
 

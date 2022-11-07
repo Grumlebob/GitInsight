@@ -1,8 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Runtime.CompilerServices;
-using Microsoft.EntityFrameworkCore;
-
-namespace GitInsight.Entities;
+﻿namespace GitInsight.Entities;
 
 public class BranchRepository : IBranchRepository
 {
@@ -23,7 +19,7 @@ public class BranchRepository : IBranchRepository
 
         if (await conflict.AnyAsync())
         {
-            var match = await conflict.FirstAsync()!;
+            var match = await conflict.FirstAsync();
             return (Response.Conflict, new BranchDto(match!.Id, match.Name, match.RepositoryId, match.Path));
         }
 

@@ -1,8 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace GitInsight.Entities;
-
-
+﻿namespace GitInsight.Entities;
 
 public class CommitRepository : ICommitRepository
 {
@@ -34,30 +30,30 @@ public class CommitRepository : ICommitRepository
             , Response.Ok);
     }
 
-    public async Task<(Response response, CommitDto? commit)> CreateAsync(CommitCreateDto DTO)
+    public async Task<(Response response, CommitDto? commit)> CreateAsync(CommitCreateDto commitCreateDto)
     {
 
         //Check if commit with that Sha already exists
-        if (await _context.Commits.FirstOrDefaultAsync(c => c.Sha == DTO.Sha) != null)
+        if (await _context.Commits.FirstOrDefaultAsync(c => c.Sha == commitCreateDto.Sha) != null)
         {
             return (Response.Conflict, null);
         }
 
         //Check for no-existing branch, author, or repository
-        if (await _context.Authors.FirstOrDefaultAsync(c => c.Id == DTO.AuthorId) is null
-                   || await _context.Branches.FirstOrDefaultAsync(c => c.Id == DTO.BranchId) is null
-                   || await _context.Repositories.FirstOrDefaultAsync(c => c.Id == DTO.RepositoryId) is null)
+        if (await _context.Authors.FirstOrDefaultAsync(c => c.Id == commitCreateDto.AuthorId) is null
+                   || await _context.Branches.FirstOrDefaultAsync(c => c.Id == commitCreateDto.BranchId) is null
+                   || await _context.Repositories.FirstOrDefaultAsync(c => c.Id == commitCreateDto.RepositoryId) is null)
         {
             return (Response.BadRequest, null);
         }
 
         var commit = new Commit
         {
-            Sha = DTO.Sha,
-            Date = DTO.Date.UtcDateTime,
-            AuthorId = DTO.AuthorId,
-            BranchId = DTO.BranchId,
-            RepositoryId = DTO.RepositoryId
+            Sha = commitCreateDto.Sha,
+            Date = commitCreateDto.Date.UtcDateTime,
+            AuthorId = commitCreateDto.AuthorId,
+            BranchId = commitCreateDto.BranchId,
+            RepositoryId = commitCreateDto.RepositoryId
         };
         
         _context.Commits.Add(commit);

@@ -1,6 +1,5 @@
 ﻿using GitInsight.Core;
 using GitInsight.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace GitInsight.Data;
 
@@ -36,12 +35,13 @@ public class DataManager
         
         //repo
         var dto = new RepositoryCreateDto(relPath, relPath, null!, null!, null!);
-        var (result, repoResponse) = await repos.CreateRepositoryAsync(dto);
+        var (result, _) = await repos.CreateRepositoryAsync(dto);
         //branches
         foreach (var b in repo.Branches)
         {
             var branchDto = new BranchCreateDto(b.FriendlyName, result.Id, b.CanonicalName);
-            var (branchResponse, branchResult) = await branches.CreateAsync(branchDto);
+            var (_, branchResult) = await branches.CreateAsync(branchDto);
+            //Authors and commits
             foreach (var c in b.Commits)
             {
                 var authorDto = new AuthorCreateDto(c.Author.Name, c.Author.Email, null, new List<int> { result.Id });
@@ -50,7 +50,6 @@ public class DataManager
                 await commits.CreateAsync(commitDto);
             }
         }
-
         await UpdateLatestCommit(result.Id, fullPath);
         Console.WriteLine("Analyze finished");
     }
@@ -63,7 +62,6 @@ public class DataManager
         var queryFilter = repo.Commits.QueryBy(new CommitFilter
         {
             SortBy = CommitSortStrategies.Topological | CommitSortStrategies.Time,
-            //IncludeReachableFrom = repo.Branches["master"].Tip
         });
         var actualLastCommit = queryFilter.FirstOrDefault();
         var (_, response) = await commits.FindByShaAsync(actualLastCommit!.Sha);
@@ -85,7 +83,6 @@ public class DataManager
         var queryFilter = repo.Commits.QueryBy(new CommitFilter
         {
             SortBy = CommitSortStrategies.Topological | CommitSortStrategies.Time,
-            //IncludeReachableFrom = repo.Branches["master"].Tip
         });
         var actualLastCommit = queryFilter.FirstOrDefault();
         var (latestDbCommit, _) = await commits.FindByShaAsync(actualLastCommit!.Sha);
