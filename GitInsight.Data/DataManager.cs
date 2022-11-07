@@ -1,5 +1,6 @@
 ﻿using GitInsight.Core;
 using GitInsight.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace GitInsight.Data;
 
@@ -32,22 +33,19 @@ public class DataManager
         var branches = new BranchRepository(_context);
         var authors = new AuthorRepository(_context);
         var commits = new CommitRepository(_context);
-
+        
         //repo
         var dto = new RepositoryCreateDto(relPath, relPath, null!, null!, null!);
-        var (result, _) = await repos.CreateRepositoryAsync(dto);
-        
+        var (result, repoResponse) = await repos.CreateRepositoryAsync(dto);
         //branches
         foreach (var b in repo.Branches)
         {
             var branchDto = new BranchCreateDto(b.FriendlyName, result.Id, b.CanonicalName);
-            var (_, branchResult) = await branches.CreateAsync(branchDto);
+            var (branchResponse, branchResult) = await branches.CreateAsync(branchDto);
             foreach (var c in b.Commits)
             {
-                
                 var authorDto = new AuthorCreateDto(c.Author.Name, c.Author.Email, null, new List<int> { result.Id });
                 var (authResult, _) = await authors.CreateAuthorAsync(authorDto);
-                
                 var commitDto = new CommitCreateDto(c.Sha, c.Author.When, authResult!.Id, branchResult!.Id, result.Id);
                 await commits.CreateAsync(commitDto);
             }

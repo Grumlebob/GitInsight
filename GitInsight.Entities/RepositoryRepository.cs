@@ -23,9 +23,7 @@ public class RepositoryRepository : IRepositoryRepository
             Authors = new List<Author?>(),//await UpdateAuthorsIfExist(_context, repositoryCreateDto.AuthorIds)
             LatestCommitId = 0,
         };
-
-        var repoDto = RepositoryToRepositoryDto(repository);
-
+        
         //if the new repository has the same path return conflict
         var existing = _context.Repositories.FirstOrDefault(r => r.Path == repository.Path);
         if (existing is not null)
@@ -33,10 +31,11 @@ public class RepositoryRepository : IRepositoryRepository
             return (RepositoryToRepositoryDto(existing), Response.Conflict);
         }
 
-        _context.Repositories.Add(repository);
-
+        await _context.Repositories.AddAsync(repository);
         await _context.SaveChangesAsync();
 
+        var repoDto = RepositoryToRepositoryDto(repository);
+        
         return (repoDto, Response.Created);
     }
 
