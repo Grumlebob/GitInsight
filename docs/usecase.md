@@ -12,4 +12,4 @@ The user wants to make a call to the program to get the amount of commits per au
 
 ### Case 3: User gets commit frequency over time
 
-The user wants to make a call to the program to get all commits distrubuted on dates for a given repository.
+The user wants to make a call to the program to get all commits distributed on dates for a given repository.
