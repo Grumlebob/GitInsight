@@ -17,7 +17,11 @@ env: # Comment env block if you do not want to apply fixes
   SPELL_CSPELL_DISABLE_ERRORS: true
   REPOSITORY_GITLEAKS_DISABLE_ERRORS: true
   COPYPASTE_JSCPD_DISABLE_ERRORS: true
+  MARKDOWN_MARKDOWN_LINK_CHECK_DISABLE_ERRORS: true
+  REPOSITORY_DEVSKIM_DISABLE_ERRORS: true
+  JSON_JSONLINT_DISABLE_ERRORS: true
   DISABLE_LINTERS: ACTION_ACTIONLINT
+  
 
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
