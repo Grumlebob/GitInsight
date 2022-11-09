@@ -15,7 +15,6 @@ public class DataManagerTest : IDisposable
     public DataManagerTest()
     {
         (_connection, _context) = SetupTests.Setup();
-        
         _context.Database.EnsureDeletedAsync();
         _context.Database.EnsureCreated();
     }
@@ -24,7 +23,7 @@ public class DataManagerTest : IDisposable
     public async Task AnalyzeShouldBeCompletedReturnsTrue()
     {
         DataManager dataManager = new DataManager(_context);
-        var res = await dataManager.Analyze( GetGitTestFolder(),GetRelativeGitFolder(@"GitInsightTest\Testrepo.git"));
+        var res = await dataManager.Analyze( GetGitTestFolder(),GetRelativeTestFolder());
         res.Should().BeTrue();
     }
     
@@ -33,8 +32,8 @@ public class DataManagerTest : IDisposable
     {
         DataManager dataManager = new DataManager(_context);
         //Run twice:
-        await dataManager.Analyze( GetGitTestFolder(),GetRelativeGitFolder(@"GitInsightTest\Testrepo.git"));
-        var res = await dataManager.Analyze( GetGitTestFolder(),GetRelativeGitFolder(@"GitInsightTest\Testrepo.git"));
+        await dataManager.Analyze( GetGitTestFolder(),GetRelativeTestFolder());
+        var res = await dataManager.Analyze( GetGitTestFolder(),GetRelativeTestFolder());
         res.Should().BeFalse();
     }
     
@@ -43,16 +42,15 @@ public class DataManagerTest : IDisposable
     {
         DataManager dataManager = new DataManager(_context);
         
-        var firstScan = await dataManager.Analyze( GetGitTestFolder(),GetRelativeGitFolder(@"GitInsightTest\Testrepo.git"));
+        var firstScan = await dataManager.Analyze( GetGitTestFolder(),GetRelativeTestFolder());
         firstScan.Should().BeTrue();
 
         await _context.Repositories.ExecuteDeleteAsync();
         await _context.Commits.ExecuteDeleteAsync();
         
-        var secondScanAfterAddedCommit = await dataManager.Analyze( GetGitTestFolder(),GetRelativeGitFolder(@"GitInsightTest\Testrepo.git"));
+        var secondScanAfterAddedCommit = await dataManager.Analyze( GetGitTestFolder(),GetRelativeTestFolder());
         secondScanAfterAddedCommit.Should().BeTrue();
     }
-
     
     public void Dispose()
     {

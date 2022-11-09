@@ -1,4 +1,5 @@
-﻿using GitInsight.Entities;
+﻿using System.IO.Compression;
+using GitInsight.Entities;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,4 +18,5 @@ public class SetupTests
         context.SaveChanges();
         return (connection, context);
     }
+    
 }

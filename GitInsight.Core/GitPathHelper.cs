@@ -1,4 +1,6 @@
-﻿namespace GitInsight.Core;
+﻿using System.IO.Compression;
+
+namespace GitInsight.Core;
 
 public static class GitPathHelper
 {
@@ -17,6 +19,23 @@ public static class GitPathHelper
     public static string GetGitTestFolder()
     {
         var projectPath =  Directory.GetParent(Directory.GetCurrentDirectory())?.Parent!.Parent!.Parent!.FullName;
-        return Path.Combine(projectPath!, @"GitInsightTest/Testrepo.git");
+        return Path.Combine(projectPath!, @"GitInsightTest/TestResources/Unzipped/Testrepo.git");
+    }
+    
+    public static string GetRelativeTestFolder()  => @"/GitInsightTest/TestResources/Unzipped/Testrepo.git";
+    public static void EnsureZipIsUnzipped()
+    {
+        //Todo lav pathing også her
+        if (!Directory.Exists("../../GitInsight/GitInsightTest/TestResources/Unzipped/Testrepo.git"))
+        {
+            ZipFile.ExtractToDirectory(
+                "../../GitInsight/GitInsightTest/TestResources/Zipped/Testrepo.git.zip", 
+                "../../GitInsight/GitInsightTest/TestResources/Unzipped/");
+        }
+        else
+        {
+            Console.WriteLine("Testrepo.git already unzipped");
+        }
+
     }
 }

@@ -42,6 +42,7 @@
 
   <ItemGroup>
     <Folder Include="TestResults\e37de9b5-a353-44a9-a179-571dcb40b5a0" />
+    <Folder Include="TestResources\Unzipped" />
   </ItemGroup>
 
 </Project>

@@ -1,10 +1,22 @@
-﻿using GitInsight;
+﻿using System.IO.Compression;
+using GitInsight;
 using GitInsight.Core;
 using GitInsight.Data;
 using GitInsight.Entities;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+if (!Directory.Exists("../../GitInsight/GitInsightTest/TestResources/Unzipped/Testrepo.git"))
+{
+    ZipFile.ExtractToDirectory(
+        "../../GitInsight/GitInsightTest/TestResources/Zipped/Testrepo.git.zip", 
+        "../../GitInsight/GitInsightTest/TestResources/Unzipped/");
+}
+else
+{
+    Console.WriteLine("Testrepo.git already unzipped");
+}
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -40,7 +52,9 @@ app.MapControllers();
 
 app.Run();
 
+
 InsightContext context = new InsightContextFactory().CreateDbContext(args);
 DataManager dm = new DataManager(context);
-await dm.Analyze( GetGitTestFolder(),GetRelativeGitFolder(@"GitInsightTest/Testrepo.git"));
+await dm.Analyze( GetGitTestFolder(),GetRelativeTestFolder());
 await dm.Analyze(GetGitLocalFolder(), GetRelativeGitFolder(".git"));
+
