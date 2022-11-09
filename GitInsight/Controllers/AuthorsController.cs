@@ -1,4 +1,5 @@
-﻿using GitInsight.Entities;
+﻿using GitInsight.Core;
+using GitInsight.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GitInsight.Controllers;
@@ -8,7 +9,7 @@ namespace GitInsight.Controllers;
 public class AuthorsController : ControllerBase
 
 {
-    private readonly AuthorRepository _authorRepository;
+    private readonly IAuthorRepository _authorRepository;
 
     public AuthorsController(InsightContext context)
     {
@@ -16,6 +17,8 @@ public class AuthorsController : ControllerBase
     }
 
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<Author>))]
     public async Task<IActionResult> GetAllAuthors()
     {
         var (list, response) = await _authorRepository.FindAllAuthorsAsync();
@@ -25,6 +28,8 @@ public class AuthorsController : ControllerBase
     
     [HttpGet]
     [Route("{id}")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Author))]
     public async Task<IActionResult> GetAuthorById(int id)
     {
         var (authorDto, response) = await _authorRepository.FindAuthorAsync(id);
