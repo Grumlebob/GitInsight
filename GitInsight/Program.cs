@@ -39,11 +39,8 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
-
-
 InsightContext context = new InsightContextFactory().CreateDbContext(args);
 DataManager dm = new DataManager(context);
-await dm.Analyze( GetGitTestFolder(),GetRelativeTestFolder());
-await dm.Analyze(GetGitLocalFolder(), GetRelativeGitFolder(".git"));
+await dm.Analyze(@"C:\Programming\CSharp\GitInsight\GitInsightTest\TestResources\Unzipped\Testrepo.git", @"GitInsightTest/TestResources/Unzipped/Testrepo.git");
+app.Run();
 

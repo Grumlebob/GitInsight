@@ -7,6 +7,7 @@ public static class GitPathHelper
     public static string GetGitLocalFolder()
     {
         var projectPath =  Directory.GetParent(Directory.GetCurrentDirectory())?.Parent!.Parent!.Parent!.FullName;
+        Console.WriteLine("in path helper" + projectPath);
         return Path.Combine(projectPath!, ".git");
     }
 
