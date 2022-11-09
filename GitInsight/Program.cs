@@ -7,16 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-if (!Directory.Exists("../../GitInsight/GitInsightTest/TestResources/Unzipped/Testrepo.git"))
-{
-    ZipFile.ExtractToDirectory(
-        "../../GitInsight/GitInsightTest/TestResources/Zipped/Testrepo.git.zip", 
-        "../../GitInsight/GitInsightTest/TestResources/Unzipped/");
-}
-else
-{
-    Console.WriteLine("Testrepo.git already unzipped");
-}
+//GitPathHelper.EnsureZipIsUnzipped();
 
 // Add services to the container.
 builder.Services.AddControllers();

@@ -9,6 +9,7 @@ public class SetupTests
 {
     public static (SqliteConnection, InsightContext) Setup()
     {
+        EnsureZipIsUnzippedTesting();
         var connection = new SqliteConnection("Filename=:memory:");
         connection.Open();
         var builder = new DbContextOptionsBuilder<InsightContext>();
