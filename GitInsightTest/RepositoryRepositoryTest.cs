@@ -88,7 +88,7 @@ public class RepositoryRepositoryTest : IDisposable
     [Fact]
     public async Task FindRepository_Test()
     {
-        var a = await _repositoryRepository.FindRepositoryAsync(1);
+        var a = await _repositoryRepository.FindAsync(1);
         Assert.Equal("First Repo", a.Item1!.Name);
         Assert.Equal("First RepoPath", a.Item1.Path);
     }
@@ -96,14 +96,14 @@ public class RepositoryRepositoryTest : IDisposable
     [Fact]
     public async Task FindRepository_DoesntExist_Test()
     {
-        var a = await _repositoryRepository.FindRepositoryAsync(2);
+        var a = await _repositoryRepository.FindAsync(2);
         Assert.Equal(a, (null, Response.NotFound));
     }
 
     [Fact]
     public async Task FindAllRepositories_test()
     {
-        var (dtoList, response) = await _repositoryRepository.FindAllRepositoriesAsync();
+        var (dtoList, response) = await _repositoryRepository.FindAllAsync();
         dtoList.Count.Should().Be(1);
         response.Should().Be(Response.Ok);
     }
@@ -113,7 +113,7 @@ public class RepositoryRepositoryTest : IDisposable
     {
         _context.Repositories.RemoveRange(_context.Repositories);
         _context.SaveChanges();
-        var (dtoList, response) = await _repositoryRepository.FindAllRepositoriesAsync();
+        var (dtoList, response) = await _repositoryRepository.FindAllAsync();
         dtoList.Should().BeNull();
         response.Should().Be(Response.NotFound);
     }
@@ -121,7 +121,7 @@ public class RepositoryRepositoryTest : IDisposable
     [Fact]
     public async Task UpdateRepository_Test()
     {
-        var (dto, _) = await _repositoryRepository.FindRepositoryAsync(1);
+        var (dto, _) = await _repositoryRepository.FindAsync(1);
         var branches = dto.BranchIds;
         var commits = dto.CommitIds;
         var authors = dto.AuthorIds;
@@ -135,8 +135,8 @@ public class RepositoryRepositoryTest : IDisposable
             authors
         );
 
-        var updatedResponse = await _repositoryRepository.UpdateRepositoryAsync(expect);
-        var (resultRepo, _) = await _repositoryRepository.FindRepositoryAsync(1);
+        var updatedResponse = await _repositoryRepository.UpdateAsync(expect);
+        var (resultRepo, _) = await _repositoryRepository.FindAsync(1);
 
         updatedResponse.Should().Be(Response.Ok);
         resultRepo.Name.Should().Be("Updated Name");
@@ -155,21 +155,21 @@ public class RepositoryRepositoryTest : IDisposable
             new List<int>()
         );
 
-        var updatedResponse = await _repositoryRepository.UpdateRepositoryAsync(expect);
+        var updatedResponse = await _repositoryRepository.UpdateAsync(expect);
         updatedResponse.Should().Be(Response.NotFound);
     }
 
     [Fact]
     public async Task DeleteRepository_Test()
     {
-        var response = await _repositoryRepository.DeleteRepositoryAsync(1);
+        var response = await _repositoryRepository.DeleteAsync(1);
         response.Should().Be(Response.Deleted);
     }
 
     [Fact]
     public async Task DeleteRepository_DoesntExist_Test()
     {
-        var response = await _repositoryRepository.DeleteRepositoryAsync(2);
+        var response = await _repositoryRepository.DeleteAsync(2);
         response.Should().Be(Response.NotFound);
     }
 
@@ -184,7 +184,7 @@ public class RepositoryRepositoryTest : IDisposable
             new List<int>()
         );
 
-        var (_, response) = await _repositoryRepository.CreateRepositoryAsync(create);
+        var (_, response) = await _repositoryRepository.CreateAsync(create);
 
         response.Should().Be(Response.Created);
     }
@@ -200,7 +200,7 @@ public class RepositoryRepositoryTest : IDisposable
             new List<int>()
         );
 
-        var (_, response) = await _repositoryRepository.CreateRepositoryAsync(create);
+        var (_, response) = await _repositoryRepository.CreateAsync(create);
 
         response.Should().Be(Response.Conflict);
     }

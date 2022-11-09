@@ -88,7 +88,7 @@ public class AuthorRepositoryTest : IDisposable
     [Fact]
     public async Task FindAuthorByIdReturnsOk()
     {
-        var (authorDto, response) = await _authorRepository.FindAuthorAsync(1);
+        var (authorDto, response) = await _authorRepository.FindAsync(1);
         authorDto.Should().BeEquivalentTo(new AuthorDto(1, "First Author", "First Email", new List<int>() { 1 },
             new List<int>() { 1 }));
         response.Should().Be(Response.Ok);
@@ -97,7 +97,7 @@ public class AuthorRepositoryTest : IDisposable
     [Fact]
     public async Task FindAuthorByIdReturnsFalse()
     {
-        var (authorDto, response) = await _authorRepository.FindAuthorAsync(3);
+        var (authorDto, response) = await _authorRepository.FindAsync(3);
         authorDto.Should().BeNull();
         response.Should().Be(Response.NotFound);
     }
@@ -105,7 +105,7 @@ public class AuthorRepositoryTest : IDisposable
     [Fact]
     public async Task FindAllAuthors()
     {
-        var (authorDtos, response) = await _authorRepository.FindAllAuthorsAsync();
+        var (authorDtos, response) = await _authorRepository.FindAllAsync();
         authorDtos.Should().BeEquivalentTo(new List<AuthorDto>
         {
             new AuthorDto(1, "First Author", "First Email", new List<int>() { 1 }, new List<int>() { 1 }),
@@ -119,7 +119,7 @@ public class AuthorRepositoryTest : IDisposable
     {
         _context.RemoveRange(_context.Authors);
         await _context.SaveChangesAsync();
-        var (authorDtos, response) = await _authorRepository.FindAllAuthorsAsync();
+        var (authorDtos, response) = await _authorRepository.FindAllAsync();
         authorDtos.Should().BeNullOrEmpty();
         response.Should().Be(Response.NotFound);
     }
@@ -128,7 +128,7 @@ public class AuthorRepositoryTest : IDisposable
     [Fact]
     public async Task FindAuthorsByName()
     {
-        var (authorDto, response) = await _authorRepository.FindAuthorsByNameAsync("First Author");
+        var (authorDto, response) = await _authorRepository.FindByNameAsync("First Author");
         authorDto.Should().BeEquivalentTo(new[]
             { new AuthorDto(1, "First Author", "First Email", new List<int>() { 1 }, new List<int>() { 1 }) });
         response.Should().Be(Response.Ok);
@@ -138,7 +138,7 @@ public class AuthorRepositoryTest : IDisposable
     [Fact]
     public async Task FindAuthorsByNameFalse()
     {
-        var (authorDto, response) = await _authorRepository.FindAuthorsByNameAsync("Non existing name");
+        var (authorDto, response) = await _authorRepository.FindByNameAsync("Non existing name");
         authorDto.Should().BeNullOrEmpty();
         response.Should().Be(Response.NotFound);
     }
@@ -147,7 +147,7 @@ public class AuthorRepositoryTest : IDisposable
     [Fact]
     public async Task FindAuthorsByEmail()
     {
-        var (authorDto, response) = await _authorRepository.FindAuthorsByEmailAsync("First Email");
+        var (authorDto, response) = await _authorRepository.FindByEmailAsync("First Email");
         authorDto.Should().BeEquivalentTo(new[]
             { new AuthorDto(1, "First Author", "First Email", new List<int>() { 1 }, new List<int>() { 1 }) });
         response.Should().Be(Response.Ok);
@@ -156,7 +156,7 @@ public class AuthorRepositoryTest : IDisposable
     [Fact]
     public async Task FindAuthorsByEmailFalse()
     {
-        var (authorDto, response) = await _authorRepository.FindAuthorsByEmailAsync("Non existing email");
+        var (authorDto, response) = await _authorRepository.FindByEmailAsync("Non existing email");
         authorDto.Should().BeNullOrEmpty();
         response.Should().Be(Response.NotFound);
     }
@@ -164,7 +164,7 @@ public class AuthorRepositoryTest : IDisposable
     [Fact]
     public async Task FindAuthorsByRepositoryId()
     {
-        var (authorDto, response) = await _authorRepository.FindAuthorsByRepositoryIdAsync(1);
+        var (authorDto, response) = await _authorRepository.FindByRepoIdAsync(1);
         authorDto.Should().BeEquivalentTo(new List<AuthorDto>
         {
             new AuthorDto(1, "First Author", "First Email", new List<int>() { 1 }, new List<int>() { 1 }),
@@ -177,7 +177,7 @@ public class AuthorRepositoryTest : IDisposable
     [Fact]
     public async Task FindAuthorsByRepositoryIdFalse()
     {
-        var (authorDto, response) = await _authorRepository.FindAuthorsByRepositoryIdAsync(2);
+        var (authorDto, response) = await _authorRepository.FindByRepoIdAsync(2);
         authorDto.Should().BeNullOrEmpty();
         response.Should().Be(Response.NotFound);
     }
@@ -185,7 +185,7 @@ public class AuthorRepositoryTest : IDisposable
     [Fact]
     public async Task FindAuthorsByCommitId()
     {
-        var (authorDto, response) = await _authorRepository.FindAuthorsByCommitIdAsync(1);
+        var (authorDto, response) = await _authorRepository.FindByCommitIdAsync(1);
         authorDto.Should().BeEquivalentTo(new List<AuthorDto>
         {
             new AuthorDto(1, "First Author", "First Email", new List<int>() { 1 }, new List<int>() { 1 }),
@@ -197,7 +197,7 @@ public class AuthorRepositoryTest : IDisposable
     [Fact]
     public async Task FindAuthorsByCommitIdFalse()
     {
-        var (authorDto, response) = await _authorRepository.FindAuthorsByCommitIdAsync(10);
+        var (authorDto, response) = await _authorRepository.FindByCommitIdAsync(10);
         authorDto.Should().BeNullOrEmpty();
         response.Should().Be(Response.NotFound);
     }
@@ -205,7 +205,7 @@ public class AuthorRepositoryTest : IDisposable
     [Fact]
     public async Task CreateAuthorReturnsCreated()
     {
-        var (authorDto, response) = await _authorRepository.CreateAuthorAsync(new AuthorCreateDto("Third Author",
+        var (authorDto, response) = await _authorRepository.CreateAsync(new AuthorCreateDto("Third Author",
             "Third Email", new List<int>() { }, new List<int>() { 1 }));
         authorDto.Should().BeEquivalentTo(new AuthorDto(3, "Third Author", "Third Email", new List<int>() { },
             new List<int>() { 1 }));
@@ -215,7 +215,7 @@ public class AuthorRepositoryTest : IDisposable
     [Fact]
     public async Task CreateAuthorReturnsBadRequest()
     {
-        var (authorDto, response) = await _authorRepository.CreateAuthorAsync(new AuthorCreateDto("Wrong repo",
+        var (authorDto, response) = await _authorRepository.CreateAsync(new AuthorCreateDto("Wrong repo",
             "Wrong repo", new List<int>() { }, new List<int>() { 10 }));
         response.Should().Be(Response.BadRequest);
         authorDto.Should().BeNull();
@@ -224,31 +224,31 @@ public class AuthorRepositoryTest : IDisposable
     [Fact]
     public async Task DeleteAuthorReturnsDeleted()
     {
-        var response = await _authorRepository.DeleteAuthorAsync(1);
+        var response = await _authorRepository.DeleteAsync(1);
         response.Should().Be(Response.Deleted);
     }
 
     [Fact]
     public async Task DeleteAuthorReturnsNotFound()
     {
-        var response = await _authorRepository.DeleteAuthorAsync(10);
+        var response = await _authorRepository.DeleteAsync(10);
         response.Should().Be(Response.NotFound);
     }
 
     [Fact]
     public async Task UpdateAuthorReturnsOk()
     {
-        var (authorDto, response) = await _authorRepository.FindAuthorAsync(1);
+        var (authorDto, response) = await _authorRepository.FindAsync(1);
         authorDto.Should().BeEquivalentTo(new AuthorDto(1, "First Author", "First Email", new List<int>() { 1 },
             new List<int>() { 1 }));
         response.Should().Be(Response.Ok);
 
         var updateDto = new AuthorDto(1, "New Name", "New Email", new List<int>() { }, new List<int>() { 1 });
-        var updatedAuthorDto = await _authorRepository.UpdateAuthorAsync(updateDto);
+        var updatedAuthorDto = await _authorRepository.UpdateAsync(updateDto);
 
         updatedAuthorDto.Should().Be(Response.Ok);
 
-        var (updatedAuthor, updatedResponse) = await _authorRepository.FindAuthorAsync(1);
+        var (updatedAuthor, updatedResponse) = await _authorRepository.FindAsync(1);
 
         updatedAuthor.Should().BeEquivalentTo(updateDto);
         updatedResponse.Should().Be(updatedAuthorDto);
@@ -259,7 +259,7 @@ public class AuthorRepositoryTest : IDisposable
     {
         var updateDto = new AuthorDto(10, "Does not exist", "Does not exist", new List<int>() { },
             new List<int>() { 1 });
-        var updatedAuthorDto = await _authorRepository.UpdateAuthorAsync(updateDto);
+        var updatedAuthorDto = await _authorRepository.UpdateAsync(updateDto);
         updatedAuthorDto.Should().Be(Response.NotFound);
     }
 

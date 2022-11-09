@@ -34,7 +34,7 @@ public class DataManager
 
         //repo
         var dto = new RepositoryCreateDto(relPath, relPath, null!, null!, null!);
-        var (result, _) = await repos.CreateRepositoryAsync(dto);
+        var (result, _) = await repos.CreateAsync(dto);
         //branches
         foreach (var b in repo.Branches)
         {
@@ -44,7 +44,7 @@ public class DataManager
             foreach (var c in b.Commits)
             {
                 var authorDto = new AuthorCreateDto(c.Author.Name, c.Author.Email, null, new List<int> { result.Id });
-                var (authResult, _) = await authors.CreateAuthorAsync(authorDto);
+                var (authResult, _) = await authors.CreateAsync(authorDto);
                 var commitDto = new CommitInsightCreateDto(c.Sha, c.Author.When, authResult!.Id, branchResult!.Id, result.Id);
                 await commits.CreateAsync(commitDto);
             }

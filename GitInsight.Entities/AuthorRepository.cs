@@ -14,7 +14,7 @@ public class AuthorRepository : IAuthorRepository
             CommitIds: author.Commits.Select(c => c.Id).ToList(),
             RepositoryIds: author.Repositories.Select(r => r.Id).ToList());
 
-    public async Task<(AuthorDto?, Response)> FindAuthorAsync(int id)
+    public async Task<(AuthorDto?, Response)> FindAsync(int id)
     {
         Response response;
 
@@ -36,7 +36,7 @@ public class AuthorRepository : IAuthorRepository
     }
 
 
-    public async Task<(List<AuthorDto>?, Response response)> FindAllAuthorsAsync()
+    public async Task<(List<AuthorDto>?, Response response)> FindAllAsync()
     {
         var authors = await _context.Authors
             .Include(a => a.Commits)
@@ -48,7 +48,7 @@ public class AuthorRepository : IAuthorRepository
             : (null, Response.NotFound);
     }
 
-    public async Task<(AuthorDto?, Response)> CreateAuthorAsync(AuthorCreateDto authorCreateDto)
+    public async Task<(AuthorDto?, Response)> CreateAsync(AuthorCreateDto authorCreateDto)
     {
         Response response;
 
@@ -58,7 +58,7 @@ public class AuthorRepository : IAuthorRepository
             return (null, response);
         }
 
-        var (existing, authorResponse) = await FindAuthorsByEmailAsync(authorCreateDto.Email);
+        var (existing, authorResponse) = await FindByEmailAsync(authorCreateDto.Email);
         if (authorResponse != Response.NotFound)
         {
             response = Response.Conflict;
@@ -83,7 +83,7 @@ public class AuthorRepository : IAuthorRepository
                 RepositoryIds: author.Repositories.Select(r => r.Id).ToList()), response);
     }
 
-    public async Task<Response> DeleteAuthorAsync(int id)
+    public async Task<Response> DeleteAsync(int id)
     {
         var author = await _context.Authors.FindAsync(id);
 
@@ -95,7 +95,7 @@ public class AuthorRepository : IAuthorRepository
         return Response.Deleted;
     }
 
-    public async Task<Response> UpdateAuthorAsync(AuthorDto authorDto)
+    public async Task<Response> UpdateAsync(AuthorDto authorDto)
     {
         Response response;
 
@@ -110,8 +110,8 @@ public class AuthorRepository : IAuthorRepository
         {
             author.Name = authorDto.Name;
             author.Email = authorDto.Email;
-            author.Commits = await UpdateCommitsIfExist(_context,authorDto.CommitIds);
-            author.Repositories = await UpdateRepositoriesIfExist(_context,authorDto.RepositoryIds);
+            author.Commits = await UpdateCommitsIfExist(_context, authorDto.CommitIds);
+            author.Repositories = await UpdateRepositoriesIfExist(_context, authorDto.RepositoryIds);
 
             _context.Authors.Update(author);
             await _context.SaveChangesAsync();
@@ -122,7 +122,7 @@ public class AuthorRepository : IAuthorRepository
         return response;
     }
 
-    public async Task<(List<AuthorDto>?, Response)> FindAuthorsByNameAsync(string name)
+    public async Task<(List<AuthorDto>?, Response)> FindByNameAsync(string name)
     {
         var authors = await _context.Authors
             .Where(a => a.Name.Contains(name))
@@ -133,7 +133,7 @@ public class AuthorRepository : IAuthorRepository
             : (null, Response.NotFound);
     }
 
-    public async Task<(List<AuthorDto>?, Response)> FindAuthorsByEmailAsync(string email)
+    public async Task<(List<AuthorDto>?, Response)> FindByEmailAsync(string email)
     {
         var authors = await _context.Authors
             .Where(a => a.Email.Contains(email))
@@ -144,7 +144,7 @@ public class AuthorRepository : IAuthorRepository
             : (null, Response.NotFound);
     }
 
-    public async Task<(List<AuthorDto>?, Response)> FindAuthorsByRepositoryIdAsync(int repositoryId)
+    public async Task<(List<AuthorDto>?, Response)> FindByRepoIdAsync(int repositoryId)
     {
         var authors = await _context.Authors
             .Where(a => a.Repositories.Any(r => r.Id == repositoryId))
@@ -156,7 +156,7 @@ public class AuthorRepository : IAuthorRepository
     }
 
 
-    public async Task<(List<AuthorDto>?, Response)> FindAuthorsByCommitIdAsync(int commitId)
+    public async Task<(List<AuthorDto>?, Response)> FindByCommitIdAsync(int commitId)
     {
         var authors = await _context.Authors
             .Where(a => a.Commits.Any(c => c.Id == commitId))

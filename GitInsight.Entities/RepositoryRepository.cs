@@ -1,6 +1,6 @@
 ﻿namespace GitInsight.Entities;
 
-public class RepositoryRepository : IRepositoryRepository
+public class RepositoryRepository : IRepoInsightRepository
 {
     private readonly InsightContext _context;
 
@@ -9,7 +9,7 @@ public class RepositoryRepository : IRepositoryRepository
         _context = context;
     }
 
-    public async Task<(RepositoryDto repo, Response response)> CreateRepositoryAsync(
+    public async Task<(RepositoryDto repo, Response response)> CreateAsync(
         RepositoryCreateDto repositoryCreateDto)
     {
         var repository = new Repository
@@ -20,7 +20,7 @@ public class RepositoryRepository : IRepositoryRepository
             Branches = await UpdateBranchesIfExist(_context, repositoryCreateDto.BranchIds),
             Authors = await UpdateAuthorsIfExist(_context, repositoryCreateDto.AuthorIds)
         };
-        
+
         //if the new repository has the same path return conflict
         var existing = _context.Repositories.FirstOrDefault(r => r.Path == repository.Path);
         if (existing is not null)
@@ -32,11 +32,11 @@ public class RepositoryRepository : IRepositoryRepository
         await _context.SaveChangesAsync();
 
         var repoDto = RepositoryToRepositoryDto(repository);
-        
+
         return (repoDto, Response.Created);
     }
 
-    public async Task<Response> DeleteRepositoryAsync(int id)
+    public async Task<Response> DeleteAsync(int id)
     {
         var entity = await _context.Repositories.FirstOrDefaultAsync(c => c.Id == id);
 
@@ -48,7 +48,7 @@ public class RepositoryRepository : IRepositoryRepository
         return Response.Deleted;
     }
 
-    public async Task<(List<RepositoryDto>?, Response)> FindAllRepositoriesAsync()
+    public async Task<(List<RepositoryDto>?, Response)> FindAllAsync()
     {
         var result = await _context.Repositories.Select(entity => RepositoryToRepositoryDto(entity)).ToListAsync();
         // if (result == null || result.Count == 0)
@@ -58,13 +58,13 @@ public class RepositoryRepository : IRepositoryRepository
         return more ? (result, Response.Ok) : (null, Response.NotFound);
     }
 
-    public async Task<(RepositoryDto?, Response)> FindRepositoryAsync(int id)
+    public async Task<(RepositoryDto?, Response)> FindAsync(int id)
     {
         var entity = await _context.Repositories.FirstOrDefaultAsync(c => c.Id == id);
 
         return entity == null ? (null, Response.NotFound) : (RepositoryToRepositoryDto(entity), Response.Ok);
     }
-    
+
     public async Task<(RepositoryDto?, Response)> FindRepositoryByPathAsync(string path)
     {
         var entity = await _context.Repositories.FirstOrDefaultAsync(c => c.Path == path);
@@ -72,7 +72,7 @@ public class RepositoryRepository : IRepositoryRepository
         return entity == null ? (null, Response.NotFound) : (RepositoryToRepositoryDto(entity), Response.Ok);
     }
 
-    public async Task<Response> UpdateRepositoryAsync(RepositoryDto repositoryDto)
+    public async Task<Response> UpdateAsync(RepositoryDto repositoryDto)
     {
         Response response;
 
