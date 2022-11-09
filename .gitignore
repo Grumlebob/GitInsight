@@ -419,6 +419,7 @@ obj/
 .idea/**/dictionaries
 .idea/**/shelf
 .idea/**/efCoreCommonOptions.xml
+.GitInsightTest/TestResources/Unzipped/Testrepo.git
 
 # AWS User-specific
 .idea/**/aws.xml
