@@ -21,20 +21,20 @@ public class AuthorsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<Author>))]
     public async Task<IActionResult> GetAllAuthors()
     {
-        var (list, response) = await _authorRepository.FindAllAuthorsAsync();
+        var (list, response) = await _authorRepository.FindAllAsync();
         if (response == Core.Response.Ok) return Ok(list);
         return NotFound();
     }
-    
+
     [HttpGet]
     [Route("{id}")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Author))]
     public async Task<IActionResult> GetAuthorById(int id)
     {
-        var (authorDto, response) = await _authorRepository.FindAuthorAsync(id);
+        var (authorDto, response) = await _authorRepository.FindAsync(id);
         if (response == Core.Response.NotFound) return NotFound();
         return Ok(authorDto);
     }
-    
+
 }

@@ -1,28 +1,28 @@
 ﻿namespace GitInsight.Entities;
 
-public class Repository
+public class RepoInsight
 {
     public int Id { get; set; }
     public string Path { get; set; } = string.Empty;
     public string? Name { get; set; } = string.Empty;
-    
+
     public int LatestCommitId { get; set; }
-    
+
     public List<Branch> Branches { get; set; }
     public List<Author> Authors { get; set; }
-    public List<Commit> Commits { get; set; }
+    public List<CommitInsight> Commits { get; set; }
 
-    public Repository()
+    public RepoInsight()
     {
         Branches = new List<Branch>();
         Authors = new List<Author>();
-        Commits = new List<Commit>();
+        Commits = new List<CommitInsight>();
     }
 }
 
-public class RepositoryConfigurations : IEntityTypeConfiguration<Repository>
+public class RepositoryConfigurations : IEntityTypeConfiguration<RepoInsight>
 {
-    public void Configure(EntityTypeBuilder<Repository> builder)
+    public void Configure(EntityTypeBuilder<RepoInsight> builder)
     {
         builder.HasKey(a => a.Id);
         builder.HasMany(a => a.Branches)

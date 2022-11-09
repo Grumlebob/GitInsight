@@ -2,13 +2,13 @@
 
 public interface IAuthorRepository
 {
-    Task<(AuthorDto?, Response)> FindAuthorAsync(int id);
-    Task<(List<AuthorDto>?, Response response)> FindAllAuthorsAsync();
-    Task<(AuthorDto?, Response)> CreateAuthorAsync(AuthorCreateDto authorCreateDto);
-    Task<Response> DeleteAuthorAsync(int id);
-    Task<Response> UpdateAuthorAsync(AuthorDto authorDto);
-    Task<(List<AuthorDto>?, Response)> FindAuthorsByNameAsync(string name);
-    Task<(List<AuthorDto>?, Response)> FindAuthorsByEmailAsync(string email);
-    Task<(List<AuthorDto>?, Response)> FindAuthorsByRepositoryIdAsync(int repositoryId);
-    Task<(List<AuthorDto>?, Response)> FindAuthorsByCommitIdAsync(int commitId);
+    Task<(AuthorDto?, Response)> FindAsync(int id);
+    Task<(List<AuthorDto>?, Response response)> FindAllAsync();
+    Task<(AuthorDto?, Response)> CreateAsync(AuthorCreateDto authorCreateDto);
+    Task<Response> DeleteAsync(int id);
+    Task<Response> UpdateAsync(AuthorDto authorDto);
+    Task<(List<AuthorDto>?, Response)> FindByNameAsync(string name);
+    Task<(List<AuthorDto>?, Response)> FindByEmailAsync(string email);
+    Task<(List<AuthorDto>?, Response)> FindByRepoIdAsync(int repositoryId);
+    Task<(List<AuthorDto>?, Response)> FindByCommitIdAsync(int commitId);
 }

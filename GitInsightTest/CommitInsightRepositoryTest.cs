@@ -6,12 +6,12 @@ using Branch = GitInsight.Entities.Branch;
 
 namespace GitInsightTest;
 
-public class CommitRepositoryTest : IDisposable
+public class CommitInsightRepositoryTest : IDisposable
 {
     private readonly InsightContext _context;
-    private readonly CommitRepository _repository;
+    private readonly CommitInsightRepository _repository;
 
-    public CommitRepositoryTest()
+    public CommitInsightRepositoryTest()
     {
         var connection = new SqliteConnection("DataSource=:memory:");
         connection.Open();
@@ -22,23 +22,23 @@ public class CommitRepositoryTest : IDisposable
         context.Database.EnsureCreated();
 
         _context = context;
-        _repository = new CommitRepository(_context);
+        _repository = new CommitInsightRepository(_context);
 
         _context.Authors.Add(new Author { Name = "Søren", Email = "søren@gmail.dk" });
         _context.Authors.Add(new Author { Name = "Per", Email = "per@gmail.dk" });
         _context.SaveChanges();
 
-        _context.Repositories.Add(new GitInsight.Entities.Repository { Name = "repo1", Path = "idk/idk" });
-        _context.Repositories.Add(new GitInsight.Entities.Repository { Name = "repo2", Path = "idc/idc" });
+        _context.Repositories.Add(new GitInsight.Entities.RepoInsight { Name = "repo1", Path = "idk/idk" });
+        _context.Repositories.Add(new GitInsight.Entities.RepoInsight { Name = "repo2", Path = "idc/idc" });
         _context.SaveChanges();
 
         _context.Branches.Add(new Branch { Name = "branch1", Path = "origin/idk", RepositoryId = 1 });
         _context.Branches.Add(new Branch { Name = "branch2", Path = "origin/idc", RepositoryId = 2 });
         _context.SaveChanges();
 
-        _context.Commits.Add(new GitInsight.Entities.Commit { Id = 1, Sha = "treg", AuthorId = 1, BranchId = 1, RepositoryId = 1, Date = DateTime.Now, Repository = null, Author = null, Branch = null });
-        _context.Commits.Add(new GitInsight.Entities.Commit { Id = 2, Sha = "heck", AuthorId = 2, BranchId = 2, RepositoryId = 2, Date = DateTime.Now });
-        _context.Commits.Add(new GitInsight.Entities.Commit { Id = 3, Sha = "tger", AuthorId = 1, BranchId = 2, RepositoryId = 2, Date = DateTime.Now });
+        _context.Commits.Add(new GitInsight.Entities.CommitInsight { Id = 1, Sha = "treg", AuthorId = 1, BranchId = 1, RepositoryId = 1, Date = DateTime.Now, Repository = null, Author = null, Branch = null });
+        _context.Commits.Add(new GitInsight.Entities.CommitInsight { Id = 2, Sha = "heck", AuthorId = 2, BranchId = 2, RepositoryId = 2, Date = DateTime.Now });
+        _context.Commits.Add(new GitInsight.Entities.CommitInsight { Id = 3, Sha = "tger", AuthorId = 1, BranchId = 2, RepositoryId = 2, Date = DateTime.Now });
 
         _context.SaveChanges();
     }
@@ -76,9 +76,9 @@ public class CommitRepositoryTest : IDisposable
     [Fact]
     public async Task Create_return_created()
     {
-        var expectedCommitDTO = new CommitDto(4, "heyuo", DateTimeOffset.Now, 2, 1, 1);
+        var expectedCommitDTO = new CommitInsightDto(4, "heyuo", DateTimeOffset.Now, 2, 1, 1);
 
-        var result = await _repository.CreateAsync(new CommitCreateDto(expectedCommitDTO.Sha, expectedCommitDTO.Date, expectedCommitDTO.AuthorId, expectedCommitDTO.BranchId, expectedCommitDTO.RepositoryId));
+        var result = await _repository.CreateAsync(new CommitInsightCreateDto(expectedCommitDTO.Sha, expectedCommitDTO.Date, expectedCommitDTO.AuthorId, expectedCommitDTO.BranchId, expectedCommitDTO.RepositoryId));
 
         result.response.Should().Be(Response.Created);
 
@@ -89,7 +89,7 @@ public class CommitRepositoryTest : IDisposable
     [Fact]
     public async Task Create_return_conflict_because_duplicate_sha()
     {
-        var result = await _repository.CreateAsync(new CommitCreateDto("treg", DateTimeOffset.Now, 2, 1, 1));
+        var result = await _repository.CreateAsync(new CommitInsightCreateDto("treg", DateTimeOffset.Now, 2, 1, 1));
 
         result.response.Should().Be(Response.Conflict);
         result.commit.Should().BeNull();
@@ -99,7 +99,7 @@ public class CommitRepositoryTest : IDisposable
     [Fact]
     public async Task Create_return_badRequest_because_nonExisting_author()
     {
-        var result = await _repository.CreateAsync(new CommitCreateDto("heyuo", DateTimeOffset.Now, 3, 1, 1));
+        var result = await _repository.CreateAsync(new CommitInsightCreateDto("heyuo", DateTimeOffset.Now, 3, 1, 1));
 
         result.response.Should().Be(Response.BadRequest);
         result.commit.Should().BeNull();
@@ -109,7 +109,7 @@ public class CommitRepositoryTest : IDisposable
     [Fact]
     public async Task Update_id_1_return_ok()
     {
-        var commitDTO = new CommitDto(1, "treg", DateTimeOffset.Now, 1, 1, 1);
+        var commitDTO = new CommitInsightDto(1, "treg", DateTimeOffset.Now, 1, 1, 1);
         var result = await _repository.UpdateAsync(commitDTO);
 
         result.response.Should().Be(Response.Ok);
@@ -122,7 +122,7 @@ public class CommitRepositoryTest : IDisposable
     [Fact]
     public async Task Update_id_4_return_notfound()
     {
-        var result = await _repository.UpdateAsync(new CommitDto(4, "hjgk", DateTimeOffset.Now, 2, 1, 1));
+        var result = await _repository.UpdateAsync(new CommitInsightDto(4, "hjgk", DateTimeOffset.Now, 2, 1, 1));
 
         result.response.Should().Be(Response.NotFound);
         result.commit.Should().BeNull();
@@ -131,7 +131,7 @@ public class CommitRepositoryTest : IDisposable
     [Fact]
     public async Task Update_return_badRequest_because_nonExisting_repo()
     {
-        var result = await _repository.UpdateAsync(new CommitDto(2, "heck", DateTimeOffset.Now, 2, 2, 3));
+        var result = await _repository.UpdateAsync(new CommitInsightDto(2, "heck", DateTimeOffset.Now, 2, 2, 3));
 
         result.response.Should().Be(Response.BadRequest);
         _repository.FindAsync(2).Result.commit.RepositoryId.Should().Be(2);
@@ -140,7 +140,7 @@ public class CommitRepositoryTest : IDisposable
     [Fact]
     public async Task Update_return_badRequest_because_nothing_is_changed()
     {
-        var result = await _repository.UpdateAsync(new CommitDto(3, "tger", _repository.FindAsync(3).Result.commit.Date, 1, 2, 2));
+        var result = await _repository.UpdateAsync(new CommitInsightDto(3, "tger", _repository.FindAsync(3).Result.commit.Date, 1, 2, 2));
 
         result.response.Should().Be(Response.BadRequest);
     }

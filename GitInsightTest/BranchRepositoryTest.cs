@@ -2,7 +2,7 @@
 using GitInsight.Entities;
 using Microsoft.Data.Sqlite;
 using Branch = GitInsight.Entities.Branch;
-using Repository = GitInsight.Entities.Repository;
+using Repository = GitInsight.Entities.RepoInsight;
 
 namespace GitInsightTest;
 
