@@ -30,7 +30,7 @@ public static class GitPathHelper
         {
             ZipFile.ExtractToDirectory(
                 "../../GitInsight/GitInsightTest/TestResources/Zipped/Testrepo.git.zip", 
-                "../../GitInsight/GitInsightTest/TestResources/Unzipped/");
+                "../../GitInsight/GitInsightTest/TestResources/Unzipped/",true);
         }
         else
         {
@@ -50,7 +50,7 @@ public static class GitPathHelper
         {
             ZipFile.ExtractToDirectory(
                 zippedFolder, 
-                destinationFolder);
+                destinationFolder,true);
             Console.WriteLine("Testrepo.git unzipped");
         }
         else
