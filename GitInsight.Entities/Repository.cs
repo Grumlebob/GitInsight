@@ -5,18 +5,18 @@ public class Repository
     public int Id { get; set; }
     public string Path { get; set; } = string.Empty;
     public string? Name { get; set; } = string.Empty;
-    
+
     public int LatestCommitId { get; set; }
-    
+
     public List<Branch> Branches { get; set; }
     public List<Author> Authors { get; set; }
-    public List<Commit> Commits { get; set; }
+    public List<CommitInsight> Commits { get; set; }
 
     public Repository()
     {
         Branches = new List<Branch>();
         Authors = new List<Author>();
-        Commits = new List<Commit>();
+        Commits = new List<CommitInsight>();
     }
 }
 

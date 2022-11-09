@@ -6,7 +6,7 @@ using GitInsight.Entities;
 using Microsoft.EntityFrameworkCore;
 
 
-Console.WriteLine("logic "+GetFullPathWhenCalledFromProgram("/.git"));
+Console.WriteLine("logic " + GetFullPathWhenCalledFromProgram("/.git"));
 
 InsightContext context = new InsightContextFactory().CreateDbContext(args);
 DataManager dm = new DataManager(context);
@@ -25,7 +25,7 @@ builder.Services.AddDbContext<InsightContext>(o =>
 builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 builder.Services.AddScoped<IRepositoryRepository, RepositoryRepository>();
 builder.Services.AddScoped<IBranchRepository, BranchRepository>();
-builder.Services.AddScoped<ICommitRepository, CommitRepository>();
+builder.Services.AddScoped<ICommitInsightRepository, CommitInsightRepository>();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -12,12 +12,12 @@ public class Branch
     public int RepositoryId { get; set; }
     public Repository Repository { get; set; } = null!;
 
-    public List<Commit> Commits { get; set; }
+    public List<CommitInsight> Commits { get; set; }
 
 
     public Branch()
     {
-        Commits = new List<Commit>();
+        Commits = new List<CommitInsight>();
     }
 }
 

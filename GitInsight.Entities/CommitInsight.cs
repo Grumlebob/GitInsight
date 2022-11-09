@@ -2,7 +2,7 @@
 
 namespace GitInsight.Entities;
 
-public class Commit
+public class CommitInsight
 {
     public int Id { get; set; }
     public string Sha { get; set; } = string.Empty;
@@ -19,18 +19,18 @@ public class Commit
 
 }
 
-public class CommitConfigurations : IEntityTypeConfiguration<Commit>
+public class CommitConfigurations : IEntityTypeConfiguration<CommitInsight>
 {
-    public void Configure(EntityTypeBuilder<Commit> builder)
+    public void Configure(EntityTypeBuilder<CommitInsight> builder)
     {
         builder.HasKey(a => a.Id);
-        
+
         builder.HasOne(a => a.Repository)
             .WithMany(a => a.Commits!);
-        
+
         builder.HasOne(a => a.Author)
             .WithMany(a => a.Commits);
-        
+
         builder.HasOne(a => a.Branch)
             .WithMany(a => a.Commits);
     }

@@ -48,7 +48,7 @@ public class RepositoryRepositoryTest : IDisposable
             Repositories = { testRepo },
             Commits =
             {
-                new GitInsight.Entities.Commit
+                new GitInsight.Entities.CommitInsight
                 {
                     Sha = "First Commit",
                     Date = DateTime.Now,
@@ -70,7 +70,7 @@ public class RepositoryRepositoryTest : IDisposable
             Repositories = { testRepo },
             Commits =
             {
-                new GitInsight.Entities.Commit
+                new GitInsight.Entities.CommitInsight
                 {
                     Sha = "Second Commit",
                     Date = DateTime.Now,

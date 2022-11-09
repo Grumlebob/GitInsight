@@ -2,7 +2,7 @@
 using GitInsight.Entities;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Commit = GitInsight.Entities.Commit;
+using Commit = GitInsight.Entities.CommitInsight;
 using Repository = GitInsight.Entities.Repository;
 
 namespace GitInsightTest;
@@ -206,7 +206,7 @@ public class AuthorRepositoryTest : IDisposable
     public async Task CreateAuthorReturnsCreated()
     {
         var (authorDto, response) = await _authorRepository.CreateAuthorAsync(new AuthorCreateDto("Third Author",
-            "Third Email", new List<int>() {}, new List<int>() { 1 }));
+            "Third Email", new List<int>() { }, new List<int>() { 1 }));
         authorDto.Should().BeEquivalentTo(new AuthorDto(3, "Third Author", "Third Email", new List<int>() { },
             new List<int>() { 1 }));
         response.Should().Be(Response.Created);

@@ -30,8 +30,8 @@ public class DataManager
         var repos = new RepositoryRepository(_context);
         var branches = new BranchRepository(_context);
         var authors = new AuthorRepository(_context);
-        var commits = new CommitRepository(_context);
-        
+        var commits = new CommitInsightRepository(_context);
+
         //repo
         var dto = new RepositoryCreateDto(relPath, relPath, null!, null!, null!);
         var (result, _) = await repos.CreateRepositoryAsync(dto);
@@ -45,7 +45,7 @@ public class DataManager
             {
                 var authorDto = new AuthorCreateDto(c.Author.Name, c.Author.Email, null, new List<int> { result.Id });
                 var (authResult, _) = await authors.CreateAuthorAsync(authorDto);
-                var commitDto = new CommitCreateDto(c.Sha, c.Author.When, authResult!.Id, branchResult!.Id, result.Id);
+                var commitDto = new CommitInsightCreateDto(c.Sha, c.Author.When, authResult!.Id, branchResult!.Id, result.Id);
                 await commits.CreateAsync(commitDto);
             }
         }
@@ -57,7 +57,7 @@ public class DataManager
     private async Task CheckIfReanalyzeNeeded(string fullPath)
     {
         using var repo = new Repository(fullPath);
-        var commits = new CommitRepository(_context);
+        var commits = new CommitInsightRepository(_context);
 
         var queryFilter = repo.Commits.QueryBy(new CommitFilter
         {
@@ -68,7 +68,8 @@ public class DataManager
         if (response == Response.NotFound)
         {
             _shouldReanalyze = true;
-        } else if (response == Response.Ok)
+        }
+        else if (response == Response.Ok)
         {
             _shouldReanalyze = false;
         }
@@ -77,7 +78,7 @@ public class DataManager
     private async Task UpdateLatestCommit(int id, string fullPath)
     {
         using var repo = new Repository(fullPath);
-        var commits = new CommitRepository(_context);
+        var commits = new CommitInsightRepository(_context);
         var repository = new RepositoryRepository(_context);
 
         var queryFilter = repo.Commits.QueryBy(new CommitFilter
