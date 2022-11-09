@@ -38,7 +38,7 @@ public static class GitPathHelper
         }
     }
     
-    public static void EnsureZipIsUnzippedTesting()
+    public static void EnsureZipIsUnzippedTesting() //Only works in testing directory
     {
         var projectPath =  Directory.GetParent(Directory.GetCurrentDirectory())?.Parent!.Parent!.Parent!.FullName;
         

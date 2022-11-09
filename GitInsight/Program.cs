@@ -7,8 +7,6 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//GitPathHelper.EnsureZipIsUnzipped();
-
 // Add services to the container.
 builder.Services.AddControllers();
 
