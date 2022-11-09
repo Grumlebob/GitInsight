@@ -5,6 +5,14 @@ using GitInsight.Data;
 using GitInsight.Entities;
 using Microsoft.EntityFrameworkCore;
 
+
+Console.WriteLine("logic "+GetFullPathWhenCalledFromProgram("/.git"));
+
+InsightContext context = new InsightContextFactory().CreateDbContext(args);
+DataManager dm = new DataManager(context);
+await dm.Analyze(GetFullPathWhenCalledFromProgram("/.git"), "/.git");
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -39,8 +47,5 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-InsightContext context = new InsightContextFactory().CreateDbContext(args);
-DataManager dm = new DataManager(context);
-await dm.Analyze(@"C:\Programming\CSharp\GitInsight\GitInsightTest\TestResources\Unzipped\Testrepo.git", @"GitInsightTest/TestResources/Unzipped/Testrepo.git");
 app.Run();
 

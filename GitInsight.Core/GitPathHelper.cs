@@ -4,17 +4,14 @@ namespace GitInsight.Core;
 
 public static class GitPathHelper
 {
+    
+    public static string GetRelativeTestFolder()  => @"/GitInsightTest/TestResources/Unzipped/Testrepo.git";
+    public static string GetRelativeLocalFolder()  => @"/.git"; //måske tilføj @"GitInsight/";
+    
     public static string GetGitLocalFolder()
     {
         var projectPath =  Directory.GetParent(Directory.GetCurrentDirectory())?.Parent!.Parent!.Parent!.FullName;
-        Console.WriteLine("in path helper" + projectPath);
-        return Path.Combine(projectPath!, ".git");
-    }
-
-    public static string GetRelativeGitFolder(string s)
-    {
-        var prefix = @"GitInsight/";
-        return prefix + s;
+        return Path.Combine(projectPath!, GetRelativeLocalFolder());
     }
 
     public static string GetGitTestFolder()
@@ -22,41 +19,11 @@ public static class GitPathHelper
         var projectPath =  Directory.GetParent(Directory.GetCurrentDirectory())?.Parent!.Parent!.Parent!.FullName;
         return Path.Combine(projectPath! + GetRelativeTestFolder());
     }
-    
-    public static string GetRelativeTestFolder()  => @"/GitInsightTest/TestResources/Unzipped/Testrepo.git";
-    public static void EnsureZipIsUnzipped() //Works everywhere but in Testfolder
+
+    public static string GetFullPathWhenCalledFromProgram(string relativePath)
     {
-        //Todo lav pathing også her
-        if (!Directory.Exists("../../GitInsight/GitInsightTest/TestResources/Unzipped/Testrepo.git"))
-        {
-            ZipFile.ExtractToDirectory(
-                "../../GitInsight/GitInsightTest/TestResources/Zipped/Testrepo.git.zip", 
-                "../../GitInsight/GitInsightTest/TestResources/Unzipped/",true);
-        }
-        else
-        {
-            Console.WriteLine("Testrepo.git already unzipped");
-        }
+        var projectPath = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
+        return Path.Combine(projectPath! + relativePath);
     }
     
-    public static void EnsureZipIsUnzippedTesting() //Only works in testing directory
-    {
-        var projectPath =  Directory.GetParent(Directory.GetCurrentDirectory())?.Parent!.Parent!.Parent!.FullName;
-        
-        string unzippedFolder = Path.Combine(projectPath! + GetRelativeTestFolder());
-        string zippedFolder = Path.Combine(projectPath! + @"/GitInsightTest/TestResources/Zipped/Testrepo.git.zip");
-        string destinationFolder = Path.Combine(projectPath! + @"/GitInsightTest/TestResources/Unzipped/");
-        
-        if (!Directory.Exists(unzippedFolder))
-        {
-            ZipFile.ExtractToDirectory(
-                zippedFolder, 
-                destinationFolder,true);
-            Console.WriteLine("Testrepo.git unzipped");
-        }
-        else
-        {
-            Console.WriteLine("Testrepo.git already unzipped");
-        }
-    }
 }
