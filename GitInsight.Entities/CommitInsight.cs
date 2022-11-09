@@ -14,7 +14,7 @@ public class CommitInsight
     public Branch Branch { get; set; } = null!;
     public int BranchId { get; set; }
 
-    public Repository Repository { get; set; } = null!;
+    public RepoInsight Repository { get; set; } = null!;
     public int RepositoryId { get; set; }
 
 }

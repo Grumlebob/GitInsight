@@ -2,9 +2,9 @@
 
 public static class ExistingCollectionHelper
 {
-    public static async Task<List<Repository>> UpdateRepositoriesIfExist(InsightContext context, IEnumerable<int> repoIds) =>
+    public static async Task<List<RepoInsight>> UpdateRepositoriesIfExist(InsightContext context, IEnumerable<int> repoIds) =>
         repoIds is null
-        ? new List<Repository>()
+        ? new List<RepoInsight>()
         : await context.Repositories.Where(r => repoIds.Contains(r.Id)).ToListAsync();
 
 

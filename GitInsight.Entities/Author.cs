@@ -7,12 +7,12 @@ public class Author
     public string Email { get; set; } = string.Empty;
 
     public List<CommitInsight> Commits { get; set; }
-    public List<Repository> Repositories { get; set; }
+    public List<RepoInsight> Repositories { get; set; }
 
     public Author()
     {
         Commits = new List<CommitInsight>();
-        Repositories = new List<Repository>();
+        Repositories = new List<RepoInsight>();
     }
 }
 

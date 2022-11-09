@@ -2,9 +2,9 @@
 
 public interface IRepoInsightRepository
 {
-    public Task<(RepositoryDto repo, Response response)> CreateAsync(RepositoryCreateDto repositoryCreateDto);
+    public Task<(RepoInsightDto repo, Response response)> CreateAsync(RepoInsightCreateDto repositoryCreateDto);
     public Task<Response> DeleteAsync(int id);
-    public Task<(List<RepositoryDto>?, Response)> FindAllAsync();
-    public Task<(RepositoryDto?, Response)> FindAsync(int id);
-    public Task<Response> UpdateAsync(RepositoryDto repositoryDto);
+    public Task<(List<RepoInsightDto>?, Response)> FindAllAsync();
+    public Task<(RepoInsightDto?, Response)> FindAsync(int id);
+    public Task<Response> UpdateAsync(RepoInsightDto repositoryDto);
 }

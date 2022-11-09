@@ -23,7 +23,7 @@ var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build()
 builder.Services.AddDbContext<InsightContext>(o =>
     o.UseNpgsql(configuration.GetConnectionString("ConnectionString")));
 builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
-builder.Services.AddScoped<IRepoInsightRepository, RepositoryRepository>();
+builder.Services.AddScoped<IRepoInsightRepository, RepoInsightRepository>();
 builder.Services.AddScoped<IBranchRepository, BranchRepository>();
 builder.Services.AddScoped<ICommitInsightRepository, CommitInsightRepository>();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);

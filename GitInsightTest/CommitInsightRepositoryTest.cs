@@ -28,8 +28,8 @@ public class CommitInsightRepositoryTest : IDisposable
         _context.Authors.Add(new Author { Name = "Per", Email = "per@gmail.dk" });
         _context.SaveChanges();
 
-        _context.Repositories.Add(new GitInsight.Entities.Repository { Name = "repo1", Path = "idk/idk" });
-        _context.Repositories.Add(new GitInsight.Entities.Repository { Name = "repo2", Path = "idc/idc" });
+        _context.Repositories.Add(new GitInsight.Entities.RepoInsight { Name = "repo1", Path = "idk/idk" });
+        _context.Repositories.Add(new GitInsight.Entities.RepoInsight { Name = "repo2", Path = "idc/idc" });
         _context.SaveChanges();
 
         _context.Branches.Add(new Branch { Name = "branch1", Path = "origin/idk", RepositoryId = 1 });

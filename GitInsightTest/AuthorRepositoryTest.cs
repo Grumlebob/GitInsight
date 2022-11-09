@@ -3,7 +3,7 @@ using GitInsight.Entities;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Commit = GitInsight.Entities.CommitInsight;
-using Repository = GitInsight.Entities.Repository;
+using Repository = GitInsight.Entities.RepoInsight;
 
 namespace GitInsightTest;
 

@@ -27,13 +27,13 @@ public class DataManager
         }
 
         using var repo = new Repository(fullPath);
-        var repos = new RepositoryRepository(_context);
+        var repos = new RepoInsightRepository(_context);
         var branches = new BranchRepository(_context);
         var authors = new AuthorRepository(_context);
         var commits = new CommitInsightRepository(_context);
 
         //repo
-        var dto = new RepositoryCreateDto(relPath, relPath, null!, null!, null!);
+        var dto = new RepoInsightCreateDto(relPath, relPath, null!, null!, null!);
         var (result, _) = await repos.CreateAsync(dto);
         //branches
         foreach (var b in repo.Branches)
@@ -79,7 +79,7 @@ public class DataManager
     {
         using var repo = new Repository(fullPath);
         var commits = new CommitInsightRepository(_context);
-        var repository = new RepositoryRepository(_context);
+        var repository = new RepoInsightRepository(_context);
 
         var queryFilter = repo.Commits.QueryBy(new CommitFilter
         {
@@ -87,7 +87,7 @@ public class DataManager
         });
         var actualLastCommit = queryFilter.FirstOrDefault();
         var (latestDbCommit, _) = await commits.FindByShaAsync(actualLastCommit!.Sha);
-        var withLatest = new RepositoryLatestCommitUpdate(id, latestDbCommit!.Id);
+        var withLatest = new RepoInsightLatestCommitUpdate(id, latestDbCommit!.Id);
         await repository.UpdateLatestCommitAsync(withLatest);
     }
 }
