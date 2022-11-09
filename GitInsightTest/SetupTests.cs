@@ -1,4 +1,5 @@
-﻿using GitInsight.Entities;
+﻿using System.IO.Compression;
+using GitInsight.Entities;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +9,7 @@ public class SetupTests
 {
     public static (SqliteConnection, InsightContext) Setup()
     {
+        EnsureZipIsUnzippedTesting();
         var connection = new SqliteConnection("Filename=:memory:");
         connection.Open();
         var builder = new DbContextOptionsBuilder<InsightContext>();
@@ -17,4 +19,5 @@ public class SetupTests
         context.SaveChanges();
         return (connection, context);
     }
+    
 }

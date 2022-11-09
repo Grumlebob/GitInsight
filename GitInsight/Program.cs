@@ -1,4 +1,5 @@
-﻿using GitInsight;
+﻿using System.IO.Compression;
+using GitInsight;
 using GitInsight.Core;
 using GitInsight.Data;
 using GitInsight.Entities;
@@ -40,7 +41,9 @@ app.MapControllers();
 
 app.Run();
 
+
 InsightContext context = new InsightContextFactory().CreateDbContext(args);
 DataManager dm = new DataManager(context);
-await dm.Analyze( GetGitTestFolder(),GetRelativeGitFolder(@"GitInsightTest/Testrepo.git"));
+await dm.Analyze( GetGitTestFolder(),GetRelativeTestFolder());
 await dm.Analyze(GetGitLocalFolder(), GetRelativeGitFolder(".git"));
+
