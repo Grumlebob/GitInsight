@@ -23,7 +23,7 @@ public class DataManagerTest : IDisposable
     public async Task AnalyzeShouldBeCompletedReturnsTrue()
     {
         DataManager dataManager = new DataManager(_context);
-        var res = await dataManager.Analyze( GetGitTestFolder(),GetRelativeTestFolder());
+        var res = await dataManager.Analyze( GetFullPathTestGit(),GetRelativeTestFolder());
         res.Should().BeTrue();
     }
     
@@ -32,8 +32,8 @@ public class DataManagerTest : IDisposable
     {
         DataManager dataManager = new DataManager(_context);
         //Run twice:
-        await dataManager.Analyze( GetGitTestFolder(),GetRelativeTestFolder());
-        var res = await dataManager.Analyze( GetGitTestFolder(),GetRelativeTestFolder());
+        await dataManager.Analyze( GetFullPathTestGit(),GetRelativeTestFolder());
+        var res = await dataManager.Analyze( GetFullPathTestGit(),GetRelativeTestFolder());
         res.Should().BeFalse();
     }
     
@@ -42,13 +42,13 @@ public class DataManagerTest : IDisposable
     {
         DataManager dataManager = new DataManager(_context);
         
-        var firstScan = await dataManager.Analyze( GetGitTestFolder(),GetRelativeTestFolder());
+        var firstScan = await dataManager.Analyze( GetFullPathTestGit(),GetRelativeTestFolder());
         firstScan.Should().BeTrue();
 
         await _context.Repositories.ExecuteDeleteAsync();
         await _context.Commits.ExecuteDeleteAsync();
         
-        var secondScanAfterAddedCommit = await dataManager.Analyze( GetGitTestFolder(),GetRelativeTestFolder());
+        var secondScanAfterAddedCommit = await dataManager.Analyze( GetFullPathTestGit(),GetRelativeTestFolder());
         secondScanAfterAddedCommit.Should().BeTrue();
     }
     
