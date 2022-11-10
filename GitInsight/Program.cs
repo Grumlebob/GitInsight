@@ -10,7 +10,7 @@ Console.WriteLine("logic " + GetFullPathWhenCalledFromProgram("/.git"));
 
 InsightContext context = new InsightContextFactory().CreateDbContext(args);
 DataManager dm = new DataManager(context);
-await dm.Analyze(GetFullPathWhenCalledFromProgram("/.git"), "/.git");
+await dm.Analyze(GetFullPathWhenCalledFromProgram(GetFullPathSourceCodeGit()), GetFullPathSourceCodeGit());
 
 
 var builder = WebApplication.CreateBuilder(args);
