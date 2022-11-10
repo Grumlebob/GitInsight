@@ -38,12 +38,15 @@ public class AuthorsController : ControllerBase
     }
     
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Author))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Author))]
     public async Task<IActionResult> CreateAuthor(AuthorCreateDto author)
     {
         var (authorDto, response) = await _authorRepository.CreateAsync(author);
-        if (response == Core.Response.NotFound) return NotFound();
+        if (response == Core.Response.BadRequest) return BadRequest();
+        if (response == Core.Response.Conflict) return Conflict(authorDto);
+        if (response == Core.Response.Created) return CreatedAtAction(nameof(GetAuthorById), new { id = authorDto.Id }, authorDto);
         return Ok(authorDto);
     }
   
