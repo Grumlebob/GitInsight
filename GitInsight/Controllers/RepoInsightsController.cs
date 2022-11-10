@@ -25,22 +25,33 @@ public class RepoInsightsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<CommitInsight>))]
     public async Task<IActionResult> AddOrUpdateLocalRepoData(string user, string repoName)
     {
+        var url = $"https://github.com/{user}/{repoName}";
         var repoPath = Path.Combine(GetSavedRepositoriesFolder(), user, repoName);
+        var dm = new DataManager(_context);
+
+        if (Directory.Exists(repoPath))
+        {
+            //https://stackoverflow.com/questions/68673942/how-to-git-fetch-remote-using-libgit2sharp
+            using var repo = new Repository(Path.Combine(repoPath, ".git"));
+            var remote = repo.Network.Remotes["origin"];
+            var refSpecs = new[] { $"+refs/heads/*:refs/remotes/{remote.Name}/*" };
+
+            repo.Network.Fetch(remote.Name, refSpecs);
+            await dm.Analyze(Path.Combine(repoPath, ".git"), user + "/" + repoName);
+            return Ok();
+        }
+
         try
         {
-            Console.WriteLine("Attempt clone");
-            var repoGitPath = Repository.Clone($"https://github.com/{user}/{repoName}", repoPath);
+            Repository.Clone(url, repoPath);
         }
         catch (LibGit2SharpException e)
         {
-            Console.WriteLine("Clone failed");
             return BadRequest(e.Message);
         }
 
-        var dm = new DataManager(_context);
         if (!Directory.Exists(repoPath))
         {
-            
         }
 
         return Ok();
