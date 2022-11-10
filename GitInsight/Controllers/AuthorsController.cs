@@ -36,5 +36,37 @@ public class AuthorsController : ControllerBase
         if (response == Core.Response.NotFound) return NotFound();
         return Ok(authorDto);
     }
+    
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Author))]
+    public async Task<IActionResult> CreateAuthor(AuthorCreateDto author)
+    {
+        var (authorDto, response) = await _authorRepository.CreateAsync(author);
+        if (response == Core.Response.NotFound) return NotFound();
+        return Ok(authorDto);
+    }
+  
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> UpdateAuthor(AuthorDto author)
+    {
+        var response = await _authorRepository.UpdateAsync(author);
+        if (response == Core.Response.NotFound) return NotFound();
+        return Ok();
+    }
+    
+    [HttpDelete]
+    [Route("{id}")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> DeleteAuthor(int id)
+    {
+        var response = await _authorRepository.DeleteAsync(id);
+        if (response == Core.Response.NotFound) return NotFound();
+        return NoContent();
+    }
+    
 
 }
