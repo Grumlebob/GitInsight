@@ -1,4 +1,5 @@
-﻿using GitInsight.Core;
+﻿using System.Reflection.Metadata.Ecma335;
+using GitInsight.Core;
 using GitInsight.Data;
 using GitInsight.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -31,16 +32,9 @@ public class RepoInsightsController : ControllerBase
 
         if (Directory.Exists(repoPath))
         {
-            //https://stackoverflow.com/questions/68673942/how-to-git-fetch-remote-using-libgit2sharp
-            using var repo = new Repository(Path.Combine(repoPath, ".git"));
-            var remote = repo.Network.Remotes["origin"];
-            var refSpecs = new[] { $"+refs/heads/*:refs/remotes/{remote.Name}/*" };
-
-            repo.Network.Fetch(remote.Name, refSpecs);
-            await dm.Analyze(Path.Combine(repoPath, ".git"), user + "/" + repoName);
-            return Ok();
+            DeleteDirectory(Path.Combine(GetSavedRepositoriesFolder(), user));
         }
-
+        
         try
         {
             Repository.Clone(url, repoPath);
@@ -50,10 +44,34 @@ public class RepoInsightsController : ControllerBase
             return BadRequest(e.Message);
         }
 
-        if (!Directory.Exists(repoPath))
+        DeleteDirectory(repoPath, foldersToSpare: new []{".git", repoPath}); //spare repoPath itself but delete all its content (but .git)
+
+        await dm.Analyze(Path.Combine(repoPath, ".git"), user + "/" + repoName);
+        
+        var (commits, _) = await new CommitInsightRepository(_context).FindAllAsync();
+        return Ok(commits);
+    }
+
+    //https://stackoverflow.com/questions/329355/cannot-delete-directory-with-directory-deletepath-true
+    private static void DeleteDirectory(string targetDir, string[]? foldersToSpare = null)
+    {
+        foldersToSpare ??= Array.Empty<string>();
+        var files = Directory.GetFiles(targetDir);
+        var dirs = Directory.GetDirectories(targetDir);
+
+        foreach (string file in files)
         {
+            System.IO.File.SetAttributes(file, FileAttributes.Normal);
+            System.IO.File.Delete(file);
         }
 
-        return Ok();
+        foreach (var dir in dirs)
+        {
+            if (foldersToSpare.Any(dir.EndsWith)) continue;
+            DeleteDirectory(dir, foldersToSpare);
+        }
+        
+        if (foldersToSpare.Any(targetDir.EndsWith)) return;
+        Directory.Delete(targetDir);
     }
 }
