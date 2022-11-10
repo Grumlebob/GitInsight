@@ -1,12 +1,11 @@
-﻿using System.IO.Compression;
-
-namespace GitInsight.Core;
+﻿namespace GitInsight.Core;
 
 public static class GitPathHelper
 {
     
     public static string GetRelativeTestFolder()  => @"/GitInsightTest/TestResources/Unzipped/Testrepo.git";
     public static string GetRelativeLocalFolder()  => @"/.git"; //måske tilføj @"GitInsight/";
+    public static string GetRelativeSavedRepositoriesFolder()  => @"/GitInsight.Data/SavedRepositories";
     
     public static string GetGitLocalFolder()
     {
@@ -20,9 +19,15 @@ public static class GitPathHelper
         return Path.Combine(projectPath! + GetRelativeTestFolder());
     }
 
+    public static string GetSavedRepositoriesFolder()
+    {
+        var projectPath = Directory.GetParent(Directory.GetCurrentDirectory())!.FullName;
+        return projectPath! + GetRelativeSavedRepositoriesFolder();
+    }
+
     public static string GetFullPathWhenCalledFromProgram(string relativePath)
     {
-        var projectPath = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
+        var projectPath = Directory.GetParent(Directory.GetCurrentDirectory())!.FullName;
         return Path.Combine(projectPath! + relativePath);
     }
     

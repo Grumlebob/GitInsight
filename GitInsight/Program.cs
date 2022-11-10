@@ -1,17 +1,9 @@
-﻿using System.IO.Compression;
-using GitInsight;
+﻿using GitInsight;
 using GitInsight.Core;
-using GitInsight.Data;
 using GitInsight.Entities;
 using Microsoft.EntityFrameworkCore;
 
-
-Console.WriteLine("logic " + GetFullPathWhenCalledFromProgram("/.git"));
-
 InsightContext context = new InsightContextFactory().CreateDbContext(args);
-DataManager dm = new DataManager(context);
-await dm.Analyze(GetFullPathWhenCalledFromProgram("/.git"), "/.git");
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,3 +41,4 @@ app.MapControllers();
 
 app.Run();
 
+Console.WriteLine(GetSavedRepositoriesFolder());
