@@ -27,12 +27,12 @@ public class RepoInsightsController : ControllerBase
     public async Task<IActionResult> AddOrUpdateLocalRepoData(string user, string repoName)
     {
         var url = $"https://github.com/{user}/{repoName}";
-        var repoPath = Path.Combine(GetSavedRepositoriesFolder(), user, repoName);
+        var repoPath = $"{GetSavedRepositoriesFolder()}/{user}/{repoName}";
         var dm = new DataManager(_context);
 
         if (Directory.Exists(repoPath))
         {
-            DeleteDirectory(Path.Combine(GetSavedRepositoriesFolder(), user));
+            DeleteDirectory($"{GetSavedRepositoriesFolder()}/{user}");
         }
         
         try
@@ -46,7 +46,7 @@ public class RepoInsightsController : ControllerBase
 
         DeleteDirectory(repoPath, foldersToSpare: new []{".git", repoPath}); //spare repoPath itself but delete all its content (but .git)
 
-        await dm.Analyze(Path.Combine(repoPath, ".git"), user + "/" + repoName);
+        await dm.Analyze(repoPath + "/.git", $"{GetRelativeSavedRepositoriesFolder()}/{user}/{repoName}");
         
         var (commits, _) = await new CommitInsightRepository(_context).FindAllAsync();
         return Ok(commits);

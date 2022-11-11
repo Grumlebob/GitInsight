@@ -2,6 +2,9 @@
 using GitInsight.Entities;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Commit = GitInsight.Entities.CommitInsight;
 using Repository = GitInsight.Entities.RepoInsight;
 
@@ -222,6 +225,20 @@ public class AuthorRepositoryTest : IDisposable
     }
 
     [Fact]
+    public async Task CreateAuthorReturnsConflict()
+    {
+        var (authorDto, response) = await _authorRepository.CreateAsync(new AuthorCreateDto("Third Author",
+            "Third Email", new List<int>() {1 }, new List<int>() { 1 }));
+        authorDto.Should().BeEquivalentTo(new AuthorDto(3, "Third Author", "Third Email", new List<int>() { 1},
+            new List<int>() { 1 }));
+        response.Should().Be(Response.Created);
+        
+        var (_, responseSame) = await _authorRepository.CreateAsync(new AuthorCreateDto("Third Author",
+            "Third Email", new List<int>() { }, new List<int>() { 1 }));
+        responseSame.Should().Be(Response.Conflict);
+    }
+
+    [Fact]
     public async Task DeleteAuthorReturnsDeleted()
     {
         var response = await _authorRepository.DeleteAsync(1);
@@ -261,6 +278,15 @@ public class AuthorRepositoryTest : IDisposable
             new List<int>() { 1 });
         var updatedAuthorDto = await _authorRepository.UpdateAsync(updateDto);
         updatedAuthorDto.Should().Be(Response.NotFound);
+    }
+
+    [Fact]
+
+    public async Task AuthorConfigurations()
+    {
+        AuthorConfigurations authorConfigurations = new AuthorConfigurations();
+        authorConfigurations.Should().NotBeNull();
+
     }
 
     public void Dispose()

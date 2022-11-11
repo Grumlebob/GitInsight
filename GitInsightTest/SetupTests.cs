@@ -7,7 +7,7 @@ namespace GitInsightTest;
 
 public static class SetupTests
 {
-    public static bool _hasBeenUnzipped = false;
+    private static bool _hasBeenUnzipped = false;
 
     public static (SqliteConnection, InsightContext) Setup()
     {
