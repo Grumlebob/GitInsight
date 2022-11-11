@@ -23,6 +23,13 @@ public class CommitInsightRepository : ICommitInsightRepository
         return entity == null ? (null, Response.NotFound) :
             (CommitToCommitDto(entity), Response.Ok);
     }
+    
+    public async Task<(List<CommitInsightDto?> commit, Response response)> FindByRepoIdAsync(int id)
+    {
+        var entities = await _context.Commits.Where(c => c.RepositoryId == id).Select(c =>CommitToCommitDto(c)).ToListAsync();
+        return entities.Any()? (entities, Response.Ok) :
+            (null,Response.NotFound);
+    }
 
     public async Task<(IReadOnlyCollection<CommitInsightDto> commits, Response response)> FindAllAsync()
     {

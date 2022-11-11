@@ -52,7 +52,6 @@ public class CommitInsightRepositoryTest : IDisposable
 
         commit.Sha.Should().Be("treg");
 
-
     }
 
     [Fact]
@@ -63,9 +62,53 @@ public class CommitInsightRepositoryTest : IDisposable
         response.Should().Be(Response.NotFound);
         commit.Should().BeNull();
     }
+    
+    [Fact]
+    public async Task Find_by_sha_return_ok()
+    {
+        var (commit, response) = await _repository.FindByShaAsync("heck");
+
+        response.Should().Be(Response.Ok);
+
+        commit.Id.Should().Be(2);
+
+    }
+    
+    [Fact]
+    public async Task Find_by_sha_return_notFound()
+    {
+        var (commit, response) = await _repository.FindByShaAsync("ebeb");
+
+        response.Should().Be(Response.NotFound);
+
+        commit.Should().BeNull();
+    }
 
     [Fact]
-    public async Task Find_id_all_return_ok()
+    public async Task Find_by_repoId_return_ok()
+    {
+        var (commits, response) = await _repository.FindByRepoIdAsync(2);
+
+        response.Should().Be(Response.Ok);
+
+        commits.Count.Should().Be(2);
+        commits[0]!.Id.Should().Be(2);
+        commits[1]!.Id.Should().Be(3);
+
+    }
+    
+    [Fact]
+    public async Task Find_by_repoId_return_notFound()
+    {
+        var (commits, response) = await _repository.FindByRepoIdAsync(5);
+
+        response.Should().Be(Response.NotFound);
+
+        commits.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task Find_all_return_ok()
     {
         var (commits, response) = await _repository.FindAllAsync();
 
@@ -166,6 +209,7 @@ public class CommitInsightRepositoryTest : IDisposable
     public async Task Test_Relations()
     {
         _context.Commits.FirstOrDefaultAsync(c => c.Id == 1).Result.Author.Name.Should().Be("Søren");
+        _context.Commits.FirstOrDefaultAsync(c => c.Id == 1).Result.Branch.Id.Should().Be(1);
         _context.Commits.FirstOrDefaultAsync(c => c.Id == 3).Result.Repository.Name.Should().Be("repo2");
     }
     public void Dispose()
