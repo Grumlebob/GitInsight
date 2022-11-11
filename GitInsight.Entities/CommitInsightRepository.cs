@@ -33,8 +33,9 @@ public class CommitInsightRepository : ICommitInsightRepository
 
     public async Task<(IReadOnlyCollection<CommitInsightDto> commits, Response response)> FindAllAsync()
     {
-        return (await _context.Commits.Select(entity => CommitToCommitDto(entity)).ToListAsync()
-            , Response.Ok);
+        var entities = await _context.Commits.Select(entity => CommitToCommitDto(entity)).ToListAsync();
+        return entities.Any()? (entities, Response.Ok) :
+            (null,Response.NotFound);
     }
 
     public async Task<(Response response, CommitInsightDto? commit)> CreateAsync(CommitInsightCreateDto commitCreateDto)

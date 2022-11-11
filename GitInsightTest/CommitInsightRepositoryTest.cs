@@ -115,6 +115,15 @@ public class CommitInsightRepositoryTest : IDisposable
         response.Should().Be(Response.Ok);
         commits.Count.Should().Be(3);
     }
+    
+    [Fact]
+    public async Task Find_all_return_notFound()
+    {
+        await _context.Commits.ExecuteDeleteAsync();
+        var (commits, response) = await _repository.FindAllAsync();
+        response.Should().Be(Response.NotFound);
+        commits.Should().BeNull();
+    }
 
     [Fact]
     public async Task Create_return_created()
