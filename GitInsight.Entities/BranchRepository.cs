@@ -9,23 +9,23 @@ public class BranchRepository : IBranchRepository
         _context = context;
     }
 
-    public async Task<(Response, BranchDto?)> CreateAsync(BranchCreateDto newBranch)
+    public async Task<(BranchDto?, Response)> CreateAsync(BranchCreateDto newBranch)
     {
         var conflict = from b in _context.Branches
-            where newBranch.RepositoryId == b.RepositoryId && newBranch.Path == b.Path
-            select new BranchDto(b.Id, b.Name, b.RepositoryId, b.Path);
+                       where newBranch.RepositoryId == b.RepositoryId && newBranch.Path == b.Path
+                       select new BranchDto(b.Id, b.Name, b.RepositoryId, b.Path);
 
         var repo = await _context.Repositories.FirstOrDefaultAsync(r => r.Id == newBranch.RepositoryId);
 
         if (await conflict.AnyAsync())
         {
             var match = await conflict.FirstAsync();
-            return (Response.Conflict, new BranchDto(match!.Id, match.Name, match.RepositoryId, match.Path));
+            return (new BranchDto(match!.Id, match.Name, match.RepositoryId, match.Path), Response.Conflict);
         }
 
         if (repo is null)
         {
-            return (Response.BadRequest, null);
+            return (null, Response.BadRequest);
         }
 
         var created = new Branch
@@ -37,36 +37,58 @@ public class BranchRepository : IBranchRepository
         await _context.Branches.AddAsync(created);
         await _context.SaveChangesAsync();
 
-        return (Response.Created,
-            new BranchDto(created.Id, created.Name, created.RepositoryId, created.Path));
+        return (
+            new BranchDto(created.Id, created.Name, created.RepositoryId, created.Path), Response.Created);
     }
 
-    public async Task<BranchDto> FindAsync(int id)
+    public async Task<(BranchDto?, Response)> FindAsync(int id)
     {
         var result = from b in _context.Branches
-            where b.Id == id
-            select new BranchDto(b.Id, b.Name,  b.RepositoryId, b.Path);
-        return (await result.FirstOrDefaultAsync())!;
+                     where b.Id == id
+                     select new BranchDto(b.Id, b.Name, b.RepositoryId, b.Path);
+
+        if (await result.AnyAsync())
+        {
+            var match = await result.FirstAsync();
+            return (match!, Response.Ok);
+        }
+
+        return (null, Response.NotFound);
     }
 
     /// <summary>
     /// Find all branches in the repository with Id = repositoryId.
     /// </summary>
     /// <param name="repositoryId"></param>
-    public async Task<IReadOnlyCollection<BranchDto>> FindAllAsync(int repositoryId)
+    public async Task<(List<BranchDto>?, Response)> FindAllAsync(int repositoryId)
     {
         var result = from b in _context.Branches
-            where b.RepositoryId == repositoryId
-            select new BranchDto(b.Id, b.Name, b.RepositoryId, b.Path);
-        return await result.ToListAsync().ContinueWith(x => x.Result as IReadOnlyCollection<BranchDto>);
+                     where b.RepositoryId == repositoryId
+                     select new BranchDto(b.Id, b.Name, b.RepositoryId, b.Path);
+
+        if (await result.AnyAsync())
+        {
+            var match = await result.ToListAsync();
+            return (match, Response.Ok);
+        }
+
+        return (null, Response.NotFound);
     }
 
     /// <returns>All branches in database.</returns>
-    public async Task<IReadOnlyCollection<BranchDto>> FindAllAsync()
+    public async Task<(List<BranchDto>?, Response)> FindAllAsync()
     {
         var result = from b in _context.Branches
-            select new BranchDto(b.Id, b.Name, b.RepositoryId, b.Path);
-        return await result.ToListAsync().ContinueWith(x => x.Result as IReadOnlyCollection<BranchDto>);
+                     select new BranchDto(b.Id, b.Name, b.RepositoryId, b.Path);
+
+        if (await result.AnyAsync())
+        {
+            var match = await result.ToListAsync();
+            return (match, Response.Ok);
+        }
+
+        return (null, Response.NotFound);
+        // return await result.ToListAsync().ContinueWith(x => x.Result as IReadOnlyCollection<BranchDto>);
     }
 
     public async Task<Response> DeleteAsync(int id)

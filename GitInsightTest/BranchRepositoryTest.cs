@@ -33,7 +33,7 @@ public class BranchRepositoryTest : IDisposable
     public async Task Create_Branch_Unknown_Repository()
     {
         var newBranch = new BranchCreateDto("cool", 3, "head/cool");
-        var (response, result) = await _repo.CreateAsync(newBranch);
+        var (result, response) = await _repo.CreateAsync(newBranch);
         response.Should().Be(Response.BadRequest);
         result.Should().BeNull();
         (await _context.Branches.FindAsync(1)).Should().BeNull();
@@ -43,9 +43,10 @@ public class BranchRepositoryTest : IDisposable
     public async Task Create_Branch_Success()
     {
         var newBranch = new BranchCreateDto("cooler", 1, "main/");
-        var (response, result) = await _repo.CreateAsync(newBranch);
+        var (result, response) = await _repo.CreateAsync(newBranch);
         response.Should().Be(Response.Created);
-        result.Id.Should().Be(1);
+        result.Should().NotBeNull();
+        result!.Id.Should().Be(1);
         result.Name.Should().Be("cooler");
         (await _context.Branches.FindAsync(1))!.Name.Should().Be("cooler");
     }
@@ -57,16 +58,20 @@ public class BranchRepositoryTest : IDisposable
             new BranchCreateDto("I came before", 1, "main/no");
         await _repo.CreateAsync(conflictBranch);
         var newBranch = new BranchCreateDto("aww man", 1, "main/no");
-        var (response, result) = await _repo.CreateAsync(newBranch);
+        var (result, response) = await _repo.CreateAsync(newBranch);
         response.Should().Be(Response.Conflict);
-        result.Name.Should().Be("I came before");
+        result.Should().NotBeNull();
+        result!.Name.Should().Be("I came before");
         (await _context.Branches.FindAsync(2)).Should().BeNull();
     }
 
     [Fact]
     public async Task Find_Branch_Not_Exist()
     {
-        (await _repo.FindAsync(1)).Should().BeNull();
+        var (result, response) = await _repo.FindAsync(1);
+        response.Should().Be(Response.NotFound);
+        result.Should().BeNull();
+
     }
 
     [Fact]
@@ -74,7 +79,10 @@ public class BranchRepositoryTest : IDisposable
     {
         var newBranch = new BranchCreateDto("me", 1, "69");
         await _repo.CreateAsync(newBranch);
-        (await _repo.FindAsync(1)).Name.Should().Be("me");
+        var (result, response) = await _repo.FindAsync(1);
+        response.Should().Be(Response.Ok);
+        result.Should().NotBeNull();
+        result!.Name.Should().Be("me");
     }
 
     [Fact]
@@ -83,7 +91,12 @@ public class BranchRepositoryTest : IDisposable
         await _repo.CreateAsync(new BranchCreateDto("1", 1, "ok/then"));
         await _repo.CreateAsync(new BranchCreateDto("2", 1, "yeah/then"));
         await _repo.CreateAsync(new BranchCreateDto("3", 2, "yeah/then"));
-        (await _repo.FindAllAsync(1)).Count.Should().Be(2);
+
+        var (result, response) = await _repo.FindAllAsync(1);
+        response.Should().Be(Response.Ok);
+        result.Should().NotBeNull();
+        result!.Should().HaveCount(2);
+
     }
 
     [Fact]
@@ -97,7 +110,12 @@ public class BranchRepositoryTest : IDisposable
         await _context.SaveChangesAsync();
         await _repo.CreateAsync(new BranchCreateDto("3rd", 2,
             "yeah/then"));
-        (await _repo.FindAllAsync()).Count.Should().Be(3);
+
+        var (result, response) = await _repo.FindAllAsync();
+        response.Should().Be(Response.Ok);
+        result.Should().NotBeNull();
+        result!.Should().HaveCount(3);
+
     }
 
     [Fact]
@@ -106,7 +124,12 @@ public class BranchRepositoryTest : IDisposable
         await _repo.CreateAsync(new BranchCreateDto("heh", 1, "nah"));
         (await _repo.FindAsync(1)).Should().NotBeNull();
         (await _repo.DeleteAsync(1)).Should().Be(Response.Deleted);
-        (await _repo.FindAsync(1)).Should().BeNull();
+
+        var (result, response) = await _repo.FindAsync(1);
+
+        response.Should().Be(Response.NotFound);
+        result.Should().BeNull();
+
     }
 
     [Fact]
@@ -132,11 +155,14 @@ public class BranchRepositoryTest : IDisposable
         await _repo.CreateAsync(new BranchCreateDto("pff", 1, "notOk"));
         var response =
             await _repo.UpdateAsync(new BranchDto(1, "Better", 2, "ok"));
-        var updated = await _repo.FindAsync(1);
+
+        var (updatedResult, findResponse) = await _repo.FindAsync(1);
         response.Should().Be(Response.Ok);
-        updated.Name.Should().Be("Better");
-        updated.RepositoryId.Should().Be(2);
-        updated.Path.Should().Be("ok");
+        findResponse.Should().Be(Response.Ok);
+        updatedResult.Should().NotBeNull();
+        updatedResult!.Name.Should().Be("Better");
+        updatedResult.RepositoryId.Should().Be(2);
+        updatedResult.Path.Should().Be("ok");
     }
 
     [Fact]
