@@ -1,7 +1,6 @@
 ﻿using GitInsight.Core;
 using GitInsight.Entities;
 using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
 using Branch = GitInsight.Entities.Branch;
 
 
@@ -18,7 +17,7 @@ public class RepoInsightRepositoryTest : IDisposable
         (_connection, _context) = SetupTests.Setup();
         _repoInsightRepository = new RepoInsightRepository(_context);
 
-        var testRepo = new GitInsight.Entities.RepoInsight()
+        var testRepo = new RepoInsight()
         {
             Id = 1,
             Name = "First Repo",
@@ -91,12 +90,28 @@ public class RepoInsightRepositoryTest : IDisposable
         var a = await _repoInsightRepository.FindAsync(1);
         Assert.Equal("First Repo", a.Item1!.Name);
         Assert.Equal("First RepoPath", a.Item1.Path);
+        Assert.Equal(0, a.Item1.LatestCommitId);
     }
 
     [Fact]
     public async Task FindRepository_DoesntExist_Test()
     {
         var a = await _repoInsightRepository.FindAsync(2);
+        Assert.Equal(a, (null, Response.NotFound));
+    }
+
+    [Fact]
+    public async Task FindRepositoryByPath_Test()
+    {
+        var a = await _repoInsightRepository.FindRepositoryByPathAsync("First RepoPath");
+        Assert.Equal("First Repo", a.Item1!.Name);
+        Assert.Equal("First RepoPath", a.Item1.Path);
+    }
+
+    [Fact]
+    public async Task FindRepositoryByPath_DoesntExist_Test()
+    {
+        var a = await _repoInsightRepository.FindRepositoryByPathAsync("Non-existing Path");
         Assert.Equal(a, (null, Response.NotFound));
     }
 
@@ -132,15 +147,17 @@ public class RepoInsightRepositoryTest : IDisposable
             "Updated Name",
             branches,
             commits,
-            authors
+            authors,
+            0
         );
 
         var updatedResponse = await _repoInsightRepository.UpdateAsync(expect);
         var (resultRepo, _) = await _repoInsightRepository.FindAsync(1);
 
         updatedResponse.Should().Be(Response.Ok);
-        resultRepo.Name.Should().Be("Updated Name");
+        resultRepo!.Name.Should().Be("Updated Name");
         resultRepo.Path.Should().Be("Updated Path");
+        resultRepo.LatestCommitId.Should().Be(0);
     }
 
     [Fact]
@@ -152,7 +169,8 @@ public class RepoInsightRepositoryTest : IDisposable
             "Updated RepoPath",
             new List<int>(),
             new List<int>(),
-            new List<int>()
+            new List<int>(),
+            1
         );
 
         var updatedResponse = await _repoInsightRepository.UpdateAsync(expect);
@@ -184,8 +202,19 @@ public class RepoInsightRepositoryTest : IDisposable
             new List<int>()
         );
 
-        var (_, response) = await _repoInsightRepository.CreateAsync(create);
 
+        var (result, response) = await _repoInsightRepository.CreateAsync(create);
+
+        var expected = new RepoInsightDto(
+            2,
+            "Second Repo",
+            "Second RepoPath",
+            new List<int>(),
+            new List<int>(),
+            new List<int>(),
+            0
+        );
+        result.Should().BeEquivalentTo(expected);
         response.Should().Be(Response.Created);
     }
 
@@ -200,9 +229,54 @@ public class RepoInsightRepositoryTest : IDisposable
             new List<int>()
         );
 
-        var (_, response) = await _repoInsightRepository.CreateAsync(create);
+        var (result, response) = await _repoInsightRepository.CreateAsync(create);
+
+        var expected = new RepoInsightDto(
+            Id: 1,
+            Name: "First Repo",
+            Path: "First RepoPath",
+            BranchIds: new List<int>() { 1 },
+            CommitIds: new List<int>() { 1, 2 },
+            AuthorIds: new List<int>() { 1, 2 },
+            LatestCommitId: 0
+        );
 
         response.Should().Be(Response.Conflict);
+        result.Should().BeEquivalentTo(expected);
+    }
+
+    [Fact]
+    public async Task Update_Latest_Commit_Success()
+    {
+        var newCommit = new CommitInsightCreateDto("ab", DateTimeOffset.Now, 1, 1, 1);
+        await new CommitInsightRepository(_context).CreateAsync(newCommit);
+        var newLastCommit = new RepoInsightLatestCommitUpdate(1, 2);
+        
+        var (result, response) = await _repoInsightRepository.FindAsync(1);
+        result!.LatestCommitId.Should().Be(0);
+        response.Should().Be(Response.Ok);
+        
+        var response2 = await _repoInsightRepository.UpdateLatestCommitAsync(newLastCommit);
+        var (result2, _) = await _repoInsightRepository.FindAsync(1);
+        response2.Should().Be(Response.Ok);
+        result2!.LatestCommitId.Should().Be(2);
+    }
+    
+    [Fact]
+    public async Task Update_Latest_Commit_Not_Exist()
+    {
+        var newLastCommit = new RepoInsightLatestCommitUpdate(1, 5);
+        var response = await _repoInsightRepository.UpdateLatestCommitAsync(newLastCommit);
+        var (result, _) = await _repoInsightRepository.FindAsync(1);
+        response.Should().Be(Response.BadRequest);
+        result!.LatestCommitId.Should().Be(0);
+    }
+
+    [Fact]
+    public async Task Update_Latest_Commit_Repo_Not_Exist()
+    {
+        var response = await _repoInsightRepository.UpdateLatestCommitAsync(new RepoInsightLatestCommitUpdate(2, 2));
+        response.Should().Be(Response.NotFound);
     }
 
 
