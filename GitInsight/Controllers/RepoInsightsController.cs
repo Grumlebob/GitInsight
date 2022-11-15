@@ -23,7 +23,7 @@ public class RepoInsightsController : ControllerBase
     [HttpGet]
     [Route("{user}/{repoName}")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<CommitInsight>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<CommitsByDateByAuthor>))]
     public async Task<IActionResult> AddOrUpdateLocalRepoData(string user, string repoName)
     {
         var url = $"https://github.com/{user}/{repoName}";
@@ -46,10 +46,16 @@ public class RepoInsightsController : ControllerBase
 
         DeleteDirectory(repoPath, foldersToSpare: new []{".git", repoPath}); //spare repoPath itself but delete all its content (but .git)
 
-        await dm.Analyze(repoPath + "/.git", $"{GetRelativeSavedRepositoriesFolder()}/{user}/{repoName}");
+        var relPath = $"{GetRelativeSavedRepositoriesFolder()}/{user}/{repoName}";
+
+        await dm.Analyze(repoPath + "/.git", relPath);
+
+        var analysis = new Analysis(_context);
         
-        var (commits, _) = await new CommitInsightRepository(_context).FindAllAsync();
-        return Ok(commits);
+        var (repo,response) = await new RepoInsightRepository(_context).FindRepositoryByPathAsync(relPath);
+        
+        
+        return Ok(await analysis.GetCommitsByAuthor(repo.Id));
     }
 
     //https://stackoverflow.com/questions/329355/cannot-delete-directory-with-directory-deletepath-true
