@@ -103,15 +103,17 @@ public class RepoInsightRepository : IRepoInsightRepository
 
     public async Task<Response> UpdateLatestCommitAsync(RepoInsightLatestCommitUpdate dto)
     {
-        var toUpdate = await _context.Repositories.FirstOrDefaultAsync(r => r.Id == dto.Id);
+        var toUpdate = await _context.Repositories.FirstOrDefaultAsync(r => r.Id == dto.RepoId);
         if (toUpdate is null) return Response.NotFound;
+        var newCommit = await _context.Commits.FirstOrDefaultAsync(c => c.Id == dto.LatestCommitId);
+        if (newCommit is null) return Response.BadRequest;
+        
         toUpdate.LatestCommitId = dto.LatestCommitId;
         _context.Repositories.Update(toUpdate);
         await _context.SaveChangesAsync();
 
         return Response.Ok;
     }
-
 
     public static RepoInsightDto RepositoryToRepositoryDto(RepoInsight repository)
     {
@@ -120,6 +122,7 @@ public class RepoInsightRepository : IRepoInsightRepository
             repository.Name!,
             repository.Branches.Select(b => b.Id),
             repository.Commits.Select(c => c.Id),
-            repository.Authors.Select(a => a.Id));
+            repository.Authors.Select(a => a.Id),
+            repository.LatestCommitId);
     }
 }
