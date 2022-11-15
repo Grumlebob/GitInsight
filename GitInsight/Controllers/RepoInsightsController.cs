@@ -1,4 +1,5 @@
-﻿using GitInsight.Core;
+﻿using System.Reflection.Metadata.Ecma335;
+using GitInsight.Core;
 using GitInsight.Data;
 using GitInsight.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -22,62 +23,39 @@ public class RepoInsightsController : ControllerBase
     [HttpGet]
     [Route("{user}/{repoName}")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<CommitInsight>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<CommitsByDateByAuthor>))]
     public async Task<IActionResult> AddOrUpdateLocalRepoData(string user, string repoName)
     {
         var url = $"https://github.com/{user}/{repoName}";
         var repoPath = $"{GetSavedRepositoriesFolder()}/{user}/{repoName}";
-        var userPath = $"{GetSavedRepositoriesFolder()}/{user}";
         var dm = new DataManager(_context);
 
         if (Directory.Exists(repoPath))
         {
-            DeleteDirectory(repoPath);
+            DeleteDirectory($"{GetSavedRepositoriesFolder()}/{user}");
         }
-
+        
         try
         {
             Repository.Clone(url, repoPath);
         }
-        catch (LibGit2SharpException)
+        catch (LibGit2SharpException e)
         {
-            if (Directory.Exists(userPath) && !Directory.EnumerateFileSystemEntries(userPath).Any())
-            {
-                DeleteDirectory(userPath); //clone makes a new folder even when failed. Delete if empty
-            }
-
-            return BadRequest("Something went wrong in trying to reach the repository. " +
-                              "Please check that your spelling is correct and that it is a public repository");
+            return BadRequest(e.Message);
         }
 
-        DeleteDirectory(repoPath,
-            foldersToSpare: new[] { ".git", repoPath }); //spare repoPath itself but delete all its content (but .git)
+        DeleteDirectory(repoPath, foldersToSpare: new []{".git", repoPath}); //spare repoPath itself but delete all its content (but .git)
 
-        await dm.Analyze(repoPath + "/.git", $"{GetRelativeSavedRepositoriesFolder()}/{user}/{repoName}");
+        var relPath = $"{GetRelativeSavedRepositoriesFolder()}/{user}/{repoName}";
 
-        var (commits, _) = await new CommitInsightRepository(_context).FindAllAsync();
-        return Ok(commits);
-    }
+        await dm.Analyze(repoPath + "/.git", relPath);
 
-    [HttpGet]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<RepoInsightRepository>))]
-    public async Task<IActionResult> GetAllRepositories()
-    {
-        var (list, response) = await _repoInsightRepository.FindAllAsync();
-        if (response == Core.Response.Ok) return Ok(list);
-        return NotFound();
-    }
-
-    [HttpGet]
-    [Route("{id:int}")]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RepoInsightRepository))]
-    public async Task<IActionResult> GetRepoById(int id)
-    {
-        var (repoDto, response) = await _repoInsightRepository.FindAsync(id);
-        if (response == Core.Response.NotFound) return NotFound();
-        return Ok(repoDto);
+        var analysis = new Analysis(_context);
+        
+        var (repo,response) = await new RepoInsightRepository(_context).FindRepositoryByPathAsync(relPath);
+        
+        
+        return Ok(await analysis.GetCommitsByAuthor(repo.Id));
     }
 
     //https://stackoverflow.com/questions/329355/cannot-delete-directory-with-directory-deletepath-true
@@ -87,7 +65,7 @@ public class RepoInsightsController : ControllerBase
         var files = Directory.GetFiles(targetDir);
         var dirs = Directory.GetDirectories(targetDir);
 
-        foreach (var file in files)
+        foreach (string file in files)
         {
             System.IO.File.SetAttributes(file, FileAttributes.Normal);
             System.IO.File.Delete(file);
@@ -98,7 +76,7 @@ public class RepoInsightsController : ControllerBase
             if (foldersToSpare.Any(dir.EndsWith)) continue;
             DeleteDirectory(dir, foldersToSpare);
         }
-
+        
         if (foldersToSpare.Any(targetDir.EndsWith)) return;
         Directory.Delete(targetDir);
     }
