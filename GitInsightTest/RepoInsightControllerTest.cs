@@ -1,4 +1,5 @@
-﻿using GitInsight.Controllers;
+﻿using GitInsight;
+using GitInsight.Controllers;
 using GitInsight.Core;
 using GitInsight.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -19,74 +20,85 @@ public class RepoInsightControllerTest : IDisposable
     {
         (_connection, _context) = SetupTests.Setup();
         _repoInsightController = new RepoInsightsController(_context);
-        //Base testing repository
-        var testRepo = new Repository()
-        {
-            Id = 1,
-            Name = "First Repo",
-            Path = "First RepoPath",
-        };
-        _context.Repositories.Add(testRepo);
-        _context.SaveChanges();
-        //Base testing branch
-        var testBranch = new GitInsight.Entities.Branch()
-        {
-            Id = 1,
-            Name = "First Branch",
-            Path = "First BranchPath",
-            Repository = testRepo,
-            RepositoryId = 1,
-        };
-        _context.Branches.Add(testBranch);
-        _context.SaveChanges();
-        //Base testing author 1
-        var sampleAuthorOne = new Author
-        {
-            Id = 1,
-            Name = "First Author",
-            Email = "First Email",
-            Repositories = { testRepo },
-            Commits =
-            {
-                new Commit
-                {
-                    Sha = "First Commit",
-                    Date = DateTime.Now,
-                    Branch = testBranch,
-                    Repository = testRepo,
-                    RepositoryId = 1,
-                },
-            },
-        };
-        _context.Add(sampleAuthorOne);
-        _context.SaveChanges();
-        //Base testing author 2
-        var sampleAuthorTwo = new Author
-        {
-            Id = 2,
-            Name = "Second Author",
-            Email = "Second Email",
-            Repositories = { testRepo },
-            Commits =
-            {
-                new Commit
-                {
-                    Sha = "Second Commit",
-                    Date = DateTime.Now,
-                    Branch = testBranch,
-                    Repository = testRepo,
-                    RepositoryId = 1,
-                },
-            },
-        };
-        _context.Add(sampleAuthorTwo);
-        _context.SaveChanges();
+    }
+
+    [Fact]
+    public async Task Get_Repo_From_Url_Success()
+    {
+        var result = await _repoInsightController.AddOrUpdateLocalRepoData("Grumlebob", "GitInsight");
+        result.Should().BeAssignableTo<OkObjectResult>();
+        var content = (result as OkObjectResult)!.Value as List<CommitsByDateByAuthor>;
+        content!.Count.Should().BePositive();
+    }
+
+    [Fact]
+    public async Task Get_Repo_From_Url_Invalid_Url()
+    {
+        var result = await _repoInsightController.AddOrUpdateLocalRepoData("NonExisting", "notExist");
+        result.Should().BeAssignableTo<BadRequestObjectResult>();
+    }
+
+    [Fact]
+    public async Task Get_Repo_From_Url_Existing_User_NonExisting_Repo()
+    {
+        var control = await _repoInsightController.AddOrUpdateLocalRepoData("Grumlebob", "GitInsight");
+        control.Should().BeAssignableTo<OkObjectResult>();
+        var result = await _repoInsightController.AddOrUpdateLocalRepoData("Grumlebob", "notExist");
+        result.Should().BeAssignableTo<BadRequestObjectResult>();
+    }
+
+    [Fact]
+    public async Task Get_Repo_From_Url_Updates_Existing()
+    {
+        var control = await _repoInsightController.AddOrUpdateLocalRepoData("Grumlebob", "GitInsight");
+        control.Should().BeAssignableTo<OkObjectResult>();
+        var result = await _repoInsightController.AddOrUpdateLocalRepoData("Grumlebob", "GitInsight");
+        result.Should().BeAssignableTo<OkObjectResult>();
+        var content = (result as OkObjectResult)!.Value as List<CommitsByDateByAuthor>;
+        content!.Count.Should().BePositive();
+    }
+
+    [Fact]
+    public async Task Get_Repo_By_Id_Success()
+    {
+        var testRepo = new RepoInsightCreateDto("pathy", "namy", null!, null!, null!);
+        await new RepoInsightRepository(_context).CreateAsync(testRepo);
         
+        var result = await _repoInsightController.GetRepoById(1);
+        result.Should().BeAssignableTo<OkObjectResult>();
+        var content = (result as OkObjectResult)!.Value as RepoInsightDto;
+        content!.Name.Should().Be("namy");
+    }
+
+    [Fact]
+    public async Task Get_Repo_By_Id_Not_Found()
+    {
+        var result = await _repoInsightController.GetRepoById(1);
+        result.Should().BeAssignableTo<NotFoundResult>();
+    }
+
+    [Fact]
+    public async Task Get_All_Repo_Success()
+    {
+        var testRepo = new RepoInsightCreateDto("pathy", "namy", null!, null!, null!);
+        await new RepoInsightRepository(_context).CreateAsync(testRepo);
+        
+        var result = await _repoInsightController.GetAllRepositories();
+        result.Should().BeAssignableTo<OkObjectResult>();
+        var content = (result as OkObjectResult)!.Value as List<RepoInsightDto>;
+        content!.Count.Should().Be(1);
+    }
+
+    [Fact]
+    public async Task Get_Repo_None_Found()
+    {
+        var result = await _repoInsightController.GetAllRepositories();
+        result.Should().BeAssignableTo<NotFoundResult>();
     }
 
     public void Dispose()
     {
         _connection.Dispose();
+        _context.Dispose();
     }
-    
 }

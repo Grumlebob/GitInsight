@@ -58,7 +58,7 @@ public class RepoInsightsController : ControllerBase
         await dm.Analyze(repoPath + "/.git", relPath);
         var analysis = new Analysis(_context);
         
-        var (repo,response) = await new RepoInsightRepository(_context).FindRepositoryByPathAsync(relPath);
+        var (repo, _) = await new RepoInsightRepository(_context).FindRepositoryByPathAsync(relPath);
         
         return Ok(await analysis.GetCommitsByAuthor(repo!.Id));
     }
