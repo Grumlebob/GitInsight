@@ -723,3 +723,6 @@ $RECYCLE.BIN/
 # Additional files built by Visual Studio
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,rider,windows,dotnetcore,vim,csharp,visualstudio
+GitInsight.Entities/Migrations/20221115095227_Initial.Designer.cs
+GitInsight.Entities/Migrations/20221115095227_Initial.cs
+*.cs
