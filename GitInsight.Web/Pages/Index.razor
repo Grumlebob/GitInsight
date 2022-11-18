@@ -1,5 +1,7 @@
 ﻿@page "/"
-@inject NavigationManager NavigationManager
+@using GitInsight.Web.Services
+@using GitInsight.Core
+@inject IAnalysisService _analysisService
 
 <PageTitle>Index</PageTitle>
 
@@ -7,17 +9,25 @@
 
 <form>
     <input type="text" @bind="@textInput" placeholder="user/GitRepo"/>
-<button type="submit" @onclick="FindRepo" >Go</button>
 </form>
+ <button @onclick="FindRepo" >Go</button>
+
+<p role="status" id="consolewriteline">@outputText</p>
 
 @code {
     private string textInput;
-    public void FindRepo()
+    private string outputText;
+    private List<CommitsByDateByAuthor> _commitsByAuthors;
+    public async Task FindRepo()
     {
-        if(textInput == "")
-            return;
 
-        NavigationManager.NavigateTo($"/{textInput}");
+        _commitsByAuthors = await _analysisService.GetCommitsByAuthor(textInput);
+        outputText = _commitsByAuthors.Count.ToString();
+    }
+    
+    private void IncrementCount()
+    {
+        outputText += "yes";
     }
 }
 

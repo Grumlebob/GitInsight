@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
+
 var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
 
 builder.Services.AddDbContext<InsightContext>(o =>
