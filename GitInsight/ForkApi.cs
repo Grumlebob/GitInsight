@@ -23,6 +23,6 @@ public class ForkApi //move me when blazor is added
     {
         //If we want more info from the forks we can make our own struct that saves relevant values instead of "Object"
         var res = await _client.GetFromJsonAsync<IEnumerable<Object>>($"repos/{repo}/forks");
-        return res.Count();
+        return res.Count(); //Closes #55 
     }
 }
