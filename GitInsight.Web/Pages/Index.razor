@@ -10,27 +10,49 @@
 <form>
     <input type="text" @bind="@textInput" placeholder="user/GitRepo"/>
 </form>
- <button @onclick="FindRepo" >Go</button>
-
-<p role="status" id="consolewriteline">@outputText</p>
-
-@code {
-    private string textInput;
-    private string outputText;
-    private List<CommitsByDateByAuthor> _commitsByAuthors;
-    public async Task FindRepo()
+ <button @onclick="GetRepo" >Go</button>
+@* <p role="status" id="consolewriteline">@outputText</p> *@
+@if (_commitsByAuthors != null && _commitsByAuthors.Any())
+{
+    @foreach (var commitsByAuthor in _commitsByAuthors)
     {
-
-        _commitsByAuthors = await _analysisService.GetCommitsByAuthor("repoinsights/" + textInput);
-        outputText = _commitsByAuthors.Count.ToString();
-    }
-    
-    private void IncrementCount()
-    {
-        outputText += "yes";
+        <TrendChart Author="@commitsByAuthor.AuthorName" Data="@FormatDates(commitsByAuthor.CommitsByDates)"/>
     }
 }
 
+@code {
+    private string textInput;
+    // private string outputText;
+    private List<CommitsByDateByAuthor> _commitsByAuthors = new ();
+
+    public List<CommitsByDateFormatted> FormatDates(IEnumerable<CommitsByDate> commitsByDate)
+    {
+        var formattedDates = new List<CommitsByDateFormatted>();
+        foreach (var date in commitsByDate)
+        {
+            var formattedDate = date.Date.ToString("dd MMM");
+            formattedDates.Add(new CommitsByDateFormatted{Date = formattedDate, CommitAmount = date.CommitAmount});
+        }
+
+        return formattedDates;
+    }
+
+
+
+    public async Task GetRepo()
+    {
+
+        _commitsByAuthors = await _analysisService.GetCommitsByAuthor($"repoinsights/{textInput}" );
+        // outputText = _commitsByAuthors.Count.ToString();
+
+    }
+
+@*     private void IncrementCount() *@
+@*     { *@
+@*         outputText += "yes"; *@
+@*     } *@
+@* } *@
+}
 
 
 

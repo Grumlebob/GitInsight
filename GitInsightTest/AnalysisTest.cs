@@ -54,10 +54,10 @@ public class AnalysisTest
         commitsByDate.Count.Should().Be(2);
 
         commitsByDate[0].Date.Should().Be(new DateTime(2022, 10, 13, 0, 0, 0));
-        commitsByDate[0].Commits.Should().Be(2);
+        commitsByDate[0].CommitAmount.Should().Be(2);
         
         commitsByDate[1].Date.Should().Be(new DateTime(2022, 11, 15, 0, 0, 0));
-        commitsByDate[1].Commits.Should().Be(1);
+        commitsByDate[1].CommitAmount.Should().Be(1);
     }
     
     
@@ -71,14 +71,14 @@ public class AnalysisTest
         commitsByAuthor[0].AuthorName.Should().Be("Søren");
         commitsByAuthor[0].CommitsByDates.Count.Should().Be(2);
         commitsByAuthor[0].CommitsByDates[0].Date.Should().Be(new DateTime(2022, 10, 13, 0, 0, 0));
-        commitsByAuthor[0].CommitsByDates[0].Commits.Should().Be(1);
+        commitsByAuthor[0].CommitsByDates[0].CommitAmount.Should().Be(1);
         commitsByAuthor[0].CommitsByDates[1].Date.Should().Be(new DateTime(2022, 11, 15, 0, 0, 0));
-        commitsByAuthor[0].CommitsByDates[1].Commits.Should().Be(1);
+        commitsByAuthor[0].CommitsByDates[1].CommitAmount.Should().Be(1);
         
         commitsByAuthor[1].AuthorName.Should().Be("Per");
         commitsByAuthor[1].CommitsByDates.Count.Should().Be(1);
         commitsByAuthor[1].CommitsByDates[0].Date.Should().Be(new DateTime(2022, 10, 13, 0, 0, 0));
-        commitsByAuthor[1].CommitsByDates[0].Commits.Should().Be(1);
+        commitsByAuthor[1].CommitsByDates[0].CommitAmount.Should().Be(1);
         
     }
 
