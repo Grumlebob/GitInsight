@@ -21,7 +21,7 @@
     public async Task FindRepo()
     {
 
-        _commitsByAuthors = await _analysisService.GetCommitsByAuthor(textInput);
+        _commitsByAuthors = await _analysisService.GetCommitsByAuthor("repoinsights/" + textInput);
         outputText = _commitsByAuthors.Count.ToString();
     }
     
