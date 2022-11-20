@@ -59,8 +59,20 @@ public class AuthorRepository : IAuthorRepository
         }
 
         var (existing, authorResponse) = await FindByEmailAsync(authorCreateDto.Email);
-        if (authorResponse != Response.NotFound)
+        if (authorResponse != Response.NotFound && existing is not null )
         {
+            //FIX THIS IS NOT CORRECT YET
+            foreach (var existingAuthor in existing)
+            {
+                var intersection = existingAuthor.RepositoryIds.Intersect(authorCreateDto.RepositoryIds);
+                if(existingAuthor.RepositoryIds.Count == intersection.Count())
+                {
+                    response = Response.Conflict;
+                    return (null, response);
+                }
+            }
+
+
             response = Response.Conflict;
             return (existing!.FirstOrDefault(), response);
         }
