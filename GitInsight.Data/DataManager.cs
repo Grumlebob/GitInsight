@@ -12,7 +12,7 @@ public class DataManager
     private readonly BranchRepository _branchRepository;
     private readonly CommitInsightRepository _commitInsightRepository;
     private readonly AuthorRepository _authorRepository;
-    
+
     private bool _shouldReanalyze;
 
     public DataManager(InsightContext context)
@@ -40,7 +40,7 @@ public class DataManager
         //branches
         foreach (var b in repo.Branches)
         {
-            var (_, branchResult) = await _branchRepository.CreateAsync(new BranchCreateDto(b.FriendlyName, repoResult.Id, b.CanonicalName));
+            var (branchResult, _) = await _branchRepository.CreateAsync(new BranchCreateDto(b.FriendlyName, repoResult.Id, b.CanonicalName));
             //Authors and commits
             foreach (var c in b.Commits)
             {
@@ -62,7 +62,7 @@ public class DataManager
         {
             SortBy = CommitSortStrategies.Topological | CommitSortStrategies.Time,
         });
-        
+
         var actualLastCommit = queryFilter.FirstOrDefault();
         var (_, response) = await _commitInsightRepository.FindByShaAsync(actualLastCommit!.Sha);
         if (response == Response.NotFound) return true;
@@ -76,7 +76,7 @@ public class DataManager
         {
             SortBy = CommitSortStrategies.Topological | CommitSortStrategies.Time,
         });
-        
+
         var actualLastCommit = queryFilter.FirstOrDefault();
         var (latestDbCommit, _) = await _commitInsightRepository.FindByShaAsync(actualLastCommit!.Sha);
         var withLatest = new RepoInsightLatestCommitUpdate(id, latestDbCommit!.Id);
