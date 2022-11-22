@@ -423,6 +423,7 @@ obj/
 GitInsightTest/TestResources/Unzipped/Testrepo.git
 GitInsight.Entities/Migrations
 GitInsight.Web/wwwroot
+GitInsight.Data/SavedRepositories
 
 # AWS User-specific
 .idea/**/aws.xml
