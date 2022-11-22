@@ -10,20 +10,26 @@
 <form>
     <input type="text" @bind="@textInput" placeholder="user/GitRepo"/>
 </form>
- <button @onclick="GetRepo" >Go</button>
+<button @onclick="GetRepo">Go</button>
 @* <p role="status" id="consolewriteline">@outputText</p> *@
 @if (_commitsByAuthors != null && _commitsByAuthors.Any())
 {
-    @foreach (var commitsByAuthor in _commitsByAuthors)
-    {
-        <TrendChart Author="@commitsByAuthor.AuthorName" Data="@FormatDates(commitsByAuthor.CommitsByDates)"/>
-    }
+    <div class="container">
+        <div class="row align-items-center justify-content-center">
+            @foreach (var commitsByAuthor in _commitsByAuthors)
+            {
+                <div class="w-50">
+                    <TrendChart Author="@commitsByAuthor.AuthorName" Data="@FormatDates(commitsByAuthor.CommitsByDates)"/>
+                </div>
+            }
+        </div>
+    </div>
 }
 
 @code {
     private string textInput;
     // private string outputText;
-    private List<CommitsByDateByAuthor> _commitsByAuthors = new ();
+    private List<CommitsByDateByAuthor> _commitsByAuthors = new();
 
     public List<CommitsByDateFormatted> FormatDates(IEnumerable<CommitsByDate> commitsByDate)
     {
@@ -31,20 +37,17 @@
         foreach (var date in commitsByDate)
         {
             var formattedDate = date.Date.ToString("dd MMM");
-            formattedDates.Add(new CommitsByDateFormatted{Date = formattedDate, CommitAmount = date.CommitAmount});
+            formattedDates.Add(new CommitsByDateFormatted { Date = formattedDate, CommitAmount = date.CommitAmount });
         }
 
         return formattedDates;
     }
 
 
-
     public async Task GetRepo()
     {
-
-        _commitsByAuthors = await _analysisService.GetCommitsByAuthor($"repoinsights/{textInput}" );
-        // outputText = _commitsByAuthors.Count.ToString();
-
+        _commitsByAuthors = await _analysisService.GetCommitsByAuthor($"repoinsights/{textInput}");
+    // outputText = _commitsByAuthors.Count.ToString();
     }
 
 @*     private void IncrementCount() *@

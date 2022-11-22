@@ -1,29 +1,22 @@
 ﻿@using System.Globalization
 @using GitInsight.Core
 
-<RadzenCard>
-    <div class="container my-5">
-        <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H1" Class="my-4">
-          @Author
-        </RadzenText>
-        <div class="row">
-            <div class="col">
-                <RadzenChart>
-                    <RadzenLineSeries Smooth="true" Data="@Data" CategoryProperty="Date" Title=" " ValueProperty="CommitAmount" RenderingOrder="1">
-                    </RadzenLineSeries>
-                    <RadzenCategoryAxis Padding="20" Formatter="@FormatDate"/>
-                    <RadzenValueAxis>
-                        <RadzenGridLines Visible="true"/>
-                        <RadzenAxisTitle Text="Commits"/>
-                    </RadzenValueAxis>
-                </RadzenChart>
-            </div>
-        </div>
-    </div>
+<RadzenCard class="my-3 flex-lg-wrap">
+    <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H1" Class="my-4">
+        @Author
+    </RadzenText>
+    <RadzenChart>
+        <RadzenLineSeries Smooth="true" Data="@Data" CategoryProperty="Date" Title=" " ValueProperty="CommitAmount" RenderingOrder="1">
+        </RadzenLineSeries>
+        <RadzenCategoryAxis Padding="20" Formatter="@FormatDate"/>
+        <RadzenValueAxis>
+            <RadzenGridLines Visible="true"/>
+            <RadzenAxisTitle Text="Commits"/>
+        </RadzenValueAxis>
+    </RadzenChart>
 </RadzenCard>
 
 @code {
-
 
 
     string FormatDate(object date) => date == null ? string.Empty : Convert.ToDateTime(date).ToString("dd MMM");
@@ -49,7 +42,8 @@
     }
 
 
-    DataItem[] revenue2019 = new DataItem[] {
+    DataItem[] revenue2019 = new DataItem[]
+    {
         new DataItem
         {
             Date = ("2019-01-01"),
