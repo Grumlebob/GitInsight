@@ -151,8 +151,8 @@ public class AuthorRepositoryTest : IDisposable
     public async Task FindAuthorsByEmail()
     {
         var (authorDto, response) = await _authorRepository.FindByEmailAsync("First Email");
-        authorDto.Should().BeEquivalentTo(new[]
-            { new AuthorDto(1, "First Author", "First Email", new List<int>() { 1 }, new List<int>() { 1 }) });
+        authorDto.Should().BeEquivalentTo(
+            new AuthorDto(1, "First Author", "First Email", new List<int>() { 1 }, new List<int>() { 1 }));
         response.Should().Be(Response.Ok);
     }
 
@@ -160,7 +160,7 @@ public class AuthorRepositoryTest : IDisposable
     public async Task FindAuthorsByEmailFalse()
     {
         var (authorDto, response) = await _authorRepository.FindByEmailAsync("Non existing email");
-        authorDto.Should().BeNullOrEmpty();
+        authorDto.Should().BeNull();
         response.Should().Be(Response.NotFound);
     }
 
@@ -209,7 +209,7 @@ public class AuthorRepositoryTest : IDisposable
     public async Task CreateAuthorReturnsCreated()
     {
         var (authorDto, response) = await _authorRepository.CreateAsync(new AuthorCreateDto("Third Author",
-            "Third Email", new List<int>() { }, new List<int>() { 1 }));
+            "Third Email", new List<int>() { 1 }));
         authorDto.Should().BeEquivalentTo(new AuthorDto(3, "Third Author", "Third Email", new List<int>() { },
             new List<int>() { 1 }));
         response.Should().Be(Response.Created);
@@ -219,7 +219,7 @@ public class AuthorRepositoryTest : IDisposable
     public async Task CreateAuthorReturnsBadRequest()
     {
         var (authorDto, response) = await _authorRepository.CreateAsync(new AuthorCreateDto("Wrong repo",
-            "Wrong repo", new List<int>() { }, new List<int>() { 10 }));
+            "Wrong repo", new List<int>() { 10 }));
         response.Should().Be(Response.BadRequest);
         authorDto.Should().BeNull();
     }
@@ -228,13 +228,13 @@ public class AuthorRepositoryTest : IDisposable
     public async Task CreateAuthorReturnsConflict()
     {
         var (authorDto, response) = await _authorRepository.CreateAsync(new AuthorCreateDto("Third Author",
-            "Third Email", new List<int>() {1 }, new List<int>() { 1 }));
-        authorDto.Should().BeEquivalentTo(new AuthorDto(3, "Third Author", "Third Email", new List<int>() { 1},
+            "Third Email", new List<int>() { 1 }));
+        authorDto.Should().BeEquivalentTo(new AuthorDto(3, "Third Author", "Third Email", new List<int>() { },
             new List<int>() { 1 }));
         response.Should().Be(Response.Created);
-        
+
         var (_, responseSame) = await _authorRepository.CreateAsync(new AuthorCreateDto("Third Author",
-            "Third Email", new List<int>() { }, new List<int>() { 1 }));
+            "Third Email", new List<int>() { 1 }));
         responseSame.Should().Be(Response.Conflict);
     }
 
@@ -260,7 +260,7 @@ public class AuthorRepositoryTest : IDisposable
             new List<int>() { 1 }));
         response.Should().Be(Response.Ok);
 
-        var updateDto = new AuthorDto(1, "New Name", "New Email", new List<int>() { }, new List<int>() { 1 });
+        var updateDto = new AuthorUpdateDto(1, "New Name", "New Email", new List<int>() { 1 });
         var updatedAuthorDto = await _authorRepository.UpdateAsync(updateDto);
 
         updatedAuthorDto.Should().Be(Response.Ok);
@@ -274,19 +274,17 @@ public class AuthorRepositoryTest : IDisposable
     [Fact]
     public async Task UpdateAuthorReturnsNotFound()
     {
-        var updateDto = new AuthorDto(10, "Does not exist", "Does not exist", new List<int>() { },
+        var updateDto = new AuthorUpdateDto(10, "Does not exist", "Does not exist",
             new List<int>() { 1 });
         var updatedAuthorDto = await _authorRepository.UpdateAsync(updateDto);
         updatedAuthorDto.Should().Be(Response.NotFound);
     }
 
     [Fact]
-
     public async Task AuthorConfigurations()
     {
         AuthorConfigurations authorConfigurations = new AuthorConfigurations();
         authorConfigurations.Should().NotBeNull();
-
     }
 
     public void Dispose()

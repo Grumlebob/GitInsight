@@ -10,9 +10,11 @@ public class AuthorRepository : IAuthorRepository
     }
 
     public static AuthorDto AuthorToAuthorDto(Author author) =>
-        new(Id: author.Id, Name: author.Name, Email: author.Email,
-            CommitIds: author.Commits.Select(c => c.Id).ToList(),
-            RepositoryIds: author.Repositories.Select(r => r.Id).ToList());
+        author is null
+            ? null
+            : new(Id: author.Id, Name: author.Name, Email: author.Email,
+                CommitIds: author.Commits.Select(c => c.Id).ToList(),
+                RepositoryIds: author.Repositories.Select(r => r.Id).ToList());
 
     public async Task<(AuthorDto?, Response)> FindAsync(int id)
     {
@@ -59,28 +61,38 @@ public class AuthorRepository : IAuthorRepository
         }
 
         var (existing, authorResponse) = await FindByEmailAsync(authorCreateDto.Email);
-        if (authorResponse != Response.NotFound)
+
+        if (authorResponse == Response.NotFound)
         {
-            response = Response.Conflict;
-            return (existing!.FirstOrDefault(), response);
+            var author = new Author
+            {
+                Name = authorCreateDto.Name,
+                Email = authorCreateDto.Email,
+                Repositories = await UpdateRepositoriesIfExist(_context, authorCreateDto.RepositoryIds),
+            };
+
+            await _context.Authors.AddAsync(author);
+            await _context.SaveChangesAsync();
+
+            response = Response.Created;
+            return (
+                new AuthorDto(Id: author.Id, Name: author.Name, Email: author.Email,
+                    CommitIds: author.Commits.Select(c => c.Id).ToList(),
+                    RepositoryIds: author.Repositories.Select(r => r.Id).ToList()), response);
         }
 
-        var author = new Author
+        //If author already exists
+        var newRepos = NewRepos(authorCreateDto, existing!);
+        if (!newRepos.Any())
         {
-            Name = authorCreateDto.Name,
-            Email = authorCreateDto.Email,
-            Commits = await UpdateCommitsIfExist(_context, authorCreateDto.CommitIds!),
-            Repositories = await UpdateRepositoriesIfExist(_context, authorCreateDto.RepositoryIds),
-        };
+            response = Response.Conflict;
+            return (existing, response);
+        }
 
-        await _context.Authors.AddAsync(author);
-        await _context.SaveChangesAsync();
-
-        response = Response.Created;
-        return (
-            new AuthorDto(Id: author.Id, Name: author.Name, Email: author.Email,
-                CommitIds: author.Commits.Select(c => c.Id).ToList(),
-                RepositoryIds: author.Repositories.Select(r => r.Id).ToList()), response);
+        existing!.RepositoryIds.AddRange(newRepos);
+        var updated = new AuthorUpdateDto(existing.Id, existing.Name, existing.Email, existing.RepositoryIds);
+        await UpdateAsync(updated);
+        return (existing, Response.Ok);
     }
 
     public async Task<Response> DeleteAsync(int id)
@@ -95,7 +107,7 @@ public class AuthorRepository : IAuthorRepository
         return Response.Deleted;
     }
 
-    public async Task<Response> UpdateAsync(AuthorDto authorDto)
+    public async Task<Response> UpdateAsync(AuthorUpdateDto authorDto)
     {
         Response response;
 
@@ -110,8 +122,8 @@ public class AuthorRepository : IAuthorRepository
         {
             author.Name = authorDto.Name;
             author.Email = authorDto.Email;
-            author.Commits = await UpdateCommitsIfExist(_context, authorDto.CommitIds);
-            author.Repositories = await UpdateRepositoriesIfExist(_context, authorDto.RepositoryIds);
+            //author.Commits = await UpdateCommitsIfExist(_context, authorDto.CommitIds);
+            //author.Repositories = await UpdateRepositoriesIfExist(_context, authorDto.RepositoryIds);
 
             _context.Authors.Update(author);
             await _context.SaveChangesAsync();
@@ -133,15 +145,12 @@ public class AuthorRepository : IAuthorRepository
             : (null, Response.NotFound);
     }
 
-    public async Task<(List<AuthorDto>?, Response)> FindByEmailAsync(string email)
+    public async Task<(AuthorDto?, Response)> FindByEmailAsync(string email)
     {
-        var authors = await _context.Authors
-            .Where(a => a.Email.Contains(email))
-            .ToListAsync();
-
-        return authors.Count > 0
-            ? (authors.Select(a => AuthorToAuthorDto(a)).ToList(), Response.Ok)
-            : (null, Response.NotFound);
+        var author = await _context.Authors
+            .Where(a => a.Email == email).FirstOrDefaultAsync();
+        var response = author is null ? Response.NotFound : Response.Ok;
+        return (AuthorToAuthorDto(author), response);
     }
 
     public async Task<(List<AuthorDto>?, Response)> FindByRepoIdAsync(int repositoryId)
@@ -151,7 +160,7 @@ public class AuthorRepository : IAuthorRepository
             .ToListAsync();
 
         return authors.Count > 0
-            ? (authors.Select(a => AuthorToAuthorDto(a)).ToList(), Response.Ok)
+            ? (authors.Select(AuthorToAuthorDto).ToList(), Response.Ok)
             : (null, Response.NotFound);
     }
 
@@ -167,6 +176,10 @@ public class AuthorRepository : IAuthorRepository
             : (null, Response.NotFound);
     }
 
+    private static List<int> NewRepos(AuthorCreateDto newAuth, AuthorDto oldAuth)
+    {
+        return newAuth.RepositoryIds.Where(repoId => oldAuth.RepositoryIds.All(r => r != repoId)).ToList();
+    }
 
     private async Task<bool> EnsureRepositoryExists(int id)
     {

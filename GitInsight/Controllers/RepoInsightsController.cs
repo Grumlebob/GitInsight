@@ -22,7 +22,7 @@ public class RepoInsightsController : ControllerBase
     [HttpGet]
     [Route("{user}/{repoName}")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<CommitInsight>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<CommitsByDateByAuthor>))]
     public async Task<IActionResult> AddOrUpdateLocalRepoData(string user, string repoName)
     {
         var url = $"https://github.com/{user}/{repoName}";

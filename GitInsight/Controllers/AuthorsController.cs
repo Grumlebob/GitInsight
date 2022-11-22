@@ -36,7 +36,7 @@ public class AuthorsController : ControllerBase
         if (response == Core.Response.NotFound) return NotFound();
         return Ok(authorDto);
     }
-    
+
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -46,20 +46,21 @@ public class AuthorsController : ControllerBase
         var (authorDto, response) = await _authorRepository.CreateAsync(author);
         if (response == Core.Response.BadRequest) return BadRequest();
         if (response == Core.Response.Conflict) return Conflict(authorDto);
-        if (response == Core.Response.Created) return CreatedAtAction(nameof(GetAuthorById), new { id = authorDto.Id }, authorDto);
+        if (response == Core.Response.Created)
+            return CreatedAtAction(nameof(GetAuthorById), new { id = authorDto.Id }, authorDto);
         return Ok(authorDto);
     }
-  
+
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> UpdateAuthor(AuthorDto author)
+    public async Task<IActionResult> UpdateAuthor(AuthorUpdateDto author)
     {
         var response = await _authorRepository.UpdateAsync(author);
         if (response == Core.Response.NotFound) return NotFound();
         return Ok();
     }
-    
+
     [HttpDelete]
     [Route("{id}")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -70,6 +71,4 @@ public class AuthorsController : ControllerBase
         if (response == Core.Response.NotFound) return NotFound();
         return NoContent();
     }
-    
-
 }
