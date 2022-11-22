@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitInsight.Core", "GitInsig
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitInsight.Data", "GitInsight.Data\GitInsight.Data.csproj", "{548EA3BA-BB4E-4C8B-8046-E70C798E1C27}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitInsight.Web", "GitInsight.Web\GitInsight.Web.csproj", "{46BC6344-8E9C-4A2D-B04F-9DF2FE467E38}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{548EA3BA-BB4E-4C8B-8046-E70C798E1C27}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{548EA3BA-BB4E-4C8B-8046-E70C798E1C27}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{548EA3BA-BB4E-4C8B-8046-E70C798E1C27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46BC6344-8E9C-4A2D-B04F-9DF2FE467E38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46BC6344-8E9C-4A2D-B04F-9DF2FE467E38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46BC6344-8E9C-4A2D-B04F-9DF2FE467E38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46BC6344-8E9C-4A2D-B04F-9DF2FE467E38}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

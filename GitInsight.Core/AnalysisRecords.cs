@@ -1,5 +1,11 @@
 ﻿namespace GitInsight.Core;
 
-public record CommitsByDate(DateTime Date, int Commits);
+public record CommitsByDate(DateTime Date, int CommitAmount);
+public class CommitsByDateFormatted
+{
+    public string Date { get; set; }
+    public int CommitAmount { get; set; }
+}
 
+// public record CommitsByAuthor(string Author, int CommitAmount);
 public record CommitsByDateByAuthor(string AuthorName, List<CommitsByDate> CommitsByDates);
