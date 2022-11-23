@@ -16,4 +16,7 @@ builder.Services.AddMsalAuthentication(options =>
     builder.Configuration.Bind("AzureAd", options.ProviderOptions.Authentication);
 });
 
+// Add auth services
+builder.Services.AddApiAuthorization();
+
 await builder.Build().RunAsync();

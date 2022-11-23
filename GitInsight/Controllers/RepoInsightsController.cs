@@ -1,11 +1,9 @@
-﻿using GitInsight.Core;
-using GitInsight.Data;
-using GitInsight.Entities;
-using Microsoft.AspNetCore.Mvc;
+﻿using GitInsight.Data;
 
 namespace GitInsight.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("[controller]")]
 public class RepoInsightsController : ControllerBase
 

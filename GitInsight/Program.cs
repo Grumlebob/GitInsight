@@ -1,7 +1,9 @@
 ﻿using GitInsight;
 using GitInsight.Core;
 using GitInsight.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+
 
 InsightContext context = new InsightContextFactory().CreateDbContext(args);
 //var forks = await new ForkApi().GetForks("itu-bdsa/project-description"); //move the code when blazor is implemented
@@ -10,6 +12,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+
+builder.Services.AddAuthentication();
+builder.Services.AddAuthorization();
 
 
 var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
@@ -42,6 +47,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
