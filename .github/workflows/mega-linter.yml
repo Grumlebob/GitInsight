@@ -25,7 +25,7 @@ env: # Comment env block if you do not want to apply fixes
     DISABLE_LINTERS: ACTION_ACTIONLINT
     EXCLUDED_DIRECTORIES: |
         GitInsight.Entities/Migrations
-        GitInsight.Web/wwwroot
+        GitInsight.Blazor/wwwroot
 
 concurrency:
     group: ${{ github.ref }}-${{ github.workflow }}
