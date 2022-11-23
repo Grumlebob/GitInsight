@@ -1,8 +1,10 @@
 ﻿using GitInsight;
 using GitInsight.Core;
 using GitInsight.Entities;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Web;
 
 
 InsightContext context = new InsightContextFactory().CreateDbContext(args);
@@ -15,6 +17,8 @@ builder.Services.AddControllers();
 
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
+
+
 
 
 var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
@@ -36,6 +40,16 @@ builder.Services.AddCors(options => options.AddDefaultPolicy( build =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApi(configuration.GetSection("AzureAdB2C"));
+
+builder.Services.Configure<JwtBearerOptions>(
+    JwtBearerDefaults.AuthenticationScheme, options =>
+    {
+        options.TokenValidationParameters.NameClaimType = "name";
+    });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -55,3 +69,5 @@ app.MapControllers();
 app.UseCors();
 
 app.Run();
+
+Console.WriteLine("asembly: "+ Assembly.GetExecutingAssembly().GetName().Name);

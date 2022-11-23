@@ -16,7 +16,8 @@ public class RepoInsightsController : ControllerBase
         _context = context;
         _repoInsightRepository = new RepoInsightRepository(context);
     }
-
+    
+    [Authorize]
     [HttpGet]
     [Route("{user}/{repoName}")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
