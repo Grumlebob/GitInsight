@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 
 
+
 InsightContext context = new InsightContextFactory().CreateDbContext(args);
 //var forks = await new ForkApi().GetForks("itu-bdsa/project-description"); //move the code when blazor is implemented
 //Console.WriteLine(forks); Thor

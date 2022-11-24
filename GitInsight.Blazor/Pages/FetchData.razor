@@ -1,9 +1,9 @@
 ﻿@page "/fetchdata"
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using Microsoft.AspNetCore.Authorization
-@using GitInsight.Blazor.Shared
 @inject HttpClient Http
 @attribute [Authorize]
+
 
 <PageTitle>Weather forecast</PageTitle>
 
@@ -45,6 +45,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        
         try
         {
             forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("WeatherForecast");
