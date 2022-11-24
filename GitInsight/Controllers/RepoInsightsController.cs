@@ -3,7 +3,7 @@
 namespace GitInsight.Controllers;
 
 [ApiController]
-[Authorize]
+//[Authorize]
 [Route("[controller]")]
 public class RepoInsightsController : ControllerBase
 
@@ -17,7 +17,7 @@ public class RepoInsightsController : ControllerBase
         _repoInsightRepository = new RepoInsightRepository(context);
     }
     
-    [Authorize]
+    //[Authorize]
     [HttpGet]
     [Route("{user}/{repoName}")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

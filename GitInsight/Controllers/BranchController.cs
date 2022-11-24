@@ -1,7 +1,7 @@
 ﻿namespace GitInsight.Controllers;
 
 [ApiController]
-[Authorize]
+//[Authorize]
 [Route("[controller]")]
 public class BranchController : ControllerBase
 
