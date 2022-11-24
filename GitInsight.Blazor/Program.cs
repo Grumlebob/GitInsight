@@ -27,7 +27,8 @@ builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
 builder.Services.AddMsalAuthentication(options =>
 {
     builder.Configuration.Bind("AzureAdB2C", options.ProviderOptions.Authentication);
-    options.ProviderOptions.DefaultAccessTokenScopes.Add("https://grumlebobgitinsight.onmicrosoft.com/0e737e20-812f-48b4-b1ce-31cf62bd6ac7/API.Access");
+    options.ProviderOptions.DefaultAccessTokenScopes.Add("https://GrumlebobGitInsight.onmicrosoft.com/09ca411b-9cae-4ce4-8e3c-db945e2a2dbf/API.Access");
+    //options.ProviderOptions.DefaultAccessTokenScopes.Add("https://GrumlebobGitInsight.onmicrosoft.com/0e737e20-812f-48b4-b1ce-31cf62bd6ac7/API.Access");
 });
 
 
