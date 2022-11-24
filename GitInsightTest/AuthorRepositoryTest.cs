@@ -1,10 +1,6 @@
 ﻿using GitInsight.Core;
 using GitInsight.Entities;
 using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Commit = GitInsight.Entities.CommitInsight;
 using Repository = GitInsight.Entities.RepoInsight;
 
@@ -236,6 +232,29 @@ public class AuthorRepositoryTest : IDisposable
         var (_, responseSame) = await _authorRepository.CreateAsync(new AuthorCreateDto("Third Author",
             "Third Email", new List<int>() { 1 }));
         responseSame.Should().Be(Response.Conflict);
+    }
+
+    [Fact]
+    public async Task CreateExistingAuthorWithNewReposReturnsOk()
+    {
+        var testRepo = new Repository()
+        {
+            Id = 69,
+            Name = "Another repo",
+            Path = "Random Path",
+        };
+        await _context.Repositories.AddAsync(testRepo);
+        await _context.SaveChangesAsync();
+        var (authorDto, response) = await _authorRepository.CreateAsync(new AuthorCreateDto("Third Author",
+            "Third Email", new List<int>() { 1 }));
+        authorDto.Should().BeEquivalentTo(new AuthorDto(3, "Third Author", "Third Email", new List<int>() { },
+            new List<int>() { 1 }));
+        response.Should().Be(Response.Created);
+
+        var (updated, responseSame) = await _authorRepository.CreateAsync(new AuthorCreateDto("Third Author",
+            "Third Email", new List<int>() { 1, 69 }));
+        responseSame.Should().Be(Response.Ok);
+        updated!.RepositoryIds.Should().Contain(69);
     }
 
     [Fact]

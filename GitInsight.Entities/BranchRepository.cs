@@ -47,13 +47,10 @@ public class BranchRepository : IBranchRepository
                      where b.Id == id
                      select new BranchDto(b.Id, b.Name, b.RepositoryId, b.Path);
 
-        if (await result.AnyAsync())
-        {
-            var match = await result.FirstAsync();
-            return (match!, Response.Ok);
-        }
+        if (!await result.AnyAsync()) return (null, Response.NotFound);
+        var match = await result.FirstAsync();
+        return (match!, Response.Ok);
 
-        return (null, Response.NotFound);
     }
 
     /// <summary>
@@ -66,13 +63,10 @@ public class BranchRepository : IBranchRepository
                      where b.RepositoryId == repositoryId
                      select new BranchDto(b.Id, b.Name, b.RepositoryId, b.Path);
 
-        if (await result.AnyAsync())
-        {
-            var match = await result.ToListAsync();
-            return (match, Response.Ok);
-        }
+        if (!await result.AnyAsync()) return (null, Response.NotFound);
+        var match = await result.ToListAsync();
+        return (match, Response.Ok);
 
-        return (null, Response.NotFound);
     }
 
     /// <returns>All branches in database.</returns>
