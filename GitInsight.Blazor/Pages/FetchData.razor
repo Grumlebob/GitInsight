@@ -1,5 +1,9 @@
 ﻿@page "/fetchdata"
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Microsoft.AspNetCore.Authorization
+@using GitInsight.Blazor.Shared
 @inject HttpClient Http
+@attribute [Authorize]
 
 <PageTitle>Weather forecast</PageTitle>
 
@@ -41,7 +45,14 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+        try
+        {
+            forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("WeatherForecast");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
     }
 
     public class WeatherForecast

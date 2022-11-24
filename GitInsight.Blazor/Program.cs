@@ -13,13 +13,9 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7273/") });
 builder.Services.AddScoped<IAnalysisService, AnalysisService>();
 
-builder.Services.AddMsalAuthentication(options =>
-{
-    builder.Configuration.Bind("AzureAd", options.ProviderOptions.Authentication);
-});
 
 // Add auth services
-builder.Services.AddApiAuthorization();
+//builder.Services.AddApiAuthorization();
 
 builder.Services.AddHttpClient( $"GitInsight.Blazor.ServerAPI", client => 
         client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
