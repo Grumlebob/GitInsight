@@ -5,12 +5,19 @@
 
 <PageTitle>Index</PageTitle>
 
-<h1>Welcome!</h1>
+<AuthorizeView>
+    <NotAuthorized>
+        <h1> You need to sign in</h1>
+    </NotAuthorized>
+    <Authorized>
+        <h1>Welcome!</h1>
+
 
 <form>
     <input type="text" @bind="@textInput" placeholder="user/GitRepo"/>
 </form>
 <button @onclick="GetRepo">Go</button>
+
 @* <p role="status" id="consolewriteline">@outputText</p> *@
 @if (_commitsByAuthors != null && _commitsByAuthors.Any())
 {
@@ -25,7 +32,8 @@
         </div>
     </div>
 }
-
+    </Authorized>
+</AuthorizeView>
 @code {
     private string textInput;
     // private string outputText;
