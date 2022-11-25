@@ -33,6 +33,7 @@ public class DataManager
             Console.WriteLine("No analyze was needed");
             return false;
         }
+
         using var repo = new Repository(fullPath);
         //repo
         var dto = new RepoInsightCreateDto(relPath, relPath, null!, null!, null!);
@@ -40,16 +41,20 @@ public class DataManager
         //branches
         foreach (var b in repo.Branches)
         {
-            var (branchResult, _) = await _branchRepository.CreateAsync(new BranchCreateDto(b.FriendlyName, repoResult.Id, b.CanonicalName));
+            var (branchResult, _) =
+                await _branchRepository.CreateAsync(new BranchCreateDto(b.FriendlyName, repoResult.Id,
+                    b.CanonicalName));
             //Authors and commits
             foreach (var c in b.Commits)
             {
-                var authorDto = new AuthorCreateDto(c.Author.Name, c.Author.Email, null, new List<int> { repoResult.Id });
+                var authorDto = new AuthorCreateDto(c.Author.Name, c.Author.Email, new List<int> { repoResult.Id });
                 var (authResult, _) = await _authorRepository.CreateAsync(authorDto);
-                var commitDto = new CommitInsightCreateDto(c.Sha, c.Author.When, authResult!.Id, branchResult!.Id, repoResult.Id);
+                var commitDto = new CommitInsightCreateDto(c.Sha, c.Author.When, authResult!.Id, branchResult!.Id,
+                    repoResult.Id);
                 await _commitInsightRepository.CreateAsync(commitDto);
             }
         }
+
         await UpdateLatestCommit(repoResult.Id, fullPath);
         Console.WriteLine("Analyze finished");
         return true;

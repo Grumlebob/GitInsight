@@ -3,12 +3,12 @@
 [ApiController]
 //[Authorize]
 [Route("[controller]")]
-public class BranchController : ControllerBase
+public class BranchesController : ControllerBase
 
 {
     private readonly IBranchRepository _branchRepository;
 
-    public BranchController(InsightContext context)
+    public BranchesController(InsightContext context)
     {
         _branchRepository = new BranchRepository(context);
     }

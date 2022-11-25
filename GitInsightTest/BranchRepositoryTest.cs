@@ -86,7 +86,7 @@ public class BranchRepositoryTest : IDisposable
     }
 
     [Fact]
-    public async Task FindAll_Branches_By_Repo()
+    public async Task FindAll_Branches_By_Repo_Success()
     {
         await _repo.CreateAsync(new BranchCreateDto("1", 1, "ok/then"));
         await _repo.CreateAsync(new BranchCreateDto("2", 1, "yeah/then"));
@@ -96,11 +96,21 @@ public class BranchRepositoryTest : IDisposable
         response.Should().Be(Response.Ok);
         result.Should().NotBeNull();
         result!.Should().HaveCount(2);
+    }
+    
+    [Fact]
+    public async Task FindAll_Branches_By_Repo_Not_Found()
+    {
+        await _repo.CreateAsync(new BranchCreateDto("1", 1, "ok/then"));
+        await _repo.CreateAsync(new BranchCreateDto("2", 1, "yeah/then"));
+        await _repo.CreateAsync(new BranchCreateDto("3", 2, "yeah/then"));
 
+        var (result, response) = await _repo.FindAllAsync(3);
+        response.Should().Be(Response.NotFound);
     }
 
     [Fact]
-    public async Task FindAll_Branches_In_Database()
+    public async Task FindAll_Branches_In_Database_Success()
     {
         await _repo.CreateAsync(
             new BranchCreateDto("1st", 1, "ok/then"));
@@ -115,6 +125,12 @@ public class BranchRepositoryTest : IDisposable
         response.Should().Be(Response.Ok);
         result.Should().NotBeNull();
         result!.Should().HaveCount(3);
+
+    }[Fact]
+    public async Task FindAll_Branches_In_Database_Not_Found()
+    {
+        var (result, response) = await _repo.FindAllAsync();
+        response.Should().Be(Response.NotFound);
 
     }
 
