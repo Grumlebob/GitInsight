@@ -1,10 +1,7 @@
-﻿using GitInsight.Core;
-using GitInsight.Entities;
-using Microsoft.AspNetCore.Mvc;
-
-namespace GitInsight.Controllers;
+﻿namespace GitInsight.Controllers;
 
 [ApiController]
+//[Authorize]
 [Route("[controller]")]
 public class AuthorsController : ControllerBase
 

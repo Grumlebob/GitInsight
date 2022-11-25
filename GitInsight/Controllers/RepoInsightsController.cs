@@ -1,11 +1,10 @@
-﻿using GitInsight.Core;
-using GitInsight.Data;
-using GitInsight.Entities;
-using Microsoft.AspNetCore.Mvc;
+﻿using GitInsight.Data;
+using Microsoft.AspNetCore.Cors;
 
 namespace GitInsight.Controllers;
 
 [ApiController]
+//[Authorize]
 [Route("[controller]")]
 public class RepoInsightsController : ControllerBase
 
@@ -18,7 +17,8 @@ public class RepoInsightsController : ControllerBase
         _context = context;
         _repoInsightRepository = new RepoInsightRepository(context);
     }
-
+    
+    //[Authorize]
     [HttpGet]
     [Route("{user}/{repoName}")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

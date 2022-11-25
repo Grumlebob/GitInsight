@@ -1,7 +1,12 @@
 ﻿using GitInsight;
 using GitInsight.Core;
 using GitInsight.Entities;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Web;
+
+
 
 InsightContext context = new InsightContextFactory().CreateDbContext(args);
 //var forks = await new ForkApi().GetForks("itu-bdsa/project-description"); //move the code when blazor is implemented
@@ -11,6 +16,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAdB2C"));
+
+builder.Services.Configure<JwtBearerOptions>(
+    JwtBearerDefaults.AuthenticationScheme, options =>
+    {
+        options.TokenValidationParameters.NameClaimType = "name";
+    });
 
 var configuration = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
 
@@ -31,6 +44,7 @@ builder.Services.AddCors(options => options.AddDefaultPolicy( build =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -42,6 +56,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
@@ -49,3 +64,5 @@ app.MapControllers();
 app.UseCors();
 
 app.Run();
+
+Console.WriteLine("asembly: "+ Assembly.GetExecutingAssembly().GetName().Name);

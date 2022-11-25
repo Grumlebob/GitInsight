@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Json;
 using GitInsight.Core;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GitInsight.Web.Services;
 
