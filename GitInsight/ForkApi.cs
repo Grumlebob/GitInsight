@@ -6,11 +6,15 @@ public class ForkApi //move me when blazor is added
     private HttpClient _client;
     public ForkApi()
     {
-
         _client = new HttpClient();
         _client.BaseAddress = new Uri("https://api.github.com/");
         var config = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
         var token = config["GitCredentials:Token"]; //dotnet user-secrets set "GitCredentials:Token" "tokenString"
+
+        if (token == null) //Hvis vores user secrets er null, bruger vi env variable.
+        {
+            token = Environment.GetEnvironmentVariable("api-key"); //Defineret i buildAndtest.yaml
+        }
         
         _client.DefaultRequestHeaders.Add("User-Agent",".Net 6.0 windows");
         _client.DefaultRequestHeaders.Add("Authorization", token);
