@@ -3,7 +3,7 @@
 name: Build and Test
 
 env:
-    api-key: ${{ secrets.GITHUB_TOKEN }} #Navn på evn variable er "api-key"
+  api-key: ${{ secrets.GITHUB_TOKEN }} #Navn på evn variable er "api-key"
 
 on:
   push:
