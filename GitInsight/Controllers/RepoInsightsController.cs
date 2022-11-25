@@ -1,4 +1,5 @@
 ﻿using GitInsight.Data;
+using Microsoft.AspNetCore.Cors;
 
 namespace GitInsight.Controllers;
 
