@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 
-
-
 InsightContext context = new InsightContextFactory().CreateDbContext(args);
 //var forks = await new ForkApi().GetForks("itu-bdsa/project-description"); //move the code when blazor is implemented
 //Console.WriteLine(forks); Thor
@@ -44,7 +42,6 @@ builder.Services.AddCors(options => options.AddDefaultPolicy( build =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -56,12 +53,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
-app.UseCors();
+
 
 app.Run();
 

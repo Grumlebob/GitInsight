@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Cors;
 namespace GitInsight.Controllers;
 
 [ApiController]
-//[Authorize]
+[Authorize]
 [Route("[controller]")]
 public class RepoInsightsController : ControllerBase
 
@@ -18,7 +18,7 @@ public class RepoInsightsController : ControllerBase
         _repoInsightRepository = new RepoInsightRepository(context);
     }
     
-    //[Authorize]
+    [Authorize]
     [HttpGet]
     [Route("{user}/{repoName}")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -59,6 +59,8 @@ public class RepoInsightsController : ControllerBase
         var analysis = new Analysis(_context);
         
         var (repo, _) = await new RepoInsightRepository(_context).FindRepositoryByPathAsync(relPath);
+        
+        Console.WriteLine("repoId: " + repo.Id);
         
         return Ok(await analysis.GetCommitsByAuthor(repo!.Id));
     }
