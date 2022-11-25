@@ -1,32 +1,38 @@
-﻿namespace GitInsight;
+﻿using System.Net;
+using GitInsight.Core;
 
-public class ForkApi //move me when blazor is added
+namespace GitInsight;
+
+public class ForkApi
 {
 
-    private HttpClient _client;
+    private readonly HttpClient _client;
     public ForkApi()
     {
         _client = new HttpClient();
         _client.BaseAddress = new Uri("https://api.github.com/");
         var config = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
-        var token = config["GitCredentials:Token"]; //dotnet user-secrets set "GitCredentials:Token" "tokenString"
-
-        if (token == null) //Hvis vores user secrets er null, bruger vi env variable.
-        {
-            token = Environment.GetEnvironmentVariable("api-key"); //Defineret i buildAndtest.yaml
-        }
+        //If user secrets is null, use env variable.
+        var token = config["GitCredentials:Token"] ?? Environment.GetEnvironmentVariable("api-key"); 
+        //dotnet user-secrets set "GitCredentials:Token" "tokenString" //env var defined in buildAndTest.yml
         
-        _client.DefaultRequestHeaders.Add("User-Agent",".Net 6.0 windows");
-        _client.DefaultRequestHeaders.Add("Authorization", token);
+        _client.DefaultRequestHeaders.Add("User-Agent", "net" + Environment.Version.ToString());
+        _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
     }
     
     /// <param name="repo">"owner/repoName"</param>
     /// <returns></returns>
     
-    public async Task<int> GetForks(string repo)
+    public async Task<IEnumerable<ForkDto>> GetForks(string repo)
     {
-        //If we want more info from the forks we can make our own struct that saves relevant values instead of "Object"
-        var res = await _client.GetFromJsonAsync<IEnumerable<Object>>($"repos/{repo}/forks");
-        return res.Count(); //Closes #55 
+        try
+        {
+            return await _client.GetFromJsonAsync<IEnumerable<ForkDto>>($"repos/{repo}/forks");
+        }
+        catch (HttpRequestException e)
+        {
+            if (e.StatusCode != HttpStatusCode.NotFound) throw;
+            return new List<ForkDto>();
+        }
     }
 }
