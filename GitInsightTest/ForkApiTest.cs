@@ -11,11 +11,11 @@ public class ForkApiTest
         res.Count().Should().Be(1);
         var instance = res.First(); 
         instance.name.Should().Be("ForkedRepo");
-        instance.html_url.Should().Be("https://github.com/A-Guldborg/ForkedRepo");
-        instance.created_at.Second.Should().Be(18);
-        instance.owner.login.Should().Be("A-Guldborg");
-        instance.owner.html_url.Should().Be("https://github.com/A-Guldborg");
-        instance.owner.avatar_url.Should().Be("https://avatars.githubusercontent.com/u/95026056?v=4");
+        instance.htmlUrl.Should().Be("https://github.com/A-Guldborg/ForkedRepo");
+        instance.created.Second.Should().Be(18);
+        instance.owner.username.Should().Be("A-Guldborg");
+        instance.owner.htmlUrl.Should().Be("https://github.com/A-Guldborg");
+        instance.owner.avatarUrl.Should().Be("https://avatars.githubusercontent.com/u/95026056?v=4");
     }
     
     [Fact]
