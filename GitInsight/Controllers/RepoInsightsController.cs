@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Cors;
 
 namespace GitInsight.Controllers;
 
-[ApiController]
 [Authorize]
+[ApiController]
 [Route("[controller]")]
 public class RepoInsightsController : ControllerBase
 
@@ -108,4 +108,22 @@ public class RepoInsightsController : ControllerBase
         if (foldersToSpare.Any(targetDir.EndsWith)) return;
         Directory.Delete(targetDir);
     }
+    
+    [Authorize]
+    [HttpGet]
+    [Route("{user}/{repoName}/EarlyBird")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GitAwardWinner))]
+    public async Task<IActionResult> EarlyBird(string user, string repoName)
+    {
+        await AddOrUpdateLocalRepoData(user, repoName);
+        
+        var relPath = $"{GetRelativeSavedRepositoriesFolder()}/{user}/{repoName}";
+        var analysis = new Analysis(_context);
+        var (repo, _) = await _repoInsightRepository.FindRepositoryByPathAsync(relPath);
+
+        return Ok(await analysis.HighestCommitterWithinTimeframe(repo.Id, DateTime.Parse("1/1/1111 06:00:00 AM"),
+            DateTime.Parse("1/1/1111 10:00:00 AM")));
+    }
+
 }

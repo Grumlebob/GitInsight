@@ -61,5 +61,36 @@ public class Analysis
         return commitsByauthor;
 
     }
+
+    public async Task<GitAwardWinner> HighestCommitterWithinTimeframe(int repoId, DateTime start, DateTime end)
+    {
+        var commitRepo = new CommitInsightRepository(_context);
+        var authorRepo = new AuthorRepository(_context);
+        var (commits, response) = await commitRepo.FindByRepoIdAsync(repoId);
+
+        var dictionary = new Dictionary<string, int>();
+
+        var startTime = start - start.Date;
+        var endTime = end - end.Date;
+        
+        foreach (var commit in commits)
+        {
+            var time = commit.Date - commit.Date.Date;
+            if (time >= startTime && time <= endTime)
+            {
+                var (author,_) = await authorRepo.FindAsync(commit.AuthorId);
+                if (!dictionary.ContainsKey(author.Name)) dictionary.Add(author.Name,0);
+                dictionary[author.Name] += 1;
+            }
+        }
+        
+        KeyValuePair<string,int> currentWinner = new KeyValuePair<string, int>("",0);
+        foreach (var keyValue in dictionary)
+        {
+            if (keyValue.Value > currentWinner.Value) currentWinner = keyValue;
+        }
+
+        return new GitAwardWinner(currentWinner.Key, currentWinner.Value);
+    }
 }
 
