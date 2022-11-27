@@ -55,6 +55,10 @@
 
     public async Task GetRepo()
     {
+        if(textInput.Trim() == "" || !textInput.Contains("/"))
+        {
+            return;
+        }
         _commitsByAuthors = await _analysisService.GetCommitsByAuthor($"repoinsights/{textInput}");
     // outputText = _commitsByAuthors.Count.ToString();
     }
