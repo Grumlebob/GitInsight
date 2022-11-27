@@ -1,0 +1,28 @@
+﻿@page "/Forks"
+@using GitInsight.Core
+<h3>Forks</h3>
+
+
+<RadzenDataList TItem="ForkDto" Data="@ForksGiven" WrapItems="true">
+    <Template Context="fork">
+        <ForkCard Fork="@fork"/>
+    </Template>
+</RadzenDataList>
+
+@code {
+
+    ForkDto Fork1 = new ForkDto("My newly created Fork", new Owner("ThomasBavn", "https://github.com/thomasbavn", "https://avatars.githubusercontent.com/u/102732812?v=4"), "https://google.com", DateTime.Now);
+    ForkDto Fork2 = new ForkDto("Another fork", new Owner("Username", "https://github.com/jgrum", "https://avatars.githubusercontent.com/u/80719417?v=4"), "https://google.com", DateTime.Now);
+
+    List<ForkDto> ForksGiven = new List<ForkDto>();
+    protected override async Task OnInitializedAsync()
+    {
+        ForksGiven.Add(Fork1);
+        ForksGiven.Add(Fork2);
+    }
+
+    //create list of forks
+
+
+
+}
