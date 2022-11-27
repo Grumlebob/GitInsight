@@ -23,4 +23,9 @@ public class AnalysisService : IAnalysisService
     {
         return await _httpClient.GetFromJsonAsync<GitAwardWinner>("repoinsights/" + repoPath + "/EarlyBird");
     }
+    
+    public async Task<GitAwardWinner> NightOwl(string repoPath)
+    {
+        return await _httpClient.GetFromJsonAsync<GitAwardWinner>("repoinsights/" + repoPath + "/NightOwl");
+    }
 }
