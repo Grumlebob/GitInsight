@@ -122,6 +122,10 @@ public class AuthorRepository : IAuthorRepository
         {
             author.Name = authorDto.Name;
             author.Email = authorDto.Email;
+            
+            if (authorDto.RepositoryIds.Any() && author.Repositories.Any()) author.Repositories =
+                authorDto.RepositoryIds.Select(id => _context.Repositories.First(r => r.Id==id)).ToList();
+         
             //author.Commits = await UpdateCommitsIfExist(_context, authorDto.CommitIds);
             //author.Repositories = await UpdateRepositoriesIfExist(_context, authorDto.RepositoryIds);
 
@@ -178,7 +182,7 @@ public class AuthorRepository : IAuthorRepository
 
     private static List<int> NewRepos(AuthorCreateDto newAuth, AuthorDto oldAuth)
     {
-        return newAuth.RepositoryIds.Where(repoId => oldAuth.RepositoryIds.All(r => r != repoId)).ToList();
+        return newAuth.RepositoryIds.Where(repoId => !oldAuth.RepositoryIds.Contains(repoId)).ToList();
     }
 
     private async Task<bool> EnsureRepositoryExists(int id)
