@@ -6,9 +6,11 @@
         @Author
     </RadzenText>
     <RadzenChart>
-        <RadzenLineSeries Smooth="true" Data="@Data" CategoryProperty="Date" Title=" " ValueProperty="CommitAmount" RenderingOrder="1">
+        <RadzenLineSeries Smooth="false" Data="@Data" CategoryProperty="Date" Title="Commits" ValueProperty="CommitAmount" RenderingOrder="1">
+            <RadzenMarkers MarkerType="MarkerType.Square" />
+            <RadzenSeriesDataLabels Visible="true" />
         </RadzenLineSeries>
-        <RadzenCategoryAxis Padding="20" Formatter="@FormatDate"/>
+        <RadzenCategoryAxis Padding="20" Formatter="@FormatDate" />
         <RadzenValueAxis>
             <RadzenGridLines Visible="true"/>
             <RadzenAxisTitle Text="Commits"/>
@@ -19,7 +21,14 @@
 @code {
 
 
-    string FormatDate(object date) => date == null ? string.Empty : Convert.ToDateTime(date).ToString("dd MMM");
+    string FormatDate(object date)
+    {
+        if (Data.Count() > 20)
+        {
+            return date == null ? string.Empty : Convert.ToDateTime(date).ToString("dd/MM");
+        }
+        else return date == null ? string.Empty : Convert.ToDateTime(date).ToString("dd MMM");
+    }
 
 @code {
 
@@ -28,84 +37,6 @@
 
     [Parameter]
     public IEnumerable<CommitsByDateFormatted> Data { get; set; } = new List<CommitsByDateFormatted>();
-
-
-    string FormatAsDate(DateTime date)
-    {
-        return date.ToString("dd MMM");
-    }
-
-    class DataItem
-    {
-        public string Date { get; set; }
-        public int Revenue { get; set; }
-    }
-
-
-    DataItem[] revenue2019 = new DataItem[]
-    {
-        new DataItem
-        {
-            Date = ("2019-01-01"),
-            Revenue = 234000
-        },
-        new DataItem
-        {
-            Date = ("2019-02-01"),
-            Revenue = 269000
-        },
-        new DataItem
-        {
-            Date = ("2019-03-01"),
-            Revenue = 233000
-        },
-        new DataItem
-        {
-            Date = ("2019-04-01"),
-            Revenue = 244000
-        },
-        new DataItem
-        {
-            Date = ("2019-05-01"),
-            Revenue = 214000
-        },
-        new DataItem
-        {
-            Date = ("2019-06-01"),
-            Revenue = 253000
-        },
-        new DataItem
-        {
-            Date = ("2019-07-01"),
-            Revenue = 274000
-        },
-        new DataItem
-        {
-            Date = ("2019-08-01"),
-            Revenue = 284000
-        },
-        new DataItem
-        {
-            Date = ("2019-09-01"),
-            Revenue = 273000
-        },
-        new DataItem
-        {
-            Date = ("2019-10-01"),
-            Revenue = 282000
-        },
-        new DataItem
-        {
-            Date = ("2019-11-01"),
-            Revenue = 289000
-        },
-        new DataItem
-        {
-            Date = ("2019-12-01"),
-            Revenue = 294000
-        }
-    };
-
 
 }
 }
