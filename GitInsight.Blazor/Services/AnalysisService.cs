@@ -18,6 +18,11 @@ public class AnalysisService : IAnalysisService
         return await _httpClient.GetFromJsonAsync<List<CommitsByDateByAuthor>>(repoPath);
     }
     
+    public async Task<List<CommitsByDate>> GetCommitsByDate(string repoPath)
+    {
+        return await _httpClient.GetFromJsonAsync<List<CommitsByDate>>(repoPath + "/CommitsByDate");
+    }
+    
     
     public async Task<GitAwardWinner> EarlyBird(string repoPath)
     {
