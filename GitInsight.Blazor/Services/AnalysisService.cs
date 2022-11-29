@@ -17,4 +17,10 @@ public class AnalysisService : IAnalysisService
     {
         return await _httpClient.GetFromJsonAsync<List<CommitsByDateByAuthor>>(repoPath);
     }
+    public async Task<IEnumerable<ForkDto>> GetForksFromApi(string repoPath)
+    {
+        var result = await _httpClient.GetFromJsonAsync<List<ForkDto>>($"repoinsights/{repoPath}/forks");
+        if(result == null) throw new ArgumentException($"No forks found for {repoPath}");
+        return result;
+    }
 }

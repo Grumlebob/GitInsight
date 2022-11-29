@@ -17,7 +17,7 @@ public class RepoInsightsController : ControllerBase
         _context = context;
         _repoInsightRepository = new RepoInsightRepository(context);
     }
-    
+
     [Authorize]
     [HttpGet]
     [Route("{user}/{repoName}")]
@@ -57,11 +57,11 @@ public class RepoInsightsController : ControllerBase
 
         await dm.Analyze(repoPath + "/.git", relPath);
         var analysis = new Analysis(_context);
-        
+
         var (repo, _) = await new RepoInsightRepository(_context).FindRepositoryByPathAsync(relPath);
-        
+
         Console.WriteLine("repoId: " + repo.Id);
-        
+
         return Ok(await analysis.GetCommitsByAuthor(repo!.Id));
     }
 
@@ -108,4 +108,17 @@ public class RepoInsightsController : ControllerBase
         if (foldersToSpare.Any(targetDir.EndsWith)) return;
         Directory.Delete(targetDir);
     }
+
+    [HttpGet]
+    [Route("{user}/{repoName}/forks")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ForkDto>))]
+    public async Task<IActionResult> GetForks(string user, string repoName)
+    {
+        var forkApi = new ForkApi();
+        var forks = await forkApi.GetForks($"{user}/{repoName}");
+        return Ok(forks);
+    }
+
+
 }

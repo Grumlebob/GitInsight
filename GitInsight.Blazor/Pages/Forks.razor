@@ -1,28 +1,36 @@
 ﻿@page "/Forks"
 @using GitInsight.Core
+@using GitInsight.Web.Services
+@inject IAnalysisService AnalysisService
+
 <h3>Forks</h3>
+<form>
+    <RadzenTextBox type="form" @bind="@textInput" placeholder="user/GitRepo"/>
+    <p class="btn btn-primary" type="submit" @onsubmit="@GetForks" >Go</p>
+</form>
 
-
-<RadzenDataList TItem="ForkDto" Data="@ForksGiven" WrapItems="true">
+<RadzenDataList TItem="ForkDto" Data="@_forksGiven" WrapItems="true">
     <Template Context="fork">
         <ForkCard Fork="@fork"/>
     </Template>
 </RadzenDataList>
 
 @code {
-
+    private string textInput;
+    private string error;
     ForkDto Fork1 = new ForkDto("My newly created Fork", new Owner("ThomasBavn", "https://github.com/thomasbavn", "https://avatars.githubusercontent.com/u/102732812?v=4"), "https://google.com", DateTime.Now);
     ForkDto Fork2 = new ForkDto("Another fork", new Owner("Username", "https://github.com/jgrum", "https://avatars.githubusercontent.com/u/80719417?v=4"), "https://google.com", DateTime.Now);
 
-    List<ForkDto> ForksGiven = new List<ForkDto>();
-    protected override async Task OnInitializedAsync()
+    IEnumerable<ForkDto> _forksGiven = new List<ForkDto>();
+
+    async Task GetForks()
     {
-        ForksGiven.Add(Fork1);
-        ForksGiven.Add(Fork2);
+
+        if (textInput.Trim() == "" || !textInput.Contains("/"))
+        {
+            return;
+        }
+        _forksGiven = await AnalysisService.GetForksFromApi(textInput);
     }
-
-    //create list of forks
-
-
 
 }
