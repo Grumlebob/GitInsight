@@ -1,36 +1,61 @@
 ﻿@page "/Forks"
-@using GitInsight.Core
 @using GitInsight.Web.Services
+@using System.Net
 @inject IAnalysisService AnalysisService
 
 <h3>Forks</h3>
-<form>
-    <RadzenTextBox type="form" @bind="@textInput" placeholder="user/GitRepo"/>
-    <p class="btn btn-primary" type="submit" @onsubmit="@GetForks" >Go</p>
+<form @onsubmit="@GetForks">
+    <RadzenTextBox type="text" @bind-Value="@_textInput" placeholder="user/GitRepo"/>
+    <button class="btn btn-primary" type="submit">Go</button>
 </form>
+<p style="color: red;">@_error</p>
+<p>@_loading</p>
 
-<RadzenDataList TItem="ForkDto" Data="@_forksGiven" WrapItems="true">
-    <Template Context="fork">
-        <ForkCard Fork="@fork"/>
-    </Template>
-</RadzenDataList>
-
+@if (_forksGiven == null)
+{
+    <p>Please input a repository</p>
+}
+else if (!_forksGiven.Any())
+{
+    <p>@_textInput does not have any forks</p>
+}
+else
+{
+    <RadzenDataList TItem="ForkDto" Data="@_forksGiven" WrapItems="true">
+        <Template Context="fork">
+            <ForkCard Fork="@fork"/>
+        </Template>
+    </RadzenDataList>
+}
 @code {
-    private string textInput;
-    private string error;
-    ForkDto Fork1 = new ForkDto("My newly created Fork", new Owner("ThomasBavn", "https://github.com/thomasbavn", "https://avatars.githubusercontent.com/u/102732812?v=4"), "https://google.com", DateTime.Now);
-    ForkDto Fork2 = new ForkDto("Another fork", new Owner("Username", "https://github.com/jgrum", "https://avatars.githubusercontent.com/u/80719417?v=4"), "https://google.com", DateTime.Now);
+    private string? _textInput;
+    private string? _error;
+    private string? _loading;
 
-    IEnumerable<ForkDto> _forksGiven = new List<ForkDto>();
+    IEnumerable<ForkDto>? _forksGiven;
 
     async Task GetForks()
     {
-
-        if (textInput.Trim() == "" || !textInput.Contains("/"))
+        _textInput ??= "";
+        if (_textInput.Trim() == "" || !_textInput.Contains("/"))
         {
+            _error = "Please enter a valid input";
             return;
         }
-        _forksGiven = await AnalysisService.GetForksFromApi(textInput);
+        _error = null;
+        _loading = "Loading...";
+        try
+        {
+            _forksGiven = await AnalysisService.GetForksFromApi(_textInput);
+            _error = null;
+        }
+        catch (HttpRequestException e)
+        {
+            Console.WriteLine(e);
+            _error = e.Message;
+            _forksGiven = null;
+        }
+        _loading = null;
     }
 
 }
