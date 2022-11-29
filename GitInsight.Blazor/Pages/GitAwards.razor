@@ -1,0 +1,48 @@
+﻿@page "/GitAwards"
+@using GitInsight.Core
+@using GitInsight.Web.Services
+@inject IAnalysisService _analysisService
+
+<AuthorizeView>
+    <NotAuthorized>
+        <h1> You need to sign in</h1>
+    </NotAuthorized>
+    <Authorized>
+        <h2>Git Awards</h2>
+
+        <form>
+            <input type="text" @bind="@textInput" placeholder="user/GitRepo"/>
+        </form>
+        <button @onclick="GetRepo">Go</button>
+
+        @* <p role="status" id="consolewriteline">@outputText</p> *@
+
+        @if (earlyBirdWinner != null)
+        {
+            <div class="row align-items-left justify-content-left" style="padding-right: 24vw">
+                    <GitAward AwardWinner="@earlyBirdWinner" AwardTitle="Early Bird" AwardDescription="Most commits in the time frame 06:00-10:00" ImageFileName="earlybird.jpg"></GitAward>
+                <GitAward AwardWinner="@nightOwlWinner" AwardTitle="Night Owl" AwardDescription="Most commits in the time frame 00:00-06:00" ImageFileName="nightowl.jpg"></GitAward>
+                </div>
+        }
+
+    </Authorized>
+</AuthorizeView>
+@code {
+    private string textInput;
+    // private string outputText;
+    private GitAwardWinner? earlyBirdWinner = null;
+    private GitAwardWinner? nightOwlWinner = null;
+
+
+    public async Task GetRepo()
+    {
+        earlyBirdWinner = await _analysisService.EarlyBird(textInput);
+        nightOwlWinner = await _analysisService.NightOwl(textInput);
+    }
+
+@*     private void IncrementCount() *@
+@*     { *@
+@*         outputText += "yes"; *@
+@*     } *@
+@* } *@
+}

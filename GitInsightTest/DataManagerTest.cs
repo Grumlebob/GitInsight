@@ -44,8 +44,7 @@ public class DataManagerTest : IDisposable
 
         var firstScan = await dataManager.Analyze(GetFullPathTestGit(), GetRelativeTestFolder());
         firstScan.Should().BeTrue();
-
-        await _context.Repositories.ExecuteDeleteAsync();
+        
         await _context.Commits.ExecuteDeleteAsync();
 
         var secondScanAfterAddedCommit = await dataManager.Analyze(GetFullPathTestGit(), GetRelativeTestFolder());
