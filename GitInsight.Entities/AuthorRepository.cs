@@ -123,7 +123,7 @@ public class AuthorRepository : IAuthorRepository
             author.Name = authorDto.Name;
             author.Email = authorDto.Email;
             
-            if (authorDto.RepositoryIds.Any() && author.Repositories.Any()) author.Repositories =
+            if (authorDto.RepositoryIds.Any()) author.Repositories =
                 authorDto.RepositoryIds.Select(id => _context.Repositories.First(r => r.Id==id)).ToList();
          
             //author.Commits = await UpdateCommitsIfExist(_context, authorDto.CommitIds);
