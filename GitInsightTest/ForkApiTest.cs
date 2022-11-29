@@ -27,6 +27,7 @@ public class ForkApiTest
     [Fact]
     public async Task GetForksInvalidRepo()
     {
-        (await new ForkApi().GetForks("AGmarsen/NotValid")).Should().BeEmpty();
+        var sut = new ForkApi();
+        await Assert.ThrowsAsync<HttpRequestException>(async () => await sut.GetForks("AGmarsen/invalid/"));
     }
 }
