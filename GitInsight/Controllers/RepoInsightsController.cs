@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Cors;
 
 namespace GitInsight.Controllers;
 
-[Authorize]
 [ApiController]
+[Authorize]
 [Route("[controller]")]
 public class RepoInsightsController : ControllerBase
 
@@ -17,7 +17,7 @@ public class RepoInsightsController : ControllerBase
         _context = context;
         _repoInsightRepository = new RepoInsightRepository(context);
     }
-    
+
     [Authorize]
     [HttpGet]
     [Route("{user}/{repoName}")]
@@ -57,11 +57,11 @@ public class RepoInsightsController : ControllerBase
 
         await dm.Analyze(repoPath + "/.git", relPath);
         var analysis = new Analysis(_context);
-        
+
         var (repo, _) = await new RepoInsightRepository(_context).FindRepositoryByPathAsync(relPath);
-        
+
         Console.WriteLine("repoId: " + repo.Id);
-        
+
         return Ok(await analysis.GetCommitsByAuthor(repo!.Id));
     }
 
@@ -108,7 +108,7 @@ public class RepoInsightsController : ControllerBase
         if (foldersToSpare.Any(targetDir.EndsWith)) return;
         Directory.Delete(targetDir);
     }
-    
+
     [Authorize]
     [HttpGet]
     [Route("{user}/{repoName}/EarlyBird")]
@@ -117,7 +117,7 @@ public class RepoInsightsController : ControllerBase
     public async Task<IActionResult> EarlyBird(string user, string repoName)
     {
         await AddOrUpdateLocalRepoData(user, repoName);
-        
+
         var relPath = $"{GetRelativeSavedRepositoriesFolder()}/{user}/{repoName}";
         var analysis = new Analysis(_context);
         var (repo, _) = await _repoInsightRepository.FindRepositoryByPathAsync(relPath);
@@ -125,7 +125,7 @@ public class RepoInsightsController : ControllerBase
         return Ok(await analysis.HighestCommitterWithinTimeframe(repo.Id, DateTime.Parse("1/1/1111 06:00:00 AM"),
             DateTime.Parse("1/1/1111 10:00:00 AM")));
     }
-    
+
     [Authorize]
     [HttpGet]
     [Route("{user}/{repoName}/NightOwl")]
@@ -134,7 +134,7 @@ public class RepoInsightsController : ControllerBase
     public async Task<IActionResult> NightOwl(string user, string repoName)
     {
         await AddOrUpdateLocalRepoData(user, repoName);
-        
+
         var relPath = $"{GetRelativeSavedRepositoriesFolder()}/{user}/{repoName}";
         var analysis = new Analysis(_context);
         var (repo, _) = await _repoInsightRepository.FindRepositoryByPathAsync(relPath);
@@ -159,5 +159,18 @@ public class RepoInsightsController : ControllerBase
 
         return Ok(await analysis.GetCommitsByDate(repo.Id));
     }
+
+
+    [HttpGet]
+    [Route("{user}/{repoName}/forks")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ForkDto>))]
+    public async Task<IActionResult> GetForks(string user, string repoName)
+    {
+        var forkApi = new ForkApi();
+        var forks = await forkApi.GetForks($"{user}/{repoName}");
+        return Ok(forks);
+    }
+
 
 }

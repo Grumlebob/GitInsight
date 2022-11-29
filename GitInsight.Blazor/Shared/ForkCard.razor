@@ -1,0 +1,55 @@
+﻿@using GitInsight.Blazor.Pages
+@using GitInsight.Core
+<RadzenCard class="flex-lg-wrap ">
+    <div class="container">
+        <div class="row">
+            <div class="col-auto">
+                <img src="@OwnerAvatarUrl" alt="Owner" class=" card-img rounded-circle" style="height: 5rem;width: 5rem;"/>
+            </div>
+            <div class="col">
+                <h1 class="display-6">@OwnerName</h1>
+                <p class="lead">@ForkName</p>
+            </div>
+            <div class="col-auto">
+                <p class="lead">
+                    <a href="@OwnerUrl" target="_blank" class="btn btn-outline-primary btn-lg" role="button">Visit User</a>
+                </p>
+            </div>
+            <div class="col-auto">
+
+                <p class="lead">
+                    <a href="@ForkUrl" target="_blank" class="btn btn-outline-primary btn-lg" role="button">Go to Fork</a>
+                </p>
+            </div>
+        </div>
+
+    <RadzenText class="text-secondary mt-3" >@Created</RadzenText>
+    </div>
+
+
+</RadzenCard>
+
+
+<style>
+    a {
+        text-decoration: none;
+    }
+</style>
+
+@code {
+
+    [Parameter]
+    public ForkDto Fork { get; set; }
+
+    private string ForkName => Fork.name;
+    private string ForkUrl => Fork.html_url;
+    private string OwnerName => Fork.owner.login;
+    private string OwnerUrl => Fork.owner.html_url;
+    private string OwnerAvatarUrl => Fork.owner.avatar_url;
+    private string Created => FormatDate(Fork.created_at);
+
+
+    string FormatDate(object date) => date == null ? string.Empty : Convert.ToDateTime(date).ToString("dd MMM yyyy");
+
+
+}
