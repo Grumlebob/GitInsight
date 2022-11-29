@@ -1,0 +1,44 @@
+﻿@using GitInsight.Core
+
+<div class="w-50 text-center d-flex align-items-center">
+    <RadzenCard class="m-3 flex-lg-wrap">
+        <div Style="background-color: #ffc720; padding: 0 " >
+        <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H1">
+            @AwardTitle
+        </RadzenText>
+        </div>
+
+        <RadzenImage Path="@_imageFilePath" style="max-width: 300px; max-height: 300px"></RadzenImage>
+
+        <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H1">
+            @AwardWinner.WinnerName
+        </RadzenText>
+
+        <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H1">
+            @AwardDescription
+        </RadzenText>
+
+        <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H1">
+            @AwardWinner.Value
+        </RadzenText>
+    </RadzenCard>
+</div>
+
+@code {
+    [Parameter]
+    public GitAwardWinner AwardWinner { get; set; }
+    
+    [Parameter]
+    public string AwardTitle { get; set; }
+    
+    [Parameter]
+    public string AwardDescription { get; set; }
+    
+    [Parameter]
+    public string ImageFileName {
+        set { _imageFilePath = $"images/{value}"; } 
+    }
+
+    private string _imageFilePath;
+
+}

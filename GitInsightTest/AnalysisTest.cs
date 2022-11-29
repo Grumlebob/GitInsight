@@ -39,9 +39,34 @@ public class AnalysisTest
         _context.Branches.Add(new Branch { Name = "branch1", Path = "origin/idk", RepositoryId = 1 });
         _context.SaveChanges();
 
-        _context.Commits.Add(new GitInsight.Entities.CommitInsight { Id = 1, Sha = "treg", AuthorId = 1, BranchId = 1, RepositoryId = 1, Date = new DateTime(2022,10,13,0,0,0)});
-        _context.Commits.Add(new GitInsight.Entities.CommitInsight { Id = 2, Sha = "heck", AuthorId = 2, BranchId = 1, RepositoryId = 1, Date = new DateTime(2022,10,13,11,45,0) });
-        _context.Commits.Add(new GitInsight.Entities.CommitInsight { Id = 3, Sha = "tger", AuthorId = 1, BranchId = 1, RepositoryId = 1, Date = new DateTime(2022,11,15,0,0,0) });
+        _context.Commits.Add(new GitInsight.Entities.CommitInsight { 
+            Id = 1, 
+            Sha = "treg", 
+            AuthorId = 1, 
+            BranchId = 1, 
+            RepositoryId = 1, 
+            Date = new DateTime(2022,10,13,0,0,0)
+            
+        });
+        
+        _context.Commits.Add(new GitInsight.Entities.CommitInsight
+        {
+            Id = 2,
+            Sha = "heck", 
+            AuthorId = 2,
+            BranchId = 1, 
+            RepositoryId = 1, 
+            Date = new DateTime(2022,10,13,11,45,0)
+        });
+        
+        _context.Commits.Add(new GitInsight.Entities.CommitInsight
+        {
+            Id = 3, Sha = "tger", 
+            AuthorId = 1, 
+            BranchId = 1, 
+            RepositoryId = 1, 
+            Date = new DateTime(2022,11,15,0,0,0)
+        });
 
         _context.SaveChanges();
     }
@@ -80,6 +105,24 @@ public class AnalysisTest
         commitsByAuthor[1].CommitsByDates[0].Date.Should().Be(new DateTime(2022, 10, 13, 0, 0, 0));
         commitsByAuthor[1].CommitsByDates[0].CommitAmount.Should().Be(1);
         
+    }
+    
+    [Fact]
+    public async Task Highest_Committer_Within_Timeframe_Return_correct_result()
+    {
+        var winner = await _analysis.HighestCommitterWithinTimeframe(1, 
+            DateTime.Parse("1/11/1111 00:00:00 AM"),
+            DateTime.Parse("2/12/1111 10:00:00 AM"));
+
+        winner.WinnerName.Should().Be("Søren");
+        winner.Value.Should().Be(2);
+        
+        var winner2 = await _analysis.HighestCommitterWithinTimeframe(1, 
+            DateTime.Parse("1/11/1111 10:00:00 AM"),
+            DateTime.Parse("2/12/1111 12:00:00 PM"));
+
+        winner2.WinnerName.Should().Be("Per");
+        winner2.Value.Should().Be(1);
     }
 
 

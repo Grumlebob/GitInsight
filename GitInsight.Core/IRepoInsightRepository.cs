@@ -8,4 +8,5 @@ public interface IRepoInsightRepository
     public Task<(RepoInsightDto?, Response)> FindAsync(int id);
     public Task<Response> UpdateAsync(RepoInsightDto repositoryDto);
     public Task<Response> UpdateLatestCommitAsync(RepoInsightLatestCommitUpdate repoInsightLatestCommitDto);
+    public Task<(RepoInsightDto?, Response)> FindRepositoryByPathAsync(string path);
 }

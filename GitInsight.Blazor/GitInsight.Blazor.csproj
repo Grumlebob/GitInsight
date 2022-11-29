@@ -18,4 +18,8 @@
     <ProjectReference Include="..\GitInsight.Core\GitInsight.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\images\earlybird.jpg" />
+  </ItemGroup>
+
 </Project>

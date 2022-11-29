@@ -9,3 +9,5 @@ public class CommitsByDateFormatted
 
 // public record CommitsByAuthor(string Author, int CommitAmount);
 public record CommitsByDateByAuthor(string AuthorName, List<CommitsByDate> CommitsByDates);
+
+public record GitAwardWinner(string WinnerName, float Value);
