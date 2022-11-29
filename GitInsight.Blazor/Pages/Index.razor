@@ -11,69 +11,8 @@
         <h1> You need to sign in</h1>
     </NotAuthorized>
     <Authorized>
-        <h1>Welcome!</h1>
+        <RadzenImage Path="images/gitinsight_logo.png" ></RadzenImage>
+         <h1>Welcome to Git Insight @context.User.Identity?.Name! </h1>
 
-
-<form>
-    <input type="text" @bind="@textInput" placeholder="user/GitRepo"/>
-</form>
-<button @onclick="GetRepo">Go</button>
-
-@* <p role="status" id="consolewriteline">@outputText</p> *@
-@if (_commitsByAuthors != null && _commitsByAuthors.Any())
-{
-    <div class="container">
-        <div class="row align-items-center justify-content-center">
-            @foreach (var commitsByAuthor in _commitsByAuthors)
-            {
-                <div class="w-50">
-                    <TrendChart Author="@commitsByAuthor.AuthorName" Data="@FormatDates(commitsByAuthor.CommitsByDates)"/>
-                </div>
-            }
-        </div>
-    </div>
-}
     </Authorized>
 </AuthorizeView>
-@code {
-    private string textInput;
-    // private string outputText;
-    private List<CommitsByDateByAuthor> _commitsByAuthors = new();
-
-    public List<CommitsByDateFormatted> FormatDates(IEnumerable<CommitsByDate> commitsByDate)
-    {
-        var formattedDates = new List<CommitsByDateFormatted>();
-        foreach (var date in commitsByDate)
-        {
-            var formattedDate = date.Date.ToString("dd MMM");
-            formattedDates.Add(new CommitsByDateFormatted { Date = formattedDate, CommitAmount = date.CommitAmount });
-        }
-
-        return formattedDates;
-    }
-
-
-    public async Task GetRepo()
-    {
-        if(textInput.Trim() == "" || !textInput.Contains("/"))
-        {
-            return;
-        }
-        _commitsByAuthors = await _analysisService.GetCommitsByAuthor($"repoinsights/{textInput}");
-    // outputText = _commitsByAuthors.Count.ToString();
-    }
-
-@*     private void IncrementCount() *@
-@*     { *@
-@*         outputText += "yes"; *@
-@*     } *@
-@* } *@
-}
-
-
-
-
-
-
-
-@* <SurveyPrompt Title="How is Blazor working for you?"/> *@

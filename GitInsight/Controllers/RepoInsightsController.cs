@@ -142,6 +142,23 @@ public class RepoInsightsController : ControllerBase
         return Ok(await analysis.HighestCommitterWithinTimeframe(repo.Id, DateTime.Parse("1/1/1111 00:00:00 "),
             DateTime.Parse("1/1/1111 06:00:00 AM")));
     }
+    
+    
+    [Authorize]
+    [HttpGet]
+    [Route("{user}/{repoName}/CommitsByDate")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CommitsByDate))]
+    public async Task<IActionResult> CommitsByDate(string user, string repoName)
+    {
+        await AddOrUpdateLocalRepoData(user, repoName);
+        
+        var relPath = $"{GetRelativeSavedRepositoriesFolder()}/{user}/{repoName}";
+        var analysis = new Analysis(_context);
+        var (repo, _) = await _repoInsightRepository.FindRepositoryByPathAsync(relPath);
+
+        return Ok(await analysis.GetCommitsByDate(repo.Id));
+    }
 
 
     [HttpGet]

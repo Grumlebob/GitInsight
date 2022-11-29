@@ -1,0 +1,103 @@
+﻿@page "/Commits"
+@using GitInsight.Web.Services
+@using GitInsight.Core
+@inject IAnalysisService _analysisService
+@inject HttpClient _httpClient
+
+<PageTitle>Index</PageTitle>
+
+<AuthorizeView>
+    <NotAuthorized>
+        <h1> You need to sign in</h1>
+    </NotAuthorized>
+    <Authorized>
+        <h1>Commits by Date</h1>
+
+        
+
+        <RadzenTextBox type="text" @bind-value="@user" placeholder="Username or organization"/>
+        <RadzenTextBox type="text" @bind-value="@repo" placeholder="Repository name"/>
+        <button class="btn btn-primary" disabled="@loading" @onclick="GetRepo">Show</button>
+
+        @* <p role="status" id="consolewriteline">@outputText</p> *@
+        @if (loading)
+        {
+            <RadzenCard>
+                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Loading</RadzenText>
+                <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
+            </RadzenCard>
+        }
+@if (_commitsByAuthors != null && _commitsByAuthors.Any())
+{
+    var multiplier = 20;
+    if (_commitsByDate.Count < 10)
+    {
+        multiplier = 45;
+    }
+    if (_commitsByDate.Count < 5)
+    {
+        multiplier = 85;
+    }
+    var height = _commitsByDate.Count * multiplier;
+    var heightAuthors = _commitsByAuthors.Max(c => c.CommitsByDates.Count)*multiplier;
+    <BarChart Author="All Contributors" Data="@FormatDates(_commitsByDate)" Height="@height"/>
+    <h1>Commits by Author</h1>
+    <div class="container">
+        <div class="row align-items-center justify-content-center">
+           
+            
+            @foreach (var commitsByAuthor in _commitsByAuthors)
+            {
+                <div class="w-50">
+                    <BarChart Author="@commitsByAuthor.AuthorName" Data="@FormatDates(commitsByAuthor.CommitsByDates)" Height="@heightAuthors"/>
+                </div>
+            }
+        </div>
+    </div>
+}
+    </Authorized>
+</AuthorizeView>
+@code {
+    private string user;
+    private string repo;
+    private bool loading;
+    // private string outputText;
+    private List<CommitsByDateByAuthor> _commitsByAuthors = new();
+    private List<CommitsByDate> _commitsByDate = new();
+
+    public List<CommitsByDateFormatted> FormatDates(IEnumerable<CommitsByDate> commitsByDate)
+    {
+        var formattedDates = new List<CommitsByDateFormatted>();
+        foreach (var date in commitsByDate)
+        {
+            var formattedDate = date.Date.ToString("dd MMM");
+            formattedDates.Add(new CommitsByDateFormatted { Date = formattedDate, CommitAmount = date.CommitAmount });
+        }
+
+        return formattedDates;
+    }
+
+
+    public async Task GetRepo()
+    {
+        loading = true;
+        _commitsByAuthors = await _analysisService.GetCommitsByAuthor($"repoinsights/{user}/{repo}");
+        _commitsByDate = await _analysisService.GetCommitsByDate($"repoinsights/{user}/{repo}");
+        loading = false;
+    // outputText = _commitsByAuthors.Count.ToString();
+    }
+
+@*     private void IncrementCount() *@
+@*     { *@
+@*         outputText += "yes"; *@
+@*     } *@
+@* } *@
+}
+
+
+
+
+
+
+
+@* <SurveyPrompt Title="How is Blazor working for you?"/> *@
