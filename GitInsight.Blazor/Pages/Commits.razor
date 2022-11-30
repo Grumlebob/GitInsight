@@ -13,8 +13,6 @@
     <Authorized>
         <h1>Commits by Date</h1>
 
-        
-
         <RadzenTextBox type="text" @bind-value="@user" placeholder="Username or organization"/>
         <RadzenTextBox type="text" @bind-value="@repo" placeholder="Repository name"/>
         <button class="btn btn-primary" disabled="@loading" @onclick="GetRepo">Show</button>
