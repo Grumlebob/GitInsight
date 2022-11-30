@@ -32,5 +32,8 @@ public class RepositoryConfigurations : IEntityTypeConfiguration<RepoInsight>
             .WithOne(a => a.Repository);
         builder.HasIndex(a => a.LatestCommitId)
             .IsUnique(); //cant make foreign key (workaround). The use case is if foreign key rule broken: reanalyze.
+        
+        builder.HasMany(a => a.Authors)
+            .WithMany(a => a.Repositories!);
     }
 }
