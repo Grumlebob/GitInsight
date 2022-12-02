@@ -8,19 +8,23 @@
         <h1> You need to sign in</h1>
     </NotAuthorized>
     <Authorized>
-        <h2>Git Awards</h2>
+        <div style="padding-bottom: 20px;">
+                    <RadzenCard Style="width: 400px; background-color: #cac4fe; padding-bottom: 5px;" Class="rz-border-radius-3">
+                        <h2>Git Awards</h2>
+                    </RadzenCard>
+                </div>
 
-      <RadzenTextBox type="text" @bind-value="@user" placeholder="Username or organization"/>
-      <RadzenTextBox type="text" @bind-value="@repo" placeholder="Repository name"/>
-       <button class="btn btn-primary" disabled="@loading"  @onclick="GetRepo">Show</button>
+     <RepoPathPicker OnChange="load" Disabled="@loading"></RepoPathPicker>
 
-      @* <p role="status" id="consolewriteline">@outputText</p> *@
+        @* <p role="status" id="consolewriteline">@outputText</p> *@
        @if (loading)
               {
-                  <RadzenCard>
-                      <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Loading</RadzenText>
-                      <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
-                  </RadzenCard>
+                  <div style="padding-top: 10px;">
+        <RadzenCard Style="width: 400px;">
+            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Loading</RadzenText>
+            <RadzenProgressBar  Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
+        </RadzenCard>
+       </div>
               }
 
         @if (earlyBirdWinner != null)
@@ -50,8 +54,18 @@
     public async Task GetRepo()
     {
         loading = true;
-        earlyBirdWinner = await _analysisService.EarlyBird($"{user}/{repo}");
-        nightOwlWinner = await _analysisService.NightOwl($"{user}/{repo}");
+        earlyBirdWinner = await _analysisService.EarlyBird(RepoPathContainer.pickedRepo);
+        nightOwlWinner = await _analysisService.NightOwl(RepoPathContainer.pickedRepo);
         loading = false;
+    }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await load();
+    }
+    
+    public async Task load()
+    {
+        if (RepoPathContainer.pickedRepo != null) await GetRepo();
     }
 }

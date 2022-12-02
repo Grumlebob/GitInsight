@@ -11,48 +11,57 @@
         <h1> You need to sign in</h1>
     </NotAuthorized>
     <Authorized>
-        <h1>Commits by Date</h1>
-
-        <RadzenTextBox type="text" @bind-value="@user" placeholder="Username or organization"/>
-        <RadzenTextBox type="text" @bind-value="@repo" placeholder="Repository name"/>
-        <button class="btn btn-primary" disabled="@loading" @onclick="GetRepo">Show</button>
+        <div style="padding-bottom: 20px;">
+            <RadzenCard Style="width: 400px; background-color: #cac4fe; padding-bottom: 10px;" Class="rz-border-radius-3">
+                <h1>Commits by Date</h1>
+            </RadzenCard>
+        </div>
+        
+        
+        <RepoPathPicker OnChange="load" Disabled="@loading"></RepoPathPicker>
 
         @* <p role="status" id="consolewriteline">@outputText</p> *@
         @if (loading)
         {
-            <RadzenCard>
-                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Loading</RadzenText>
-                <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
-            </RadzenCard>
+            <div style="padding-top: 10px;">
+                <RadzenCard Style="width: 400px;">
+                    <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Loading</RadzenText>
+                    <RadzenProgressBar  Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
+                </RadzenCard>
+            </div>
         }
-@if (_commitsByAuthors != null && _commitsByAuthors.Any())
-{
-    var multiplier = 20;
-    if (_commitsByDate.Count < 10)
-    {
-        multiplier = 45;
-    }
-    if (_commitsByDate.Count < 5)
-    {
-        multiplier = 85;
-    }
-    var height = _commitsByDate.Count * multiplier;
-    var heightAuthors = _commitsByAuthors.Max(c => c.CommitsByDates.Count)*multiplier;
-    <BarChart Author="All Contributors" Data="@FormatDates(_commitsByDate)" Height="@height"/>
-    <h1>Commits by Author</h1>
-    <div class="container">
-        <div class="row align-items-center justify-content-center">
-           
-            
-            @foreach (var commitsByAuthor in _commitsByAuthors)
+        @if (_commitsByAuthors != null && _commitsByAuthors.Any())
+        {
+            var multiplier = 20;
+            if (_commitsByDate.Count < 16)
             {
-                <div class="w-50">
-                    <BarChart Author="@commitsByAuthor.AuthorName" Data="@FormatDates(commitsByAuthor.CommitsByDates)" Height="@heightAuthors"/>
-                </div>
+                multiplier = 35;
             }
-        </div>
-    </div>
-}
+            if (_commitsByDate.Count < 5)
+            {
+                multiplier = 85;
+            }
+            var height = _commitsByDate.Count * multiplier;
+            var heightAuthors = _commitsByAuthors.Max(c => c.CommitsByDates.Count) * multiplier;
+            <BarChart Author="All Contributors" Data="@FormatDates(_commitsByDate)" Height="@height"/>
+            <div style="padding-top: 20px;">
+                <RadzenCard Style="width: 400px; background-color: #cac4fe; padding-bottom: 10px;" Class="rz-border-radius-3">
+                    <h1>Commits by Author</h1>
+                </RadzenCard>
+            </div>
+            <div class="container">
+                <div class="row align-items-center justify-content-center">
+
+
+                    @foreach (var commitsByAuthor in _commitsByAuthors)
+                    {
+                        <div class="w-50">
+                            <BarChart Author="@commitsByAuthor.AuthorName" Data="@FormatDates(commitsByAuthor.CommitsByDates)" Height="@heightAuthors"/>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
     </Authorized>
 </AuthorizeView>
 @code {
@@ -74,22 +83,28 @@
 
         return formattedDates;
     }
+    
 
 
     public async Task GetRepo()
     {
         loading = true;
-        _commitsByAuthors = await _analysisService.GetCommitsByAuthor($"repoinsights/{user}/{repo}");
-        _commitsByDate = await _analysisService.GetCommitsByDate($"repoinsights/{user}/{repo}");
+        _commitsByAuthors = await _analysisService.GetCommitsByAuthor($"repoinsights/{RepoPathContainer.pickedRepo}");
+        _commitsByDate = await _analysisService.GetCommitsByDate($"repoinsights/{RepoPathContainer.pickedRepo}");
         loading = false;
     // outputText = _commitsByAuthors.Count.ToString();
     }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await load();
+    }
 
-@*     private void IncrementCount() *@
-@*     { *@
-@*         outputText += "yes"; *@
-@*     } *@
-@* } *@
+    public async Task load()
+    {
+        if (RepoPathContainer.pickedRepo != null) await GetRepo();
+    }
+    
 }
 
 

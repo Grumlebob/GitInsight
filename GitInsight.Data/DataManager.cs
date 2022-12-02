@@ -12,11 +12,13 @@ public class DataManager
     private readonly BranchRepository _branchRepository;
     private readonly CommitInsightRepository _commitInsightRepository;
     private readonly AuthorRepository _authorRepository;
+    private InsightContext _context;
 
     private bool _shouldReanalyze;
 
     public DataManager(InsightContext context)
     {
+        _context = context;
         var ctx = context;
         _repoInsightRepository = new RepoInsightRepository(ctx);
         _branchRepository = new BranchRepository(ctx);
@@ -33,11 +35,19 @@ public class DataManager
             Console.WriteLine("No analyze was needed");
             return false;
         }
+        
+        foreach (var idk in _context.Authors)
+        {
+            Console.WriteLine($"{idk.Name}: {idk.Repositories.Count}");
+        }
 
         using var repo = new Repository(fullPath);
         //repo
         var dto = new RepoInsightCreateDto(relPath, relPath, null!, null!, null!);
         var (repoResult, _) = await _repoInsightRepository.CreateAsync(dto);
+
+        
+        
         //branches
         foreach (var b in repo.Branches)
         {

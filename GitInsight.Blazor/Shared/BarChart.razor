@@ -5,6 +5,9 @@
     <RadzenText TextStyle="TextStyle.H5">
         @Author
     </RadzenText>
+    <RadzenText >
+                             Total: @Data.Sum(d => d.CommitAmount)
+                         </RadzenText>
     <RadzenChart id="chart" Style="@HeightOfChart">
         <RadzenBarSeries Data="@Data" CategoryProperty="Date" Title="Commits" ValueProperty="CommitAmount" RenderingOrder="1">
             <RadzenMarkers MarkerType="MarkerType.Square"/>
