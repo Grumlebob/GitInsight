@@ -1,10 +1,4 @@
-﻿using GitInsight.Core;
-using GitInsight.Entities;
-using Microsoft.Data.Sqlite;
-using Branch = GitInsight.Entities.Branch;
-
-
-namespace GitInsightTest;
+﻿namespace GitInsightTest;
 
 public class RepoInsightRepositoryTest : IDisposable
 {
@@ -17,7 +11,7 @@ public class RepoInsightRepositoryTest : IDisposable
         (_connection, _context) = SetupTests.Setup();
         _repoInsightRepository = new RepoInsightRepository(_context);
 
-        var testRepo = new RepoInsight()
+        var testRepo = new RepoInsight
         {
             Id = 1,
             Name = "First Repo",
@@ -27,7 +21,7 @@ public class RepoInsightRepositoryTest : IDisposable
         _context.SaveChanges();
 
         //Base testing branch
-        var testBranch = new Branch()
+        var testBranch = new Branch
         {
             Id = 1,
             Name = "First Branch",
@@ -47,7 +41,7 @@ public class RepoInsightRepositoryTest : IDisposable
             Repositories = { testRepo },
             Commits =
             {
-                new GitInsight.Entities.CommitInsight
+                new CommitInsight
                 {
                     Sha = "First Commit",
                     Date = DateTime.Now,
@@ -69,7 +63,7 @@ public class RepoInsightRepositoryTest : IDisposable
             Repositories = { testRepo },
             Commits =
             {
-                new GitInsight.Entities.CommitInsight
+                new CommitInsight
                 {
                     Sha = "Second Commit",
                     Date = DateTime.Now,
@@ -119,7 +113,7 @@ public class RepoInsightRepositoryTest : IDisposable
     public async Task FindAllRepositories_test()
     {
         var (dtoList, response) = await _repoInsightRepository.FindAllAsync();
-        dtoList.Count.Should().Be(1);
+        dtoList!.Count.Should().Be(1);
         response.Should().Be(Response.Ok);
     }
 
@@ -127,7 +121,7 @@ public class RepoInsightRepositoryTest : IDisposable
     public async Task FindAllRepositories_Empty_Test()
     {
         _context.Repositories.RemoveRange(_context.Repositories);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         var (dtoList, response) = await _repoInsightRepository.FindAllAsync();
         dtoList.Should().BeNull();
         response.Should().Be(Response.NotFound);
@@ -137,7 +131,7 @@ public class RepoInsightRepositoryTest : IDisposable
     public async Task UpdateRepository_Test()
     {
         var (dto, _) = await _repoInsightRepository.FindAsync(1);
-        var branches = dto.BranchIds;
+        var branches = dto!.BranchIds;
         var commits = dto.CommitIds;
         var authors = dto.AuthorIds;
 
@@ -235,9 +229,9 @@ public class RepoInsightRepositoryTest : IDisposable
             Id: 1,
             Name: "First Repo",
             Path: "First RepoPath",
-            BranchIds: new List<int>() { 1 },
-            CommitIds: new List<int>() { 1, 2 },
-            AuthorIds: new List<int>() { 1, 2 },
+            BranchIds: new List<int> { 1 },
+            CommitIds: new List<int> { 1, 2 },
+            AuthorIds: new List<int> { 1, 2 },
             LatestCommitId: 0
         );
 

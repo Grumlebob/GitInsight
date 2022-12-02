@@ -1,10 +1,4 @@
-﻿using GitInsight.Core;
-using GitInsight.Entities;
-using Microsoft.Data.Sqlite;
-using Commit = GitInsight.Entities.CommitInsight;
-using Repository = GitInsight.Entities.RepoInsight;
-
-namespace GitInsightTest;
+﻿namespace GitInsightTest;
 
 public class AuthorRepositoryTest : IDisposable
 {
@@ -18,7 +12,7 @@ public class AuthorRepositoryTest : IDisposable
         _authorRepository = new AuthorRepository(_context);
 
         //Base testing repository
-        var testRepo = new Repository()
+        var testRepo = new Repository
         {
             Id = 1,
             Name = "First Repo",
@@ -28,7 +22,7 @@ public class AuthorRepositoryTest : IDisposable
         _context.SaveChanges();
 
         //Base testing branch
-        var testBranch = new GitInsight.Entities.Branch()
+        var testBranch = new Branch
         {
             Id = 1,
             Name = "First Branch",
@@ -89,7 +83,7 @@ public class AuthorRepositoryTest : IDisposable
     {
         var (authorDto, response) = await _authorRepository.FindAsync(1);
         authorDto.Should().BeEquivalentTo(new AuthorDto(1, "First Author", "First Email",
-            new List<int>() { 1 }));
+            new List<int> { 1 }));
         response.Should().Be(Response.Ok);
     }
 
@@ -107,8 +101,8 @@ public class AuthorRepositoryTest : IDisposable
         var (authorDtos, response) = await _authorRepository.FindAllAsync();
         authorDtos.Should().BeEquivalentTo(new List<AuthorDto>
         {
-            new AuthorDto(1, "First Author", "First Email", new List<int>() { 1 }),
-            new AuthorDto(2, "Second Author", "Second Email", new List<int>() { 1 }),
+            new AuthorDto(1, "First Author", "First Email", new List<int> { 1 }),
+            new AuthorDto(2, "Second Author", "Second Email", new List<int> { 1 }),
         });
         response.Should().Be(Response.Ok);
     }
@@ -129,7 +123,7 @@ public class AuthorRepositoryTest : IDisposable
     {
         var (authorDto, response) = await _authorRepository.FindByNameAsync("First Author");
         authorDto.Should().BeEquivalentTo(new[]
-            { new AuthorDto(1, "First Author", "First Email", new List<int>() { 1 }) });
+            { new AuthorDto(1, "First Author", "First Email", new List<int> { 1 }) });
         response.Should().Be(Response.Ok);
     }
 
@@ -148,7 +142,7 @@ public class AuthorRepositoryTest : IDisposable
     {
         var (authorDto, response) = await _authorRepository.FindByEmailAsync("First Email");
         authorDto.Should().BeEquivalentTo(
-            new AuthorDto(1, "First Author", "First Email", new List<int>() { 1 }));
+            new AuthorDto(1, "First Author", "First Email", new List<int> { 1 }));
         response.Should().Be(Response.Ok);
     }
 
@@ -166,8 +160,8 @@ public class AuthorRepositoryTest : IDisposable
         var (authorDto, response) = await _authorRepository.FindByRepoIdAsync(1);
         authorDto.Should().BeEquivalentTo(new List<AuthorDto>
         {
-            new AuthorDto(1, "First Author", "First Email", new List<int>() { 1 }),
-            new AuthorDto(2, "Second Author", "Second Email", new List<int>() { 1 }),
+            new AuthorDto(1, "First Author", "First Email", new List<int> { 1 }),
+            new AuthorDto(2, "Second Author", "Second Email", new List<int> { 1 }),
         });
 
         response.Should().Be(Response.Ok);
@@ -187,7 +181,7 @@ public class AuthorRepositoryTest : IDisposable
         var (authorDto, response) = await _authorRepository.FindByCommitIdAsync(1);
         authorDto.Should().BeEquivalentTo(new List<AuthorDto>
         {
-            new AuthorDto(1, "First Author", "First Email", new List<int>() { 1 }),
+            new AuthorDto(1, "First Author", "First Email", new List<int> { 1 }),
         });
         response.Should().Be(Response.Ok);
     }
@@ -205,9 +199,9 @@ public class AuthorRepositoryTest : IDisposable
     public async Task CreateAuthorReturnsCreated()
     {
         var (authorDto, response) = await _authorRepository.CreateAsync(new AuthorCreateDto("Third Author",
-            "Third Email", new List<int>() { 1 }));
+            "Third Email", new List<int> { 1 }));
         authorDto.Should().BeEquivalentTo(new AuthorDto(3, "Third Author", "Third Email",
-            new List<int>() { 1 }));
+            new List<int> { 1 }));
         response.Should().Be(Response.Created);
     }
 
@@ -215,7 +209,7 @@ public class AuthorRepositoryTest : IDisposable
     public async Task CreateAuthorReturnsBadRequest()
     {
         var (authorDto, response) = await _authorRepository.CreateAsync(new AuthorCreateDto("Wrong repo",
-            "Wrong repo", new List<int>() { 10 }));
+            "Wrong repo", new List<int> { 10 }));
         response.Should().Be(Response.BadRequest);
         authorDto.Should().BeNull();
     }
@@ -224,20 +218,20 @@ public class AuthorRepositoryTest : IDisposable
     public async Task CreateAuthorReturnsConflict()
     {
         var (authorDto, response) = await _authorRepository.CreateAsync(new AuthorCreateDto("Third Author",
-            "Third Email", new List<int>() { 1 }));
+            "Third Email", new List<int> { 1 }));
         authorDto.Should().BeEquivalentTo(new AuthorDto(3, "Third Author", "Third Email",
-            new List<int>() { 1 }));
+            new List<int> { 1 }));
         response.Should().Be(Response.Created);
 
         var (_, responseSame) = await _authorRepository.CreateAsync(new AuthorCreateDto("Third Author",
-            "Third Email", new List<int>() { 1 }));
+            "Third Email", new List<int> { 1 }));
         responseSame.Should().Be(Response.Conflict);
     }
 
     [Fact]
     public async Task CreateExistingAuthorWithNewReposReturnsOk()
     {
-        var testRepo = new Repository()
+        var testRepo = new Repository
         {
             Id = 69,
             Name = "Another repo",
@@ -246,13 +240,13 @@ public class AuthorRepositoryTest : IDisposable
         await _context.Repositories.AddAsync(testRepo);
         await _context.SaveChangesAsync();
         var (authorDto, response) = await _authorRepository.CreateAsync(new AuthorCreateDto("Third Author",
-            "Third Email", new List<int>() { 1 }));
+            "Third Email", new List<int> { 1 }));
         authorDto.Should().BeEquivalentTo(new AuthorDto(3, "Third Author", "Third Email",
-            new List<int>() { 1 }));
+            new List<int> { 1 }));
         response.Should().Be(Response.Created);
 
         var (updated, responseSame) = await _authorRepository.CreateAsync(new AuthorCreateDto("Third Author",
-            "Third Email", new List<int>() { 1, 69 }));
+            "Third Email", new List<int> { 1, 69 }));
         responseSame.Should().Be(Response.Ok);
         updated!.RepositoryIds.Should().Contain(69);
     }
@@ -276,10 +270,10 @@ public class AuthorRepositoryTest : IDisposable
     {
         var (authorDto, response) = await _authorRepository.FindAsync(1);
         authorDto.Should().BeEquivalentTo(new AuthorDto(1, "First Author", "First Email",
-            new List<int>() { 1 }));
+            new List<int> { 1 }));
         response.Should().Be(Response.Ok);
 
-        var updateDto = new AuthorUpdateDto(1, "New Name", "New Email", new List<int>() { 1 });
+        var updateDto = new AuthorUpdateDto(1, "New Name", "New Email", new List<int> { 1 });
         var updatedAuthorDto = await _authorRepository.UpdateAsync(updateDto);
 
         updatedAuthorDto.Should().Be(Response.Ok);
@@ -294,13 +288,13 @@ public class AuthorRepositoryTest : IDisposable
     public async Task UpdateAuthorReturnsNotFound()
     {
         var updateDto = new AuthorUpdateDto(10, "Does not exist", "Does not exist",
-            new List<int>() { 1 });
+            new List<int> { 1 });
         var updatedAuthorDto = await _authorRepository.UpdateAsync(updateDto);
         updatedAuthorDto.Should().Be(Response.NotFound);
     }
 
     [Fact]
-    public async Task AuthorConfigurations()
+    public void AuthorConfigurations()
     {
         AuthorConfigurations authorConfigurations = new AuthorConfigurations();
         authorConfigurations.Should().NotBeNull();

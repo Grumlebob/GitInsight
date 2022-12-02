@@ -1,27 +1,18 @@
-﻿using GitInsight.Controllers;
-using GitInsight.Core;
-using GitInsight.Entities;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
-using Commit = GitInsight.Entities.CommitInsight;
-using Repository = GitInsight.Entities.RepoInsight;
-
-namespace GitInsightTest;
+﻿namespace GitInsightTest;
 
 public class CommitsControllerTest : IDisposable
 {
     private readonly SqliteConnection _connection;
     private readonly InsightContext _context;
-    private readonly CommitsController _CommitsController;
+    private readonly CommitsController _commitsController;
 
     
     public CommitsControllerTest()
     {
         (_connection, _context) = SetupTests.Setup();
-        _CommitsController = new CommitsController(_context);
+        _commitsController = new CommitsController(_context);
         //Base testing repository
-        var testRepo = new Repository()
+        var testRepo = new Repository
         {
             Id = 1,
             Name = "First Repo",
@@ -30,7 +21,7 @@ public class CommitsControllerTest : IDisposable
         _context.Repositories.Add(testRepo);
         _context.SaveChanges();
         //Base testing branch
-        var testBranch = new GitInsight.Entities.Branch()
+        var testBranch = new Branch
         {
             Id = 1,
             Name = "First Branch",
@@ -95,16 +86,16 @@ public class CommitsControllerTest : IDisposable
     [Fact]
     public async Task GetAllCommitsReturnsOk()
     {
-        var Commits = await _CommitsController.GetAllCommits();
-        Commits.Should().BeAssignableTo<OkObjectResult>();
+        var commits = await _commitsController.GetAllCommits();
+        commits.Should().BeAssignableTo<OkObjectResult>();
     }
     
     [Fact]
     public async Task GetAllCommitsReturnsNotFound()
     {
         await _context.Commits.ExecuteDeleteAsync();
-        var Commits = await _CommitsController.GetAllCommits();
-        Commits.Should().BeAssignableTo<NotFoundResult>();
+        var commits = await _commitsController.GetAllCommits();
+        commits.Should().BeAssignableTo<NotFoundResult>();
     }
     
     
@@ -112,16 +103,16 @@ public class CommitsControllerTest : IDisposable
     [Fact]
     public async Task GetCommitByIdReturnsOk()
     {
-        var Commits = await _CommitsController.GetCommitById(1);
-        Commits.Should().BeAssignableTo<OkObjectResult>();
+        var commits = await _commitsController.GetCommitById(1);
+        commits.Should().BeAssignableTo<OkObjectResult>();
     }
     
     [Fact]
     public async Task GetAuthorByIdReturnsNotFound()
     {
         await _context.Commits.ExecuteDeleteAsync();
-        var Commits = await _CommitsController.GetCommitById(10);
-        Commits.Should().BeAssignableTo<NotFoundResult>();
+        var commits = await _commitsController.GetCommitById(10);
+        commits.Should().BeAssignableTo<NotFoundResult>();
     }
 
 

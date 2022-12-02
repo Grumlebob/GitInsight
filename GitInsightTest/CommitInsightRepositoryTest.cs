@@ -1,10 +1,4 @@
-﻿using GitInsight.Core;
-using GitInsight.Entities;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
-using Branch = GitInsight.Entities.Branch;
-
-namespace GitInsightTest;
+﻿namespace GitInsightTest;
 
 public class CommitInsightRepositoryTest : IDisposable
 {
@@ -28,17 +22,17 @@ public class CommitInsightRepositoryTest : IDisposable
         _context.Authors.Add(new Author { Name = "Per", Email = "per@gmail.dk" });
         _context.SaveChanges();
 
-        _context.Repositories.Add(new GitInsight.Entities.RepoInsight { Name = "repo1", Path = "idk/idk" });
-        _context.Repositories.Add(new GitInsight.Entities.RepoInsight { Name = "repo2", Path = "idc/idc" });
+        _context.Repositories.Add(new RepoInsight { Name = "repo1", Path = "idk/idk" });
+        _context.Repositories.Add(new RepoInsight { Name = "repo2", Path = "idc/idc" });
         _context.SaveChanges();
 
         _context.Branches.Add(new Branch { Name = "branch1", Path = "origin/idk", RepositoryId = 1 });
         _context.Branches.Add(new Branch { Name = "branch2", Path = "origin/idc", RepositoryId = 2 });
         _context.SaveChanges();
 
-        _context.Commits.Add(new GitInsight.Entities.CommitInsight { Id = 1, Sha = "treg", AuthorId = 1, BranchId = 1, RepositoryId = 1, Date = DateTime.Now, Repository = null, Author = null, Branch = null });
-        _context.Commits.Add(new GitInsight.Entities.CommitInsight { Id = 2, Sha = "heck", AuthorId = 2, BranchId = 2, RepositoryId = 2, Date = DateTime.Now });
-        _context.Commits.Add(new GitInsight.Entities.CommitInsight { Id = 3, Sha = "tger", AuthorId = 1, BranchId = 2, RepositoryId = 2, Date = DateTime.Now });
+        _context.Commits.Add(new CommitInsight { Id = 1, Sha = "treg", AuthorId = 1, BranchId = 1, RepositoryId = 1, Date = DateTime.Now, Repository = null!, Author = null!, Branch = null! });
+        _context.Commits.Add(new CommitInsight { Id = 2, Sha = "heck", AuthorId = 2, BranchId = 2, RepositoryId = 2, Date = DateTime.Now });
+        _context.Commits.Add(new CommitInsight { Id = 3, Sha = "tger", AuthorId = 1, BranchId = 2, RepositoryId = 2, Date = DateTime.Now });
 
         _context.SaveChanges();
     }
@@ -50,7 +44,7 @@ public class CommitInsightRepositoryTest : IDisposable
 
         response.Should().Be(Response.Ok);
 
-        commit.Sha.Should().Be("treg");
+        commit!.Sha.Should().Be("treg");
 
     }
 
@@ -70,7 +64,7 @@ public class CommitInsightRepositoryTest : IDisposable
 
         response.Should().Be(Response.Ok);
 
-        commit.Id.Should().Be(2);
+        commit!.Id.Should().Be(2);
 
     }
     
@@ -128,14 +122,14 @@ public class CommitInsightRepositoryTest : IDisposable
     [Fact]
     public async Task Create_return_created()
     {
-        var expectedCommitDTO = new CommitInsightDto(4, "heyuo", DateTimeOffset.Now, 2, 1, 1);
+        var expectedCommitDto = new CommitInsightDto(4, "heyuo", DateTimeOffset.Now, 2, 1, 1);
 
-        var result = await _repository.CreateAsync(new CommitInsightCreateDto(expectedCommitDTO.Sha, expectedCommitDTO.Date, expectedCommitDTO.AuthorId, expectedCommitDTO.BranchId, expectedCommitDTO.RepositoryId));
+        var result = await _repository.CreateAsync(new CommitInsightCreateDto(expectedCommitDto.Sha, expectedCommitDto.Date, expectedCommitDto.AuthorId, expectedCommitDto.BranchId, expectedCommitDto.RepositoryId));
 
         result.response.Should().Be(Response.Created);
 
-        _repository.FindAsync(4).Result.commit.Should().BeEquivalentTo(expectedCommitDTO);
-        result.commit.Should().BeEquivalentTo(expectedCommitDTO);
+        _repository.FindAsync(4).Result.commit.Should().BeEquivalentTo(expectedCommitDto);
+        result.commit.Should().BeEquivalentTo(expectedCommitDto);
     }
 
     [Fact]
@@ -161,13 +155,13 @@ public class CommitInsightRepositoryTest : IDisposable
     [Fact]
     public async Task Update_id_1_return_ok()
     {
-        var commitDTO = new CommitInsightDto(1, "treg", DateTimeOffset.Now, 1, 1, 1);
-        var result = await _repository.UpdateAsync(commitDTO);
+        var commitDto = new CommitInsightDto(1, "treg", DateTimeOffset.Now, 1, 1, 1);
+        var result = await _repository.UpdateAsync(commitDto);
 
         result.response.Should().Be(Response.Ok);
 
-        result.commit.Should().BeEquivalentTo(commitDTO);
-        _repository.FindAsync(1).Result.commit.Should().BeEquivalentTo(commitDTO);
+        result.commit.Should().BeEquivalentTo(commitDto);
+        _repository.FindAsync(1).Result.commit.Should().BeEquivalentTo(commitDto);
 
     }
 
@@ -186,13 +180,13 @@ public class CommitInsightRepositoryTest : IDisposable
         var result = await _repository.UpdateAsync(new CommitInsightDto(2, "heck", DateTimeOffset.Now, 2, 2, 3));
 
         result.response.Should().Be(Response.BadRequest);
-        _repository.FindAsync(2).Result.commit.RepositoryId.Should().Be(2);
+        _repository.FindAsync(2).Result.commit!.RepositoryId.Should().Be(2);
     }
 
     [Fact]
     public async Task Update_return_badRequest_because_nothing_is_changed()
     {
-        var result = await _repository.UpdateAsync(new CommitInsightDto(3, "tger", _repository.FindAsync(3).Result.commit.Date, 1, 2, 2));
+        var result = await _repository.UpdateAsync(new CommitInsightDto(3, "tger", _repository.FindAsync(3).Result.commit!.Date, 1, 2, 2));
 
         result.response.Should().Be(Response.BadRequest);
     }
@@ -217,9 +211,9 @@ public class CommitInsightRepositoryTest : IDisposable
     [Fact]
     public async Task Test_Relations()
     {
-        _context.Commits.FirstOrDefaultAsync(c => c.Id == 1).Result.Author.Name.Should().Be("Søren");
-        _context.Commits.FirstOrDefaultAsync(c => c.Id == 1).Result.Branch.Id.Should().Be(1);
-        _context.Commits.FirstOrDefaultAsync(c => c.Id == 3).Result.Repository.Name.Should().Be("repo2");
+        (await _context.Commits.FirstOrDefaultAsync(c => c.Id == 1))!.Author.Name.Should().Be("Søren");
+        (await _context.Commits.FirstOrDefaultAsync(c => c.Id == 1))!.Branch.Id.Should().Be(1);
+        (await _context.Commits.FirstOrDefaultAsync(c => c.Id == 3))!.Repository.Name.Should().Be("repo2");
     }
     public void Dispose()
     {
