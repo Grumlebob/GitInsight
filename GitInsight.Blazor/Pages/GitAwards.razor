@@ -14,7 +14,7 @@
                     </RadzenCard>
                 </div>
 
-     <RepoPathPicker OnChange="load"></RepoPathPicker>
+     <RepoPathPicker OnChange="load" Disabled="@loading"></RepoPathPicker>
 
         @* <p role="status" id="consolewriteline">@outputText</p> *@
        @if (loading)

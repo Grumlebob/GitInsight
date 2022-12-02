@@ -3,21 +3,37 @@
 @using System.Net
 @inject IAnalysisService AnalysisService
 
-<h3>Forks</h3>
-<form @onsubmit="@GetForks">
-    <RadzenTextBox type="text" @bind-Value="@_textInput" placeholder="user/GitRepo"/>
-    <button class="btn btn-primary" type="submit">Go</button>
-</form>
-<p style="color: red;">@_error</p>
-<p>@_loading</p>
 
-@if (_forksGiven == null)
+<AuthorizeView>
+    <NotAuthorized>
+        <h1> You need to sign in</h1>
+    </NotAuthorized>
+    <Authorized>
+
+        <div style="padding-bottom: 20px;">
+            <RadzenCard Style="width: 400px; background-color: #cac4fe; padding-bottom: 10px;" Class="rz-border-radius-3">
+                <h1>Forks</h1>
+            </RadzenCard>
+        </div>
+
+        <RepoPathPicker OnChange="load" Disabled="@_loading"></RepoPathPicker>
+          @if (_loading)
+                {
+                    <div style="padding-top: 10px;">
+                        <RadzenCard Style="width: 400px;">
+                            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Loading</RadzenText>
+                            <RadzenProgressBar  Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
+                        </RadzenCard>
+                    </div>
+                }
+        
+        @if (_forksGiven == null)
 {
-    <p>Please input a repository</p>
+    
 }
 else if (!_forksGiven.Any())
 {
-    <p>@_textInput does not have any forks</p>
+    <p>@RepoPathContainer.pickedRepo does not have any forks</p>
 }
 else
 {
@@ -27,26 +43,23 @@ else
         </Template>
     </RadzenDataList>
 }
-@code {
-    private string? _textInput;
+    </Authorized>
+    </AuthorizeView>
+    
+    @code {
     private string? _error;
-    private string? _loading;
+    private bool _loading;
 
     IEnumerable<ForkDto>? _forksGiven;
 
     async Task GetForks()
     {
-        _textInput ??= "";
-        if (_textInput.Trim() == "" || !_textInput.Contains("/"))
-        {
-            _error = "Please enter a valid input";
-            return;
-        }
+       
         _error = null;
-        _loading = "Loading...";
+        _loading = true;
         try
         {
-            _forksGiven = await AnalysisService.GetForksFromApi(_textInput);
+            _forksGiven = await AnalysisService.GetForksFromApi(RepoPathContainer.pickedRepo);
             _error = null;
         }
         catch (HttpRequestException e)
@@ -55,7 +68,17 @@ else
             _error = e.Message;
             _forksGiven = null;
         }
-        _loading = null;
+        _loading = false;
+    }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await load();
+    }
+
+    public async Task load()
+    {
+        if (RepoPathContainer.pickedRepo != null) await GetForks();
     }
 
 }
