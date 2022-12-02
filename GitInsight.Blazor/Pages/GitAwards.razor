@@ -8,29 +8,25 @@
         <h1> You need to sign in</h1>
     </NotAuthorized>
     <Authorized>
-        <div style="padding-bottom: 20px;">
-                    <RadzenCard Style="width: 400px; background-color: #cac4fe; padding-bottom: 5px;" Class="rz-border-radius-3">
-                        <h2>Git Awards</h2>
-                    </RadzenCard>
-                </div>
+        <TitleCard Title="Git Awards" />
 
-     <RepoPathPicker OnChange="load" Disabled="@loading"></RepoPathPicker>
+        <RepoPathPicker OnChange="load" Disabled="@loading"></RepoPathPicker>
 
         @* <p role="status" id="consolewriteline">@outputText</p> *@
-       @if (loading)
-              {
-                  <div style="padding-top: 10px;">
-        <RadzenCard Style="width: 400px;">
-            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Loading</RadzenText>
-            <RadzenProgressBar  Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
-        </RadzenCard>
-       </div>
-              }
+        @if (loading)
+        {
+            <div style="padding-top: 10px;">
+                <RadzenCard Style="width: 400px;">
+                    <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Loading</RadzenText>
+                    <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate"/>
+                </RadzenCard>
+            </div>
+        }
 
         @if (earlyBirdWinner != null)
         {
             <div class="row align-items-left justify-content-left" style="padding-right: 24vw">
-                @if (earlyBirdWinner.Value>0)
+                @if (earlyBirdWinner.Value > 0)
                 {
                     <GitAward AwardWinner="@earlyBirdWinner" AwardTitle="Early Bird" AwardDescription="Most commits in the time frame 06:00-10:00" ImageFileName="earlybird.jpg"></GitAward>
                 }
@@ -43,6 +39,7 @@
 
     </Authorized>
 </AuthorizeView>
+
 @code {
     private string user;
     private string repo;
@@ -58,14 +55,15 @@
         nightOwlWinner = await _analysisService.NightOwl(RepoPathContainer.pickedRepo);
         loading = false;
     }
-    
+
     protected override async Task OnInitializedAsync()
     {
         await load();
     }
-    
+
     public async Task load()
     {
         if (RepoPathContainer.pickedRepo != null) await GetRepo();
     }
+
 }

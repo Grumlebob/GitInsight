@@ -30,7 +30,7 @@ public class AuthorConfigurations : IEntityTypeConfiguration<Author>
             .OnDelete(DeleteBehavior.ClientCascade);
 
         builder.HasMany(a => a.Repositories)
-            .WithMany(a => a.Authors!);
+            .WithMany(a => a.Authors);
 
 
     }

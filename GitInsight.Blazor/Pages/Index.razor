@@ -11,13 +11,11 @@
         <h1> You need to sign in</h1>
     </NotAuthorized>
     <Authorized>
-        
+
         <RadzenImage Path="images/gitinsight_logo.png"></RadzenImage>
-         <div style="padding-bottom: 20px;">
-                    <RadzenCard Style="width: 800px; background-color: #cac4fe; padding-bottom: 10px;" Class="rz-border-radius-3">
-                        <h1>Welcome to Git Insight, @context.User.Identity?.Name! </h1>
-                    </RadzenCard>
-                </div>
+        <RadzenCard Style="width: 800px; background-color: #cac4fe; " Class="rz-border-radius-3 mb-1">
+            <h1>Welcome to Git Insight, @context.User.Identity?.Name! </h1>
+        </RadzenCard>
 
     </Authorized>
 </AuthorizeView>
@@ -25,7 +23,7 @@
 @code
 {
 
-    
-    
-    
+
+
+
 }

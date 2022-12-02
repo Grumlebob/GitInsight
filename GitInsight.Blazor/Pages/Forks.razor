@@ -9,44 +9,35 @@
         <h1> You need to sign in</h1>
     </NotAuthorized>
     <Authorized>
-
-        <div style="padding-bottom: 20px;">
-            <RadzenCard Style="width: 400px; background-color: #cac4fe; padding-bottom: 10px;" Class="rz-border-radius-3">
-                <h1>Forks</h1>
-            </RadzenCard>
-        </div>
-
+        <TitleCard Title="Forks"/>
         <RepoPathPicker OnChange="load" Disabled="@_loading"></RepoPathPicker>
-          @if (_loading)
-                {
-                    <div style="padding-top: 10px;">
-                        <RadzenCard Style="width: 400px;">
-                            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Loading</RadzenText>
-                            <RadzenProgressBar  Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
-                        </RadzenCard>
-                    </div>
-                }
-        
+        @if (true)
+        {
+            <RadzenCard Style="width: 400px;" class="mb-1">
+                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Loading</RadzenText>
+                <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate"/>
+            </RadzenCard>
+        }
+
         @if (_forksGiven == null)
-{
-    
-}
-else if (!_forksGiven.Any())
-{
-    <p>@RepoPathContainer.pickedRepo does not have any forks</p>
-}
-else
-{
-    <RadzenDataList TItem="ForkDto" Data="@_forksGiven" WrapItems="true">
-        <Template Context="fork">
-            <ForkCard Fork="@fork"/>
-        </Template>
-    </RadzenDataList>
-}
+        {
+        }
+        else if (!_forksGiven.Any())
+        {
+            <p>@RepoPathContainer.pickedRepo does not have any forks</p>
+        }
+        else
+        {
+            <RadzenDataList TItem="ForkDto" Data="@_forksGiven" WrapItems="true">
+                <Template Context="fork">
+                    <ForkCard Fork="@fork"/>
+                </Template>
+            </RadzenDataList>
+        }
     </Authorized>
-    </AuthorizeView>
-    
-    @code {
+</AuthorizeView>
+
+@code {
     private string? _error;
     private bool _loading;
 
@@ -54,7 +45,6 @@ else
 
     async Task GetForks()
     {
-       
         _error = null;
         _loading = true;
         try
@@ -70,7 +60,7 @@ else
         }
         _loading = false;
     }
-    
+
     protected override async Task OnInitializedAsync()
     {
         await load();
