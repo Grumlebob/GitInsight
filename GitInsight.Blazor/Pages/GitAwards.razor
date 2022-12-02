@@ -7,11 +7,7 @@
         <h1> You need to sign in</h1>
     </NotAuthorized>
     <Authorized>
-        <div style="padding-bottom: 20px;">
-                    <RadzenCard Style="width: 400px; background-color: #cac4fe; padding-bottom: 5px;" Class="rz-border-radius-3">
-                        <h2>Git Awards</h2>
-                    </RadzenCard>
-                </div>
+        <TitleCard Title="Git Awards" />
 
      <RepoPathPicker OnChange="Load" Disabled="@_loading"></RepoPathPicker>
 
@@ -41,6 +37,7 @@
 
     </Authorized>
 </AuthorizeView>
+
 @code {
 
     private GitAwardWinner? _earlyBirdWinner;
@@ -54,14 +51,15 @@
         _nightOwlWinner = await AnalysisService.NightOwl(RepoPathContainer.PickedRepositoryPath!);
         _loading = false;
     }
-    
+
     protected override async Task OnInitializedAsync()
     {
         await Load();
     }
-    
+
     private async Task Load()
     {
         if (RepoPathContainer.PickedRepositoryPath != null) await GetRepo();
     }
+
 }

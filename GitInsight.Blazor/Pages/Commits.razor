@@ -9,22 +9,15 @@
         <h1> You need to sign in</h1>
     </NotAuthorized>
     <Authorized>
-        <div style="padding-bottom: 20px;">
-            <RadzenCard Style="width: 400px; background-color: #cac4fe; padding-bottom: 10px;" Class="rz-border-radius-3">
-                <h1>Commits by Date</h1>
-            </RadzenCard>
-        </div>
-        
+        <TitleCard Title="Commits by Date"/>
         <RepoPathPicker OnChange="Load" Disabled="@_loading"></RepoPathPicker>
 
         @if (_loading)
         {
-            <div style="padding-top: 10px;">
-                <RadzenCard Style="width: 400px;">
-                    <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Loading</RadzenText>
-                    <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate"/>
-                </RadzenCard>
-            </div>
+            <RadzenCard Style="width: 400px;" class="mb-1">
+                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Loading</RadzenText>
+                <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate"/>
+            </RadzenCard>
         }
         @if (_commitsByAuthors != null && _commitsByAuthors.Any())
         {
@@ -98,11 +91,3 @@
     }
 
 }
-
-
-
-
-
-
-
-@* <SurveyPrompt Title="How is Blazor working for you?"/> *@
