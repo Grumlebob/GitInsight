@@ -25,6 +25,11 @@ public class AnalysisService : IAnalysisService
         return await _httpClient.GetFromJsonAsync<List<CommitsByDate>>(repoPath + "/CommitsByDate");
     }
     
+    public async Task<List<RepoInsightDto>> AllRepos()
+    {
+        return await _httpClient.GetFromJsonAsync<List<RepoInsightDto>>("/repoinsights");
+    }
+    
     public async Task<GitAwardWinner> EarlyBird(string repoPath)
     {
         return await _httpClient.GetFromJsonAsync<GitAwardWinner>("repoinsights/" + repoPath + "/EarlyBird");

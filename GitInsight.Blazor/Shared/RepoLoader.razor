@@ -1,0 +1,18 @@
+﻿@using GitInsight.Web.Services
+@inject IAnalysisService _analysisService
+
+@code {
+    protected override async  Task OnInitializedAsync()
+    {
+        var repos = await _analysisService.AllRepos();
+        
+        
+        var repoPaths = new List<string>();
+        foreach (var repo in repos)
+        {
+            var names = repo.Path.Split("/");
+            RepoPathContainer.repos.Add($"{names[names.Length-2]}/{names[names.Length-1]}");
+        }
+    }
+
+}
