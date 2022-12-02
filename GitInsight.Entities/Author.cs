@@ -6,8 +6,8 @@ public class Author
     public string Name { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
 
-    public List<CommitInsight> Commits { get; set; }
-    public List<RepoInsight> Repositories { get; set; }
+    public ICollection<CommitInsight> Commits { get; set; }
+    public ICollection<RepoInsight> Repositories { get; set; }
 
     public Author()
     {

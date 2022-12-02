@@ -8,10 +8,10 @@ using LibGit2Sharp;
 
 public class DataManager
 {
-    private readonly RepoInsightRepository _repoInsightRepository;
-    private readonly BranchRepository _branchRepository;
-    private readonly CommitInsightRepository _commitInsightRepository;
-    private readonly AuthorRepository _authorRepository;
+    private readonly IRepoInsightRepository _repoInsightRepository;
+    private readonly IBranchRepository _branchRepository;
+    private readonly ICommitInsightRepository _commitInsightRepository;
+    private readonly IAuthorRepository _authorRepository;
     private InsightContext _context;
 
     private bool _shouldReanalyze;

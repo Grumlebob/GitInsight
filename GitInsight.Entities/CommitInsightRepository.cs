@@ -1,5 +1,6 @@
 ﻿namespace GitInsight.Entities;
 
+
 public class CommitInsightRepository : ICommitInsightRepository
 {
     private readonly InsightContext _context;

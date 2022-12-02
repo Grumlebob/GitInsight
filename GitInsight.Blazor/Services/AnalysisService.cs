@@ -1,9 +1,8 @@
 ﻿using System.Net.Http.Json;
 using GitInsight.Core;
 using LibGit2Sharp;
-using Microsoft.AspNetCore.Authorization;
 
-namespace GitInsight.Web.Services;
+namespace GitInsight.Blazor.Services;
 
 public class AnalysisService : IAnalysisService
 {
@@ -16,28 +15,39 @@ public class AnalysisService : IAnalysisService
 
     public async Task<List<CommitsByDateByAuthor>> GetCommitsByAuthor(string repoPath)
     {
-        return await _httpClient.GetFromJsonAsync<List<CommitsByDateByAuthor>>(repoPath);
+        var result= await _httpClient.GetFromJsonAsync<List<CommitsByDateByAuthor>>(repoPath);
+        if(result == null) throw new NotFoundException($"No forks found for {repoPath}");
+        return result;
     }
 
     
     public async Task<List<CommitsByDate>> GetCommitsByDate(string repoPath)
     {
-        return await _httpClient.GetFromJsonAsync<List<CommitsByDate>>(repoPath + "/CommitsByDate");
+        var result = await _httpClient.GetFromJsonAsync<List<CommitsByDate>>(repoPath + "/CommitsByDate");
+        if(result == null) throw new NotFoundException($"No forks found for {repoPath}");
+        return result;
     }
     
     public async Task<List<RepoInsightDto>> AllRepos()
     {
-        return await _httpClient.GetFromJsonAsync<List<RepoInsightDto>>("/repoinsights");
+        var result = await _httpClient.GetFromJsonAsync<List<RepoInsightDto>>("/repoinsights");
+        if(result == null) throw new NotFoundException($"No Repositories");
+        return result;
     }
     
     public async Task<GitAwardWinner> EarlyBird(string repoPath)
     {
-        return await _httpClient.GetFromJsonAsync<GitAwardWinner>("repoinsights/" + repoPath + "/EarlyBird");
+        var result = await _httpClient.GetFromJsonAsync<GitAwardWinner>("repoinsights/" + repoPath + "/EarlyBird");
+        if(result == null) throw new NotFoundException($"No forks found for {repoPath}");
+        return result;
     }
 
     public async Task<GitAwardWinner> NightOwl(string repoPath)
     {
-        return await _httpClient.GetFromJsonAsync<GitAwardWinner>("repoinsights/" + repoPath + "/NightOwl");
+        
+        var result = await _httpClient.GetFromJsonAsync<GitAwardWinner>("repoinsights/" + repoPath + "/NightOwl");
+        if(result == null) throw new NotFoundException($"No forks found for {repoPath}");
+        return result;
     }
     public async Task<IEnumerable<ForkDto>> GetForksFromApi(string repoPath)
     {

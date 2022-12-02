@@ -1,6 +1,6 @@
 ﻿@page "/Commits"
-@using GitInsight.Web.Services
 @using GitInsight.Core
+@using GitInsight.Blazor.Services
 @inject IAnalysisService _analysisService
 @inject HttpClient _httpClient
 
@@ -68,7 +68,6 @@
     private string user;
     private string repo;
     private bool loading;
-    // private string outputText;
     private List<CommitsByDateByAuthor> _commitsByAuthors = new();
     private List<CommitsByDate> _commitsByDate = new();
 
@@ -89,10 +88,9 @@
     public async Task GetRepo()
     {
         loading = true;
-        _commitsByAuthors = await _analysisService.GetCommitsByAuthor($"repoinsights/{RepoPathContainer.pickedRepo}");
-        _commitsByDate = await _analysisService.GetCommitsByDate($"repoinsights/{RepoPathContainer.pickedRepo}");
+        _commitsByAuthors = await _analysisService.GetCommitsByAuthor($"repoinsights/{RepoPathContainer.PickedRepositoryPath}");
+        _commitsByDate = await _analysisService.GetCommitsByDate($"repoinsights/{RepoPathContainer.PickedRepositoryPath}");
         loading = false;
-    // outputText = _commitsByAuthors.Count.ToString();
     }
     
     protected override async Task OnInitializedAsync()
@@ -102,7 +100,7 @@
 
     public async Task load()
     {
-        if (RepoPathContainer.pickedRepo != null) await GetRepo();
+        if (RepoPathContainer.PickedRepositoryPath != null) await GetRepo();
     }
     
 }

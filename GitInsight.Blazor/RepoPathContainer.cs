@@ -2,7 +2,7 @@
 
 public static class RepoPathContainer
 {
-    public static List<string> repos { get; set; } = new List<string>();
-    public static string pickedRepo { get; set; }
+    public static List<string> RepositoryPaths { get; set; } = new();
+    public static string? PickedRepositoryPath { get; set; }
 
 }

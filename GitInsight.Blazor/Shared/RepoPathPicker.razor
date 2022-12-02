@@ -1,95 +1,92 @@
-﻿@using GitInsight.Web.Services
+﻿@using GitInsight.Blazor.Services
 @inject NotificationService NotificationService
-@inject IAnalysisService _analysisService
+@inject IAnalysisService AnalysisService
 
-<RadzenDropDown AllowClear="true" TValue="string"  
-                Data=@RepoPathContainer.repos
+<RadzenDropDown AllowClear="true" TValue="string"
+                Data=@RepoPathContainer.RepositoryPaths
                                         @bind-value="@Path" Change="@Invoke" placeholder="Pick a Repository"
-                Disabled="@Disabled"
-/>
+                Disabled="@Disabled"/>
 
- <RadzenButton class="rz-ripple" IsBusy="adding" Click="@ShowAdding">Add Repo</RadzenButton>
+<RadzenButton class="rz-ripple" IsBusy="_adding" Click="@ShowAdding">Add Repo</RadzenButton>
 
-@if (adding)
- {
-     <br/>
-     <div style="padding-top: 10px">
-         <RadzenTextBox type="text" @bind-value="@user" placeholder="Username or organization" />
-         <RadzenTextBox type="text" @bind-value="@repo" placeholder="Repository name"/>
-         <RadzenButton class="rz-ripple" Disabled="@loading" Click="@(AddRepo)">Add</RadzenButton>
-     </div>
-     @if (loading)
-     {
-         <div style="padding-top: 10px;">
-             <RadzenCard Style="width: 400px;">
-                 <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Loading</RadzenText>
-                 <RadzenProgressBar  Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
-             </RadzenCard>
-         </div>
-     }
-
- }
+@if (_adding)
+{
+    <br/>
+    <div style="padding-top: 10px">
+        <RadzenTextBox type="text" @bind-value="@_user" placeholder="Username or organization"/>
+        <RadzenTextBox type="text" @bind-value="@_repo" placeholder="Repository name"/>
+        <RadzenButton class="rz-ripple" Disabled="@_loading" Click="@(AddRepo)">Add</RadzenButton>
+    </div>
+    @if (_loading)
+    {
+        <div style="padding-top: 10px;">
+            <RadzenCard Style="width: 400px;">
+                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Loading</RadzenText>
+                <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate"/>
+            </RadzenCard>
+        </div>
+    }
+}
 
 @code {
-    private string user;
-    private string repo;
-    private bool adding;
-    private bool loading;
-    
+    private string _user = null!;
+    private string _repo = null!;
+    private bool _adding;
+    private bool _loading;
+
     [Parameter]
     public bool Disabled { get; set; }
-    
+
     [Parameter]
     public EventCallback OnChange { get; set; }
-    
-    public string Path
+
+    private string Path
     {
-        get { return RepoPathContainer.pickedRepo; }
-        set { RepoPathContainer.pickedRepo = value; }
+        get { return RepoPathContainer.PickedRepositoryPath!; }
+        set { RepoPathContainer.PickedRepositoryPath = value; }
     }
 
-    public async Task ShowAdding()
+    private void ShowAdding()
     {
-        adding = true;
+        _adding = true;
     }
 
-    public async Task AddRepo()
+    private async Task AddRepo()
     {
-        var pathString = $"{user}/{repo}";
-        if (RepoPathContainer.repos.Contains(pathString))
+        var pathString = $"{_user}/{_repo}";
+        if (RepoPathContainer.RepositoryPaths.Contains(pathString))
         {
             ShowNotification(new NotificationMessage { Severity = NotificationSeverity.Error, Summary = "Repository has already been added", Detail = "", Duration = 4000 });
             return;
         }
         try
         {
-            loading = true;
-            await _analysisService.GetCommitsByAuthor($"repoinsights/{pathString}");
+            _loading = true;
+            await AnalysisService.GetCommitsByAuthor($"repoinsights/{pathString}");
         }
-        catch (Exception e)
+        catch (Exception)
         {
             ShowNotification(new NotificationMessage { Severity = NotificationSeverity.Error, Summary = "Invalid Repository", Detail = "The given repository either doesn't exist or is not public", Duration = 5000 });
-            loading = false;
+            _loading = false;
             return;
         }
-        loading = false;
-        RepoPathContainer.repos.Add(pathString);
+        _loading = false;
+        RepoPathContainer.RepositoryPaths.Add(pathString);
         ShowNotification(new NotificationMessage { Severity = NotificationSeverity.Success, Summary = "Repository Added", Detail = "", Duration = 4000 });
-        adding = false;
+        _adding = false;
     }
-    
-    
+
 
     private async Task Invoke()
     {
-        OnChange.InvokeAsync();
+        await OnChange.InvokeAsync();
     }
-    
+
     void ShowNotification(NotificationMessage message)
     {
         NotificationService.Notify(message);
 
         Console.WriteLine($"{message.Severity} notification");
     }
-    
+
 }

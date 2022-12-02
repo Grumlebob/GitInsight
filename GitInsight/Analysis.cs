@@ -1,12 +1,8 @@
-﻿using GitInsight.Core;
-using GitInsight.Entities;
-
-namespace GitInsight;
-
+﻿namespace GitInsight;
 
 public class Analysis
 {
-    private InsightContext _context;
+    private readonly InsightContext _context;
 
     public Analysis(InsightContext context)
     {
@@ -16,28 +12,28 @@ public class Analysis
     public async Task<List<CommitsByDate>> GetCommitsByDate(int repoId, int? authorId = null)
     {
         var commitRepo = new CommitInsightRepository(_context);
-        var (commits, response) = await commitRepo.FindByRepoIdAsync(repoId);
+        var (commits, _) = await commitRepo.FindByRepoIdAsync(repoId);
 
         if (authorId != null)
         {
-            commits = commits.Where(c => c.AuthorId == authorId).ToList();
+            commits = commits.Where(c => c?.AuthorId == authorId).ToList();
         }
 
-        commits = commits.OrderBy(c => c.Date).ToList();
+        commits = commits.OrderBy(c => c?.Date).ToList();
 
         List<CommitsByDate> commitsByDates = new List<CommitsByDate>();
-        DateTime lastDate = commits.First().Date.Date;
+        DateTime lastDate = commits.First()!.Date.Date;
         int currentCommits = 0;
         foreach (var commit in commits)
         {
-            if (commit.Date.Date == lastDate)
+            if (commit?.Date.Date == lastDate)
             {
                 currentCommits++;
             }
             else
             {
                 commitsByDates.Add(new CommitsByDate(lastDate, currentCommits));
-                lastDate = commit.Date.Date;
+                lastDate = commit!.Date.Date;
                 currentCommits = 1;
             }
         }
@@ -52,13 +48,13 @@ public class Analysis
         var authorRepo = new AuthorRepository(_context);
         var (authors, _) = await authorRepo.FindByRepoIdAsync(repoId);
 
-        var commitsByauthor = new List<CommitsByDateByAuthor>();
+        var commitsByAuthor = new List<CommitsByDateByAuthor>();
         foreach (var author in authors!)
         {
-            commitsByauthor.Add(new CommitsByDateByAuthor(author.Name, await GetCommitsByDate(repoId, author.Id)));
+            commitsByAuthor.Add(new CommitsByDateByAuthor(author.Name, await GetCommitsByDate(repoId, author.Id)));
         }
 
-        return commitsByauthor;
+        return commitsByAuthor;
 
     }
 
@@ -66,7 +62,7 @@ public class Analysis
     {
         var commitRepo = new CommitInsightRepository(_context);
         var authorRepo = new AuthorRepository(_context);
-        var (commits, response) = await commitRepo.FindByRepoIdAsync(repoId);
+        var (commits, _) = await commitRepo.FindByRepoIdAsync(repoId);
 
         var dictionary = new Dictionary<string, int>();
 
@@ -75,11 +71,11 @@ public class Analysis
         
         foreach (var commit in commits)
         {
-            var time = commit.Date - commit.Date.Date;
+            var time = commit!.Date - commit.Date.Date;
             if (time >= startTime && time <= endTime)
             {
                 var (author,_) = await authorRepo.FindAsync(commit.AuthorId);
-                if (!dictionary.ContainsKey(author.Name)) dictionary.Add(author.Name,0);
+                if (!dictionary.ContainsKey(author!.Name)) dictionary.Add(author.Name,0);
                 dictionary[author.Name] += 1;
             }
         }
