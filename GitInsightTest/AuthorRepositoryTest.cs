@@ -88,7 +88,7 @@ public class AuthorRepositoryTest : IDisposable
     public async Task FindAuthorByIdReturnsOk()
     {
         var (authorDto, response) = await _authorRepository.FindAsync(1);
-        authorDto.Should().BeEquivalentTo(new AuthorDto(1, "First Author", "First Email", new List<int>() { 1 },
+        authorDto.Should().BeEquivalentTo(new AuthorDto(1, "First Author", "First Email",
             new List<int>() { 1 }));
         response.Should().Be(Response.Ok);
     }
@@ -107,8 +107,8 @@ public class AuthorRepositoryTest : IDisposable
         var (authorDtos, response) = await _authorRepository.FindAllAsync();
         authorDtos.Should().BeEquivalentTo(new List<AuthorDto>
         {
-            new AuthorDto(1, "First Author", "First Email", new List<int>() { 1 }, new List<int>() { 1 }),
-            new AuthorDto(2, "Second Author", "Second Email", new List<int>() { 2 }, new List<int>() { 1 }),
+            new AuthorDto(1, "First Author", "First Email", new List<int>() { 1 }),
+            new AuthorDto(2, "Second Author", "Second Email", new List<int>() { 1 }),
         });
         response.Should().Be(Response.Ok);
     }
@@ -129,7 +129,7 @@ public class AuthorRepositoryTest : IDisposable
     {
         var (authorDto, response) = await _authorRepository.FindByNameAsync("First Author");
         authorDto.Should().BeEquivalentTo(new[]
-            { new AuthorDto(1, "First Author", "First Email", new List<int>() { 1 }, new List<int>() { 1 }) });
+            { new AuthorDto(1, "First Author", "First Email", new List<int>() { 1 }) });
         response.Should().Be(Response.Ok);
     }
 
@@ -148,7 +148,7 @@ public class AuthorRepositoryTest : IDisposable
     {
         var (authorDto, response) = await _authorRepository.FindByEmailAsync("First Email");
         authorDto.Should().BeEquivalentTo(
-            new AuthorDto(1, "First Author", "First Email", new List<int>() { 1 }, new List<int>() { 1 }));
+            new AuthorDto(1, "First Author", "First Email", new List<int>() { 1 }));
         response.Should().Be(Response.Ok);
     }
 
@@ -166,8 +166,8 @@ public class AuthorRepositoryTest : IDisposable
         var (authorDto, response) = await _authorRepository.FindByRepoIdAsync(1);
         authorDto.Should().BeEquivalentTo(new List<AuthorDto>
         {
-            new AuthorDto(1, "First Author", "First Email", new List<int>() { 1 }, new List<int>() { 1 }),
-            new AuthorDto(2, "Second Author", "Second Email", new List<int>() { 2 }, new List<int>() { 1 }),
+            new AuthorDto(1, "First Author", "First Email", new List<int>() { 1 }),
+            new AuthorDto(2, "Second Author", "Second Email", new List<int>() { 1 }),
         });
 
         response.Should().Be(Response.Ok);
@@ -187,7 +187,7 @@ public class AuthorRepositoryTest : IDisposable
         var (authorDto, response) = await _authorRepository.FindByCommitIdAsync(1);
         authorDto.Should().BeEquivalentTo(new List<AuthorDto>
         {
-            new AuthorDto(1, "First Author", "First Email", new List<int>() { 1 }, new List<int>() { 1 }),
+            new AuthorDto(1, "First Author", "First Email", new List<int>() { 1 }),
         });
         response.Should().Be(Response.Ok);
     }
@@ -206,7 +206,7 @@ public class AuthorRepositoryTest : IDisposable
     {
         var (authorDto, response) = await _authorRepository.CreateAsync(new AuthorCreateDto("Third Author",
             "Third Email", new List<int>() { 1 }));
-        authorDto.Should().BeEquivalentTo(new AuthorDto(3, "Third Author", "Third Email", new List<int>() { },
+        authorDto.Should().BeEquivalentTo(new AuthorDto(3, "Third Author", "Third Email",
             new List<int>() { 1 }));
         response.Should().Be(Response.Created);
     }
@@ -225,7 +225,7 @@ public class AuthorRepositoryTest : IDisposable
     {
         var (authorDto, response) = await _authorRepository.CreateAsync(new AuthorCreateDto("Third Author",
             "Third Email", new List<int>() { 1 }));
-        authorDto.Should().BeEquivalentTo(new AuthorDto(3, "Third Author", "Third Email", new List<int>() { },
+        authorDto.Should().BeEquivalentTo(new AuthorDto(3, "Third Author", "Third Email",
             new List<int>() { 1 }));
         response.Should().Be(Response.Created);
 
@@ -247,7 +247,7 @@ public class AuthorRepositoryTest : IDisposable
         await _context.SaveChangesAsync();
         var (authorDto, response) = await _authorRepository.CreateAsync(new AuthorCreateDto("Third Author",
             "Third Email", new List<int>() { 1 }));
-        authorDto.Should().BeEquivalentTo(new AuthorDto(3, "Third Author", "Third Email", new List<int>() { },
+        authorDto.Should().BeEquivalentTo(new AuthorDto(3, "Third Author", "Third Email",
             new List<int>() { 1 }));
         response.Should().Be(Response.Created);
 
@@ -275,7 +275,7 @@ public class AuthorRepositoryTest : IDisposable
     public async Task UpdateAuthorReturnsOk()
     {
         var (authorDto, response) = await _authorRepository.FindAsync(1);
-        authorDto.Should().BeEquivalentTo(new AuthorDto(1, "First Author", "First Email", new List<int>() { 1 },
+        authorDto.Should().BeEquivalentTo(new AuthorDto(1, "First Author", "First Email",
             new List<int>() { 1 }));
         response.Should().Be(Response.Ok);
 

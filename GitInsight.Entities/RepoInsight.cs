@@ -5,9 +5,7 @@ public class RepoInsight
     public int Id { get; set; }
     public string Path { get; set; } = string.Empty;
     public string? Name { get; set; } = string.Empty;
-
-    public int LatestCommitId { get; set; }
-
+    public int LatestCommitInsightId { get; set; }
     public List<Branch> Branches { get; set; }
     public List<Author> Authors { get; set; }
     public List<CommitInsight> Commits { get; set; }
@@ -30,10 +28,10 @@ public class RepositoryConfigurations : IEntityTypeConfiguration<RepoInsight>
             .OnDelete(DeleteBehavior.ClientCascade);
         builder.HasMany(a => a.Commits)
             .WithOne(a => a.Repository);
-        builder.HasIndex(a => a.LatestCommitId)
+        builder.HasIndex(a => a.LatestCommitInsightId)
             .IsUnique(); //cant make foreign key (workaround). The use case is if foreign key rule broken: reanalyze.
         
         builder.HasMany(a => a.Authors)
-            .WithMany(a => a.Repositories!);
+            .WithMany(a => a.Repositories);
     }
 }

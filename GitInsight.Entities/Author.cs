@@ -23,6 +23,7 @@ public class AuthorConfigurations : IEntityTypeConfiguration<Author>
         builder.HasKey(a => a.Id);
 
         builder.HasIndex(a => a.Email).IsUnique();
+        builder.Property(e => e.Email).IsRequired();
 
         builder.HasMany(a => a.Commits)
             .WithOne(c => c.Author)
@@ -30,8 +31,6 @@ public class AuthorConfigurations : IEntityTypeConfiguration<Author>
             .OnDelete(DeleteBehavior.ClientCascade);
 
         builder.HasMany(a => a.Repositories)
-            .WithMany(a => a.Authors!);
-
-
+            .WithMany(a => a.Authors);
     }
 }

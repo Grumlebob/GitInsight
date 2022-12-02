@@ -9,12 +9,11 @@ public class AuthorRepository : IAuthorRepository
         _context = context;
     }
 
-    public static AuthorDto AuthorToAuthorDto(Author? author)
+    private static AuthorDto AuthorToAuthorDto(Author? author)
     {
         return author is null
             ? null!
             : new AuthorDto(Id: author.Id, Name: author.Name, Email: author.Email,
-                CommitIds: author.Commits.Select(c => c.Id).ToList(),
                 RepositoryIds: author.Repositories.Select(r => r.Id).ToList());
     }
         
@@ -49,7 +48,7 @@ public class AuthorRepository : IAuthorRepository
             .ToListAsync();
 
         return authors.Count > 0
-            ? (authors.Select(a => AuthorToAuthorDto(a)).ToList(), Response.Ok)
+            ? (authors.Select(AuthorToAuthorDto).ToList(), Response.Ok)
             : (null, Response.NotFound);
     }
 
@@ -80,7 +79,6 @@ public class AuthorRepository : IAuthorRepository
             response = Response.Created;
             return (
                 new AuthorDto(Id: author.Id, Name: author.Name, Email: author.Email,
-                    CommitIds: author.Commits.Select(c => c.Id).ToList(),
                     RepositoryIds: author.Repositories.Select(r => r.Id).ToList()), response);
         }
 
