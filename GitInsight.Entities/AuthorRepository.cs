@@ -126,10 +126,7 @@ public class AuthorRepository : IAuthorRepository
             
             if (authorDto.RepositoryIds.Any()) author.Repositories =
                 authorDto.RepositoryIds.Select(id => _context.Repositories.First(r => r.Id==id)).ToList();
-         
-            //author.Commits = await UpdateCommitsIfExist(_context, authorDto.CommitIds);
-            //author.Repositories = await UpdateRepositoriesIfExist(_context, authorDto.RepositoryIds);
-
+            
             _context.Authors.Update(author);
             await _context.SaveChangesAsync();
 
