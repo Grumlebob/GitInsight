@@ -24,6 +24,9 @@ public class CommitConfigurations : IEntityTypeConfiguration<CommitInsight>
     public void Configure(EntityTypeBuilder<CommitInsight> builder)
     {
         builder.HasKey(a => a.Id);
+        
+        builder.HasIndex(a => a.Sha).IsUnique();
+        builder.Property(e => e.Sha).IsRequired();
 
         builder.HasOne(a => a.Repository)
             .WithMany(a => a.Commits!);

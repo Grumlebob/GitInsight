@@ -1,17 +1,9 @@
-﻿using GitInsight.Core;
-using GitInsight.Data;
-using GitInsight.Entities;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
-
-namespace GitInsightTest;
+﻿namespace GitInsightTest;
 
 public class DataManagerTest : IDisposable
 {
     private readonly SqliteConnection _connection;
     private readonly InsightContext _context;
-
-
     public DataManagerTest()
     {
         (_connection, _context) = SetupTests.Setup();

@@ -3,7 +3,7 @@
 public record CommitsByDate(DateTime Date, int CommitAmount);
 public class CommitsByDateFormatted
 {
-    public string Date { get; set; }
+    public string Date { get; set; } = null!;
     public int CommitAmount { get; set; }
 }
 

@@ -1,17 +1,23 @@
-﻿@using GitInsight.Web.Services
-@inject IAnalysisService _analysisService
+﻿@using GitInsight.Blazor.Services
+@inject IAnalysisService AnalysisService
 
 @code {
     protected override async  Task OnInitializedAsync()
     {
-        var repos = await _analysisService.AllRepos();
-        
-        
-        var repoPaths = new List<string>();
-        foreach (var repo in repos)
+        try
         {
-            var names = repo.Path.Split("/");
-            RepoPathContainer.repos.Add($"{names[names.Length-2]}/{names[names.Length-1]}");
+            var repos = await AnalysisService.AllRepos();
+            
+            foreach (var repo in repos)
+            {
+                var names = repo.Path.Split("/");
+                RepoPathContainer.RepositoryPaths.Add($"{names[^2]}/{names[^1]}");
+            }
+        }
+        catch (Exception)
+        {
+            Console.WriteLine("No repos added");
+
         }
     }
 

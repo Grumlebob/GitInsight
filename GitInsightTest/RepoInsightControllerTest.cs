@@ -1,14 +1,4 @@
-﻿using GitInsight;
-using GitInsight.Controllers;
-using GitInsight.Core;
-using GitInsight.Entities;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
-using Commit = GitInsight.Entities.CommitInsight;
-using Repository = GitInsight.Entities.RepoInsight;
-
-namespace GitInsightTest;
+﻿namespace GitInsightTest;
 
 public class RepoInsightControllerTest : IDisposable
 {

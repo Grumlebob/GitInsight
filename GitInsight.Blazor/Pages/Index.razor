@@ -1,31 +1,17 @@
 ﻿@page "/"
-@using GitInsight.Web.Services
-@using GitInsight.Core
-@inject IAnalysisService _analysisService
-@inject HttpClient _httpClient
 
 <PageTitle>Index</PageTitle>
 
 <AuthorizeView>
     <NotAuthorized>
-        <h1> You need to sign in</h1>
+        <h1> Welcome to GitInsight. Please sign in to use it.</h1>
     </NotAuthorized>
     <Authorized>
-        
         <RadzenImage Path="images/gitinsight_logo.png"></RadzenImage>
-         <div style="padding-bottom: 20px;">
-                    <RadzenCard Style="width: 800px; background-color: #cac4fe; padding-bottom: 10px;" Class="rz-border-radius-3">
-                        <h1>Welcome to Git Insight, @context.User.Identity?.Name! </h1>
-                    </RadzenCard>
-                </div>
-
+        <div style="padding-bottom: 20px;">
+            <RadzenCard Style="width: 800px; background-color: #cac4fe; padding-bottom: 10px;" Class="rz-border-radius-3">
+                <h1>Welcome to Git Insight, @context.User.Identity?.Name! </h1>
+            </RadzenCard>
+        </div>
     </Authorized>
 </AuthorizeView>
-
-@code
-{
-
-    
-    
-    
-}

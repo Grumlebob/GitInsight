@@ -1,12 +1,4 @@
-﻿using GitInsight;
-using GitInsight.Core;
-using GitInsight.Entities;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Web;
-
-var builder = WebApplication.CreateBuilder(args);
+﻿var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -57,8 +49,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-
-
 app.Run();
-
-Console.WriteLine("asembly: "+ Assembly.GetExecutingAssembly().GetName().Name);

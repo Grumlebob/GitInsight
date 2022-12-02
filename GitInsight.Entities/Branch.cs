@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-namespace GitInsight.Entities;
+﻿namespace GitInsight.Entities;
 
 public class Branch
 {
@@ -25,10 +22,13 @@ public class BranchConfigurations : IEntityTypeConfiguration<Branch>
 {
     public void Configure(EntityTypeBuilder<Branch> builder)
     {
+        
+        builder.Property(e => e.Path).IsRequired();
+        
         builder.HasKey(a => a.Id);
         builder.HasKey(a => new { a.RepositoryId, a.Path });
         builder.HasMany(a => a.Commits)
-            .WithOne(b => b!.Branch)
+            .WithOne(b => b.Branch)
             .OnDelete(DeleteBehavior.ClientCascade);
     }
 }

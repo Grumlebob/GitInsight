@@ -1,7 +1,6 @@
 ﻿@page "/GitAwards"
-@using GitInsight.Core
-@using GitInsight.Web.Services
-@inject IAnalysisService _analysisService
+@using GitInsight.Blazor.Services
+@inject IAnalysisService AnalysisService
 
 <AuthorizeView>
     <NotAuthorized>
@@ -14,10 +13,9 @@
                     </RadzenCard>
                 </div>
 
-     <RepoPathPicker OnChange="load" Disabled="@loading"></RepoPathPicker>
+     <RepoPathPicker OnChange="Load" Disabled="@_loading"></RepoPathPicker>
 
-        @* <p role="status" id="consolewriteline">@outputText</p> *@
-       @if (loading)
+       @if (_loading)
               {
                   <div style="padding-top: 10px;">
         <RadzenCard Style="width: 400px;">
@@ -27,16 +25,16 @@
        </div>
               }
 
-        @if (earlyBirdWinner != null)
+        @if (_earlyBirdWinner != null)
         {
             <div class="row align-items-left justify-content-left" style="padding-right: 24vw">
-                @if (earlyBirdWinner.Value>0)
+                @if (_earlyBirdWinner.Value>0)
                 {
-                    <GitAward AwardWinner="@earlyBirdWinner" AwardTitle="Early Bird" AwardDescription="Most commits in the time frame 06:00-10:00" ImageFileName="earlybird.jpg"></GitAward>
+                    <GitAward AwardWinner="@_earlyBirdWinner" AwardTitle="Early Bird" AwardDescription="Most commits in the time frame 06:00-10:00" ImageFileName="earlybird.jpg"></GitAward>
                 }
-                @if (nightOwlWinner.Value > 0)
+                @if (_nightOwlWinner!.Value > 0)
                 {
-                    <GitAward AwardWinner="@nightOwlWinner" AwardTitle="Night Owl" AwardDescription="Most commits in the time frame 00:00-06:00" ImageFileName="nightowl.jpg"></GitAward>
+                    <GitAward AwardWinner="@_nightOwlWinner" AwardTitle="Night Owl" AwardDescription="Most commits in the time frame 00:00-06:00" ImageFileName="nightowl.jpg"></GitAward>
                 }
             </div>
         }
@@ -44,28 +42,26 @@
     </Authorized>
 </AuthorizeView>
 @code {
-    private string user;
-    private string repo;
-    // private string outputText;
-    private GitAwardWinner? earlyBirdWinner = null;
-    private GitAwardWinner? nightOwlWinner = null;
-    private bool loading;
 
-    public async Task GetRepo()
+    private GitAwardWinner? _earlyBirdWinner;
+    private GitAwardWinner? _nightOwlWinner;
+    private bool _loading;
+
+    private async Task GetRepo()
     {
-        loading = true;
-        earlyBirdWinner = await _analysisService.EarlyBird(RepoPathContainer.pickedRepo);
-        nightOwlWinner = await _analysisService.NightOwl(RepoPathContainer.pickedRepo);
-        loading = false;
+        _loading = true;
+        _earlyBirdWinner = await AnalysisService.EarlyBird(RepoPathContainer.PickedRepositoryPath!);
+        _nightOwlWinner = await AnalysisService.NightOwl(RepoPathContainer.PickedRepositoryPath!);
+        _loading = false;
     }
     
     protected override async Task OnInitializedAsync()
     {
-        await load();
+        await Load();
     }
     
-    public async Task load()
+    private async Task Load()
     {
-        if (RepoPathContainer.pickedRepo != null) await GetRepo();
+        if (RepoPathContainer.PickedRepositoryPath != null) await GetRepo();
     }
 }

@@ -1,13 +1,4 @@
-﻿using GitInsight.Controllers;
-using GitInsight.Core;
-using GitInsight.Entities;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
-using Commit = GitInsight.Entities.CommitInsight;
-using Repository = GitInsight.Entities.RepoInsight;
-
-namespace GitInsightTest;
+﻿namespace GitInsightTest;
 
 public class AuthorsControllerTest : IDisposable
 {
@@ -20,7 +11,7 @@ public class AuthorsControllerTest : IDisposable
         (_connection, _context) = SetupTests.Setup();
         _authorsController = new AuthorsController(_context);
         //Base testing repository
-        var testRepo = new Repository()
+        var testRepo = new Repository
         {
             Id = 1,
             Name = "First Repo",
@@ -29,7 +20,7 @@ public class AuthorsControllerTest : IDisposable
         _context.Repositories.Add(testRepo);
         _context.SaveChanges();
         //Base testing branch
-        var testBranch = new GitInsight.Entities.Branch()
+        var testBranch = new Branch
         {
             Id = 1,
             Name = "First Branch",
@@ -124,7 +115,7 @@ public class AuthorsControllerTest : IDisposable
         };
         var authors =
             await _authorsController.CreateAuthor(new AuthorCreateDto(author.Name, author.Email,
-                new List<int>() { 1 }));
+                new List<int> { 1 }));
         authors.Should().BeAssignableTo<CreatedAtActionResult>();
     }
 
@@ -132,7 +123,7 @@ public class AuthorsControllerTest : IDisposable
     public async Task CreateAuthorReturnsBadRequest()
     {
         var authors = await _authorsController.CreateAuthor(new AuthorCreateDto("Wrong repo",
-            "Wrong repo", new List<int>() { 10 }));
+            "Wrong repo", new List<int> { 10 }));
         authors.Should().BeAssignableTo<BadRequestResult>();
     }
 
@@ -147,7 +138,7 @@ public class AuthorsControllerTest : IDisposable
         };
         var firstCreate =
             await _authorsController.CreateAuthor(new AuthorCreateDto(author.Name, author.Email,
-                new List<int>() { 1 }));
+                new List<int> { 1 }));
         firstCreate.Should().BeAssignableTo<CreatedAtActionResult>();
 
         var sameAuthor = new Author
@@ -158,7 +149,7 @@ public class AuthorsControllerTest : IDisposable
         };
         var secondCreate =
             await _authorsController.CreateAuthor(new AuthorCreateDto(sameAuthor.Name, sameAuthor.Email,
-                new List<int>() { 1 }));
+                new List<int> { 1 }));
         secondCreate.Should().BeAssignableTo<ConflictObjectResult>();
     }
 
@@ -173,7 +164,7 @@ public class AuthorsControllerTest : IDisposable
         };
         var authors =
             await _authorsController.CreateAuthor(new AuthorCreateDto(author.Name, author.Email,
-                new List<int>() { 1 }));
+                new List<int> { 1 }));
         authors.Should().BeAssignableTo<CreatedAtActionResult>();
 
         var updatedAuthor = new Author
