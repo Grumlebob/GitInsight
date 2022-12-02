@@ -28,13 +28,13 @@ public static class GitPathHelper
     public static string GetSavedRepositoriesFolder()
     {
         var projectPath = Directory.GetParent(Directory.GetCurrentDirectory())!.FullName;
-        return projectPath! + GetRelativeSavedRepositoriesFolder();
+        return projectPath + GetRelativeSavedRepositoriesFolder();
     }
 
     public static string GetFullPathWhenCalledFromProgram(string relativePath)
     {
         var projectPath = Directory.GetParent(Directory.GetCurrentDirectory())!.FullName;
-        return Path.Combine(projectPath! + relativePath);
+        return Path.Combine(projectPath + relativePath);
     }
     
 }

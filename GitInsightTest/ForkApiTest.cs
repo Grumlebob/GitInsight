@@ -1,13 +1,13 @@
-﻿using GitInsight;
-
-namespace GitInsightTest;
+﻿namespace GitInsightTest;
 
 public class ForkApiTest
 {
     [Fact]
     public async Task GetForksSuccess()
     {
-        var res = (await new ForkApi().GetForks("OliFryser/GitInsightTestRepo_1Fork")).ToList();
+        //TODO. Use a test-repository where we have full control. Instead of some random repo of a classmate.
+        
+        var res = ((await new ForkApi().GetForks("OliFryser/GitInsightTestRepo_1Fork"))!).ToList();
         res.Count().Should().Be(1);
         var instance = res.First();
         instance.name.Should().Be("ForkedRepo");

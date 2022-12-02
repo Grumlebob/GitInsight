@@ -1,10 +1,4 @@
-﻿using GitInsight.Core;
-using GitInsight.Entities;
-using Microsoft.Data.Sqlite;
-using Branch = GitInsight.Entities.Branch;
-using Repository = GitInsight.Entities.RepoInsight;
-
-namespace GitInsightTest;
+﻿namespace GitInsightTest;
 
 public class BranchRepositoryTest : IDisposable
 {
@@ -22,13 +16,9 @@ public class BranchRepositoryTest : IDisposable
         };
         _context.Repositories.AddAsync(repo);
         _context.SaveChangesAsync();
-        //100% coverage :/
-        var gojleren1 = new Branch { Id = 1 };
-        var gojleren2 = gojleren1.Commits;
-        gojleren1.Repository = new Repository() { Path = "Mega Gargoyle" };
-        var gojleren3 = gojleren1.Repository;
     }
 
+    
     [Fact]
     public async Task Create_Branch_Unknown_Repository()
     {
@@ -198,6 +188,17 @@ public class BranchRepositoryTest : IDisposable
         (await _repo.UpdateAsync(new BranchDto(1, null, 1, "uhm")))
             .Should()
             .Be(Response.NotFound);
+    }
+    
+    [Fact]
+    public void CoverageCover()
+    {
+        var aNewBranch = new Branch { Id = 1 };
+        var commitsFromNewBranch = aNewBranch.Commits;
+        aNewBranch.Repository = new Repository() { Path = "Mega Gargoyle" };
+        var repositoryFromNewBranch = aNewBranch.Repository;
+        commitsFromNewBranch.Should().BeEmpty();
+        repositoryFromNewBranch.Should().NotBeNull();
     }
 
     public void Dispose()

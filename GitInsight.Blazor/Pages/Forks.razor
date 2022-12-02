@@ -1,6 +1,5 @@
 ﻿@page "/Forks"
-@using GitInsight.Web.Services
-@using System.Net
+@using GitInsight.Blazor.Services
 @inject IAnalysisService AnalysisService
 
 
@@ -10,8 +9,8 @@
     </NotAuthorized>
     <Authorized>
         <TitleCard Title="Forks"/>
-        <RepoPathPicker OnChange="load" Disabled="@_loading"></RepoPathPicker>
-        @if (true)
+        <RepoPathPicker OnChange="Load" Disabled="@_loading"></RepoPathPicker>
+        @if (_loading)
         {
             <RadzenCard Style="width: 400px;" class="mb-1">
                 <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Loading</RadzenText>
@@ -24,7 +23,7 @@
         }
         else if (!_forksGiven.Any())
         {
-            <p>@RepoPathContainer.pickedRepo does not have any forks</p>
+            <p>@RepoPathContainer.PickedRepositoryPath does not have any forks</p>
         }
         else
         {
@@ -38,24 +37,19 @@
 </AuthorizeView>
 
 @code {
-    private string? _error;
     private bool _loading;
 
     IEnumerable<ForkDto>? _forksGiven;
 
     async Task GetForks()
     {
-        _error = null;
         _loading = true;
         try
         {
-            _forksGiven = await AnalysisService.GetForksFromApi(RepoPathContainer.pickedRepo);
-            _error = null;
+            _forksGiven = await AnalysisService.GetForksFromApi(RepoPathContainer.PickedRepositoryPath!);
         }
-        catch (HttpRequestException e)
+        catch (HttpRequestException)
         {
-            Console.WriteLine(e);
-            _error = e.Message;
             _forksGiven = null;
         }
         _loading = false;
@@ -63,12 +57,12 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await load();
+        await Load();
     }
 
-    public async Task load()
+    private async Task Load()
     {
-        if (RepoPathContainer.pickedRepo != null) await GetForks();
+        if (RepoPathContainer.PickedRepositoryPath != null) await GetForks();
     }
 
 }

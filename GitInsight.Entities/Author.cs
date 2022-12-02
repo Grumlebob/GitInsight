@@ -6,8 +6,8 @@ public class Author
     public string Name { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
 
-    public List<CommitInsight> Commits { get; set; }
-    public List<RepoInsight> Repositories { get; set; }
+    public ICollection<CommitInsight> Commits { get; set; }
+    public ICollection<RepoInsight> Repositories { get; set; }
 
     public Author()
     {
@@ -23,6 +23,7 @@ public class AuthorConfigurations : IEntityTypeConfiguration<Author>
         builder.HasKey(a => a.Id);
 
         builder.HasIndex(a => a.Email).IsUnique();
+        builder.Property(e => e.Email).IsRequired();
 
         builder.HasMany(a => a.Commits)
             .WithOne(c => c.Author)
@@ -31,7 +32,5 @@ public class AuthorConfigurations : IEntityTypeConfiguration<Author>
 
         builder.HasMany(a => a.Repositories)
             .WithMany(a => a.Authors);
-
-
     }
 }
