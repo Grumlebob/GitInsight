@@ -6,8 +6,8 @@
         @Author
     </RadzenText>
     <RadzenText >
-                             Total: @Data.Sum(d => d.CommitAmount)
-                         </RadzenText>
+        Total: @Data.Sum(d => d.CommitAmount)
+    </RadzenText>
     <RadzenChart id="chart" Style="@HeightOfChart">
         <RadzenBarSeries Data="@Data" CategoryProperty="Date" Title="Commits" ValueProperty="CommitAmount" RenderingOrder="1">
             <RadzenMarkers MarkerType="MarkerType.Square"/>
@@ -18,7 +18,7 @@
             <RadzenGridLines Visible="true"/>
             <RadzenAxisTitle Text="Commits"/>
         </RadzenValueAxis>
-        <RadzenBarOptions Radius="5" Height="10"  />
+        <RadzenBarOptions Radius="5" Height="10"/>
     </RadzenChart>
 </RadzenCard>
 
@@ -27,7 +27,7 @@
     [Parameter]
     public int Height
     {
-        get { return _height;}
+        get { return _height; }
         set
         {
             if (value < 100)
@@ -46,24 +46,17 @@
     public string HeightOfChart
     {
         get { return $"height: {Height}px"; }
-    } 
-
-    string FormatDate(object date)
-    {
-        if (Data.Count() > 20)
-        {
-            return date == null ? string.Empty : Convert.ToDateTime(date).ToString("dd/MM");
-        }
-        else return date == null ? string.Empty : Convert.ToDateTime(date).ToString("dd MMM");
     }
 
-@code {
+    string FormatDate(object? date) =>
+        date == null ? string.Empty : Convert.ToDateTime(date).ToString("dd MMM");
+    
+    @code {
 
-    [Parameter]
-    public string Author { get; set; }
+        [Parameter]
+        public string? Author { get; set; }
 
-    [Parameter]
-    public IEnumerable<CommitsByDateFormatted> Data { get; set; } = new List<CommitsByDateFormatted>();
+        [Parameter]
+        public IEnumerable<CommitsByDateFormatted> Data { get; set; } = new List<CommitsByDateFormatted>();
 
-}
-    } 
+    }} 

@@ -1,8 +1,6 @@
-using System.Reflection;
 using GitInsight.Blazor;
-using GitInsight.Web.Services;
+using GitInsight.Blazor.Services;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Radzen;
 

@@ -1,10 +1,4 @@
-﻿using System.IO.Compression;
-using GitInsight.Entities;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
-
-namespace GitInsightTest;
-
+﻿namespace GitInsightTest;
 public static class SetupTests
 {
     private static bool _hasBeenUnzipped = false;
@@ -22,7 +16,7 @@ public static class SetupTests
         return (connection, context);
     }
 
-    public static void EnsureZipIsUnzippedTesting() //Only works in testing directory
+    private static void EnsureZipIsUnzippedTesting() //Only works in testing directory
     {
         if (_hasBeenUnzipped) return;
         var projectPath = "";

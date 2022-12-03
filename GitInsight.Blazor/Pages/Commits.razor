@@ -1,8 +1,6 @@
 ﻿@page "/Commits"
-@using GitInsight.Web.Services
-@using GitInsight.Core
-@inject IAnalysisService _analysisService
-@inject HttpClient _httpClient
+@using GitInsight.Blazor.Services
+@inject IAnalysisService AnalysisService
 
 <PageTitle>Index</PageTitle>
 
@@ -11,24 +9,15 @@
         <h1> You need to sign in</h1>
     </NotAuthorized>
     <Authorized>
-        <div style="padding-bottom: 20px;">
-            <RadzenCard Style="width: 400px; background-color: #cac4fe; padding-bottom: 10px;" Class="rz-border-radius-3">
-                <h1>Commits by Date</h1>
-            </RadzenCard>
-        </div>
-        
-        
-        <RepoPathPicker OnChange="load" Disabled="@loading"></RepoPathPicker>
+        <TitleCard Title="Commits by Date"/>
+        <RepoPathPicker OnChange="Load" Disabled="@_loading"></RepoPathPicker>
 
-        @* <p role="status" id="consolewriteline">@outputText</p> *@
-        @if (loading)
+        @if (_loading)
         {
-            <div style="padding-top: 10px;">
-                <RadzenCard Style="width: 400px;">
-                    <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Loading</RadzenText>
-                    <RadzenProgressBar  Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
-                </RadzenCard>
-            </div>
+            <RadzenCard Style="width: 400px;" class="mb-1">
+                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Loading</RadzenText>
+                <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate"/>
+            </RadzenCard>
         }
         @if (_commitsByAuthors != null && _commitsByAuthors.Any())
         {
@@ -64,15 +53,13 @@
         }
     </Authorized>
 </AuthorizeView>
+
 @code {
-    private string user;
-    private string repo;
-    private bool loading;
-    // private string outputText;
-    private List<CommitsByDateByAuthor> _commitsByAuthors = new();
+    private bool _loading;
+    private List<CommitsByDateByAuthor>? _commitsByAuthors = new();
     private List<CommitsByDate> _commitsByDate = new();
 
-    public List<CommitsByDateFormatted> FormatDates(IEnumerable<CommitsByDate> commitsByDate)
+    private List<CommitsByDateFormatted> FormatDates(IEnumerable<CommitsByDate> commitsByDate)
     {
         var formattedDates = new List<CommitsByDateFormatted>();
         foreach (var date in commitsByDate)
@@ -83,34 +70,24 @@
 
         return formattedDates;
     }
-    
 
 
-    public async Task GetRepo()
+    private async Task GetRepo()
     {
-        loading = true;
-        _commitsByAuthors = await _analysisService.GetCommitsByAuthor($"repoinsights/{RepoPathContainer.pickedRepo}");
-        _commitsByDate = await _analysisService.GetCommitsByDate($"repoinsights/{RepoPathContainer.pickedRepo}");
-        loading = false;
-    // outputText = _commitsByAuthors.Count.ToString();
+        _loading = true;
+        _commitsByAuthors = await AnalysisService.GetCommitsByAuthor($"repoinsights/{RepoPathContainer.PickedRepositoryPath}");
+        _commitsByDate = await AnalysisService.GetCommitsByDate($"repoinsights/{RepoPathContainer.PickedRepositoryPath}");
+        _loading = false;
     }
-    
+
     protected override async Task OnInitializedAsync()
     {
-        await load();
+        await Load();
     }
 
-    public async Task load()
+    private async Task Load()
     {
-        if (RepoPathContainer.pickedRepo != null) await GetRepo();
+        if (RepoPathContainer.PickedRepositoryPath != null) await GetRepo();
     }
-    
+
 }
-
-
-
-
-
-
-
-@* <SurveyPrompt Title="How is Blazor working for you?"/> *@

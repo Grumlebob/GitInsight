@@ -1,15 +1,7 @@
-﻿using GitInsight;
-using GitInsight.Core;
-using GitInsight.Entities;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
-using Branch = GitInsight.Entities.Branch;
-
-namespace GitInsightTest;
+﻿namespace GitInsightTest;
 
 public class AnalysisTest
 {
-    private readonly InsightContext _context;
     private readonly Analysis _analysis;
 
     public AnalysisTest()
@@ -22,24 +14,24 @@ public class AnalysisTest
 
         context.Database.EnsureCreated();
 
-        _context = context;
-        _analysis=new Analysis(_context);
+        var context1 = context;
+        _analysis=new Analysis(context1);
 
 
         var repo = new RepoInsight { Name = "repo1", Path = "idk/idk" };
-        _context.Repositories.Add(repo);
-        _context.SaveChanges();
+        context1.Repositories.Add(repo);
+        context1.SaveChanges();
 
-        _context.Authors.Add(new Author { Name = "Søren", Email = "søren@gmail.dk", Repositories = {repo}});
-        _context.Authors.Add(new Author { Name = "Per", Email = "per@gmail.dk", Repositories = {repo}});
-        _context.SaveChanges();
+        context1.Authors.Add(new Author { Name = "Søren", Email = "søren@gmail.dk", Repositories = {repo}});
+        context1.Authors.Add(new Author { Name = "Per", Email = "per@gmail.dk", Repositories = {repo}});
+        context1.SaveChanges();
 
         
 
-        _context.Branches.Add(new Branch { Name = "branch1", Path = "origin/idk", RepositoryId = 1 });
-        _context.SaveChanges();
+        context1.Branches.Add(new Branch { Name = "branch1", Path = "origin/idk", RepositoryId = 1 });
+        context1.SaveChanges();
 
-        _context.Commits.Add(new GitInsight.Entities.CommitInsight { 
+        context1.Commits.Add(new CommitInsight { 
             Id = 1, 
             Sha = "treg", 
             AuthorId = 1, 
@@ -49,7 +41,7 @@ public class AnalysisTest
             
         });
         
-        _context.Commits.Add(new GitInsight.Entities.CommitInsight
+        context1.Commits.Add(new CommitInsight
         {
             Id = 2,
             Sha = "heck", 
@@ -59,7 +51,7 @@ public class AnalysisTest
             Date = new DateTime(2022,10,13,11,45,0)
         });
         
-        _context.Commits.Add(new GitInsight.Entities.CommitInsight
+        context1.Commits.Add(new CommitInsight
         {
             Id = 3, Sha = "tger", 
             AuthorId = 1, 
@@ -68,7 +60,7 @@ public class AnalysisTest
             Date = new DateTime(2022,11,15,0,0,0)
         });
 
-        _context.SaveChanges();
+        context1.SaveChanges();
     }
     
     [Fact]

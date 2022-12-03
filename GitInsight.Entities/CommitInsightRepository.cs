@@ -27,15 +27,15 @@ public class CommitInsightRepository : ICommitInsightRepository
     public async Task<(List<CommitInsightDto?> commit, Response response)> FindByRepoIdAsync(int id)
     {
         var entities = await _context.Commits.Where(c => c.RepositoryId == id).Select(c =>CommitToCommitDto(c)).ToListAsync();
-        return entities.Any()? (entities, Response.Ok) :
-            (null,Response.NotFound);
+        return (entities.Any()? (entities, Response.Ok) :
+            (null,Response.NotFound))!;
     }
 
     public async Task<(IReadOnlyCollection<CommitInsightDto> commits, Response response)> FindAllAsync()
     {
         var entities = await _context.Commits.Select(entity => CommitToCommitDto(entity)).ToListAsync();
-        return entities.Any()? (entities, Response.Ok) :
-            (null,Response.NotFound);
+        return (entities.Any()? (entities, Response.Ok) :
+            (null,Response.NotFound))!;
     }
 
     public async Task<(Response response, CommitInsightDto? commit)> CreateAsync(CommitInsightCreateDto commitCreateDto)
@@ -119,7 +119,7 @@ public class CommitInsightRepository : ICommitInsightRepository
         return Response.Deleted;
     }
 
-    public static CommitInsightDto CommitToCommitDto(CommitInsight commit)
+    private static CommitInsightDto CommitToCommitDto(CommitInsight commit)
     {
         return new CommitInsightDto(commit.Id, commit.Sha, commit.Date, commit.AuthorId, commit.BranchId,
             commit.RepositoryId);

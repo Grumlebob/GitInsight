@@ -52,11 +52,7 @@ public class BranchRepository : IBranchRepository
         return (match!, Response.Ok);
 
     }
-
-    /// <summary>
-    /// Find all branches in the repository with Id = repositoryId.
-    /// </summary>
-    /// <param name="repositoryId"></param>
+    
     public async Task<(List<BranchDto>?, Response)> FindAllAsync(int repositoryId)
     {
         var result = from b in _context.Branches
@@ -69,7 +65,6 @@ public class BranchRepository : IBranchRepository
 
     }
 
-    /// <returns>All branches in database.</returns>
     public async Task<(List<BranchDto>?, Response)> FindAllAsync()
     {
         var result = from b in _context.Branches
@@ -82,7 +77,6 @@ public class BranchRepository : IBranchRepository
         }
 
         return (null, Response.NotFound);
-        // return await result.ToListAsync().ContinueWith(x => x.Result as IReadOnlyCollection<BranchDto>);
     }
 
     public async Task<Response> DeleteAsync(int id)

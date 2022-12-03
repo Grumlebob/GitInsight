@@ -1,6 +1,6 @@
 ﻿using GitInsight.Core;
 
-namespace GitInsight.Web.Services;
+namespace GitInsight.Blazor.Services;
 
 public interface IAnalysisService
 {

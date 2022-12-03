@@ -1,6 +1,5 @@
 ﻿using GitInsight.Core;
 using GitInsight.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace GitInsight.Data;
 
@@ -8,17 +7,15 @@ using LibGit2Sharp;
 
 public class DataManager
 {
-    private readonly RepoInsightRepository _repoInsightRepository;
-    private readonly BranchRepository _branchRepository;
-    private readonly CommitInsightRepository _commitInsightRepository;
-    private readonly AuthorRepository _authorRepository;
-    private InsightContext _context;
+    private readonly IRepoInsightRepository _repoInsightRepository;
+    private readonly IBranchRepository _branchRepository;
+    private readonly ICommitInsightRepository _commitInsightRepository;
+    private readonly IAuthorRepository _authorRepository;
 
     private bool _shouldReanalyze;
 
     public DataManager(InsightContext context)
     {
-        _context = context;
         var ctx = context;
         _repoInsightRepository = new RepoInsightRepository(ctx);
         _branchRepository = new BranchRepository(ctx);
@@ -32,15 +29,9 @@ public class DataManager
         _shouldReanalyze = await CheckIfReanalyzeNeeded(fullPath);
         if (!_shouldReanalyze)
         {
-            Console.WriteLine("No analyze was needed");
             return false;
         }
         
-        foreach (var idk in _context.Authors)
-        {
-            Console.WriteLine($"{idk.Name}: {idk.Repositories.Count}");
-        }
-
         using var repo = new Repository(fullPath);
         //repo
         var dto = new RepoInsightCreateDto(relPath, relPath, null!, null!, null!);
@@ -66,7 +57,6 @@ public class DataManager
         }
 
         await UpdateLatestCommit(repoResult.Id, fullPath);
-        Console.WriteLine("Analyze finished");
         return true;
     }
 
