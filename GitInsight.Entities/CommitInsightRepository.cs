@@ -132,5 +132,6 @@ public class CommitInsightRepository : ICommitInsightRepository
                  || await _context.Repositories.FirstOrDefaultAsync(c => c.Id == commit.RepositoryId) is null);
 
     }
+    
 
 }
