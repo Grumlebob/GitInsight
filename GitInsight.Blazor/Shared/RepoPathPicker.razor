@@ -1,4 +1,5 @@
 ﻿@using GitInsight.Blazor.Services
+@using System.Net
 @inject NotificationService NotificationService
 @inject IAnalysisService AnalysisService
 
@@ -64,9 +65,17 @@
             _loading = true;
             await AnalysisService.GetCommitsByAuthor($"repoinsights/{pathString}");
         }
-        catch (Exception)
+        catch (HttpRequestException e)
         {
-            ShowNotification(new NotificationMessage { Severity = NotificationSeverity.Error, Summary = "Invalid Repository", Detail = "The given repository either doesn't exist or is not public", Duration = 5000 });
+            if (e.StatusCode == HttpStatusCode.BadRequest)
+            {
+                ShowNotification(new NotificationMessage { Severity = NotificationSeverity.Error, Summary = "Invalid Repository", Detail = "The given repository either doesn't exist or is not public", Duration = 5000 }); 
+            }
+            else
+            {
+                ShowNotification(new NotificationMessage { Severity = NotificationSeverity.Error, Summary = "Server Error", Detail = "The server failed for an unknown reason", Duration = 5000 }); 
+            }
+            
             _loading = false;
             return;
         }

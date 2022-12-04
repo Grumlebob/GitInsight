@@ -116,8 +116,12 @@ public class RepoInsightsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GitAwardWinner))]
     public async Task<IActionResult> EarlyBird(string user, string repoName)
     {
-        await AddOrUpdateLocalRepoData(user, repoName);
-
+        var response = await AddOrUpdateLocalRepoData(user, repoName);
+        if (response is BadRequestObjectResult)
+        {
+            return BadRequest();
+        }
+        
         var relPath = $"{GetRelativeSavedRepositoriesFolder()}/{user}/{repoName}";
         var analysis = new Analysis(_context);
         var (repo, _) = await _repoInsightRepository.FindRepositoryByPathAsync(relPath);
@@ -133,7 +137,12 @@ public class RepoInsightsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GitAwardWinner))]
     public async Task<IActionResult> NightOwl(string user, string repoName)
     {
-        await AddOrUpdateLocalRepoData(user, repoName);
+        var response = await AddOrUpdateLocalRepoData(user, repoName);
+    
+        if (response is BadRequestObjectResult)
+        {
+            return BadRequest();
+        }
 
         var relPath = $"{GetRelativeSavedRepositoriesFolder()}/{user}/{repoName}";
         var analysis = new Analysis(_context);
@@ -151,7 +160,11 @@ public class RepoInsightsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CommitsByDate))]
     public async Task<IActionResult> CommitsByDate(string user, string repoName)
     {
-        await AddOrUpdateLocalRepoData(user, repoName);
+        var response = await AddOrUpdateLocalRepoData(user, repoName);
+        if (response is BadRequestObjectResult)
+        {
+            return BadRequest();
+        }
         
         var relPath = $"{GetRelativeSavedRepositoriesFolder()}/{user}/{repoName}";
         var analysis = new Analysis(_context);
