@@ -5,18 +5,19 @@
 
 <RadzenDropDown AllowClear="true" TValue="string"
                 Data=@RepoPathContainer.RepositoryPaths
-                                        @bind-value="@Path" Change="@Invoke" placeholder="Pick a Repository"
+                                         @bind-value="@Path" Change="@Invoke" placeholder="Pick a Repository"
                 Disabled="@Disabled"/>
 
 <RadzenButton class="rz-ripple" IsBusy="_adding" Click="@ShowAdding">Add Repo</RadzenButton>
 
 @if (_adding)
 {
-    <br/>
     <div style="padding-top: 10px">
-        <RadzenTextBox type="text" @bind-value="@_user" placeholder="Username or organization"/>
-        <RadzenTextBox type="text" @bind-value="@_repo" placeholder="Repository name"/>
-        <RadzenButton class="rz-ripple" Disabled="@_loading" Click="@(AddRepo)">Add</RadzenButton>
+        <form onsubmit="@AddRepo">
+            <RadzenTextBox type="text" @bind-value="@_user" placeholder="Username or organization"/>
+            <RadzenTextBox type="text" @bind-value="@_repo" placeholder="Repository name"/>
+            <RadzenButton type="submit" class="rz-ripple" Disabled="@_loading" >Add</RadzenButton>
+        </form>
     </div>
     @if (_loading)
     {
@@ -55,6 +56,7 @@
     private async Task AddRepo()
     {
         var pathString = $"{_user}/{_repo}";
+        pathString = pathString.ToLower();
         if (RepoPathContainer.RepositoryPaths.Contains(pathString))
         {
             ShowNotification(new NotificationMessage { Severity = NotificationSeverity.Error, Summary = "Repository has already been added", Detail = "", Duration = 4000 });
@@ -69,13 +71,13 @@
         {
             if (e.StatusCode == HttpStatusCode.BadRequest)
             {
-                ShowNotification(new NotificationMessage { Severity = NotificationSeverity.Error, Summary = "Invalid Repository", Detail = "The given repository either doesn't exist or is not public", Duration = 5000 }); 
+                ShowNotification(new NotificationMessage { Severity = NotificationSeverity.Error, Summary = "Invalid Repository", Detail = "The given repository either doesn't exist or is not public", Duration = 5000 });
             }
             else
             {
-                ShowNotification(new NotificationMessage { Severity = NotificationSeverity.Error, Summary = "Server Error", Detail = "The server failed for an unknown reason", Duration = 5000 }); 
+                ShowNotification(new NotificationMessage { Severity = NotificationSeverity.Error, Summary = "Server Error", Detail = "The server failed for an unknown reason", Duration = 5000 });
             }
-            
+
             _loading = false;
             return;
         }
