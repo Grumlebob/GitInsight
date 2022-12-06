@@ -10,12 +10,18 @@
 
 ## Set up the project
 
-To run the program, first run  the following in the terminal
-```dotnet ef database update```
+To run the program, first run the following in the terminal
 
-Afterwards open two terminals to run the backend and frontend separately. 
-```dotnet run --project GitInsight```
-```dotnet run --project GitInsight.Blazor```
+```bash
+dotnet ef database update
+```
 
-Head to [url](http://localhost:7011) to see the project. 
+Afterwards open two terminals to run the backend and frontend separately.
+
+```bash
+dotnet run --project GitInsight
+dotnet run --project GitInsight.Blazor
+```
+
+Head to <http://localhost:7011> to see the project.
 If any errors occur, it may be because a process is already running on the api port (localhost:7273).
