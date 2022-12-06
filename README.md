@@ -23,5 +23,5 @@ dotnet run --project GitInsight
 dotnet run --project GitInsight.Blazor
 ```
 
-Head to [url](http://localhost:7011) to see the project.
+Head to <http://localhost:7011> to see the project.
 If any errors occur, it may be because a process is already running on the api port (localhost:7273).
