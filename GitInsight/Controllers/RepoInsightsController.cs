@@ -185,5 +185,4 @@ public class RepoInsightsController : ControllerBase
         return Ok(forks);
     }
 
-
 }
