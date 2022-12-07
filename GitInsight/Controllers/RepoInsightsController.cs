@@ -38,6 +38,7 @@ public class RepoInsightsController : ControllerBase
                 var remote = repository.Network.Remotes[remoteName];
                 var options = new FetchOptions();
                 var refSpecs = remote.FetchRefSpecs.Select(x => x.Specification);
+                repository.Reset(ResetMode.Hard);
 
                 // Fetch the latest changes from the remote repository
                 Commands.Fetch(repository, remoteName, refSpecs, options, $"Fetching updates for {repoPath}");
@@ -45,7 +46,9 @@ public class RepoInsightsController : ControllerBase
                 // Merge the fetched changes into the local repository
                 MergeResult result = repository.MergeFetchedRefs(new Signature("Your Name", "your@email.com", DateTime.Now), new MergeOptions
                 {
-                    FastForwardStrategy = FastForwardStrategy.NoFastForward
+                    FastForwardStrategy = FastForwardStrategy.NoFastForward,
+                    MergeFileFavor = MergeFileFavor.Theirs
+                    
                 });
 
                 if (result.Status == MergeStatus.Conflicts)
