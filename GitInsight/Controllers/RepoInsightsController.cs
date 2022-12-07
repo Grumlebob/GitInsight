@@ -170,7 +170,7 @@ public class RepoInsightsController : ControllerBase
         var analysis = new Analysis(_context);
         var (repo, _) = await _repoInsightRepository.FindRepositoryByPathAsync(relPath);
 
-        return Ok(await analysis.GetCommitsByDate(repo.Id));
+        return Ok(await analysis.GetCommitsByDate(repo!.Id));
     }
 
 
