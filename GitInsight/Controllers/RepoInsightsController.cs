@@ -31,22 +31,49 @@ public class RepoInsightsController : ControllerBase
 
         if (Directory.Exists(repoPath))
         {
-            DeleteDirectory(repoPath);
-        }
-
-        try
-        {
-            Repository.Clone(url, repoPath);
-        }
-        catch (LibGit2SharpException)
-        {
-            if (Directory.Exists(userPath) && !Directory.EnumerateFileSystemEntries(userPath).Any())
+            using (var repository = new Repository(repoPath))
             {
-                DeleteDirectory(userPath); //clone makes a new folder even when failed. Delete if empty
+                var remoteName = "origin";
+                var remote = repository.Network.Remotes[remoteName];
+                var options = new FetchOptions();
+                var refSpecs = remote.FetchRefSpecs.Select(x => x.Specification);
+                repository.Reset(ResetMode.Hard);
+
+                // Fetch the latest changes from the remote repository
+                Commands.Fetch(repository, remoteName, refSpecs, options, $"Fetching updates for {repoPath}");
+
+                // Merge the fetched changes into the local repository
+                MergeResult result = repository.MergeFetchedRefs(new Signature("codeMerge", "codeMerge", DateTime.Now), new MergeOptions
+                {
+                    FastForwardStrategy = FastForwardStrategy.NoFastForward,
+                    MergeFileFavor = MergeFileFavor.Theirs
+                    
+                });
+
+                if (result.Status == MergeStatus.Conflicts)
+                {
+                    // There were merge conflicts, so you will need to handle them here
+                }
+            }
+        }
+        else
+        {
+            // The repository does not exist, so clone it
+            try
+            {
+                Repository.Clone(url, repoPath);
+            }
+            catch (LibGit2SharpException)
+            {
+                if (Directory.Exists(userPath) && !Directory.EnumerateFileSystemEntries(userPath).Any())
+                {
+                    DeleteDirectory(userPath); //clone makes a new folder even when failed. Delete if empty
+                }
+
+                return BadRequest("Something went wrong in trying to reach the repository. " +
+                                  "Please check that your spelling is correct and that it is a public repository");
             }
 
-            return BadRequest("Something went wrong in trying to reach the repository. " +
-                              "Please check that your spelling is correct and that it is a public repository");
         }
 
         DeleteDirectory(repoPath,
