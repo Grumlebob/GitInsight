@@ -7,7 +7,6 @@ namespace GitInsight.Controllers;
 [Authorize]
 [Route("[controller]")]
 public class RepoInsightsController : ControllerBase
-
 {
     private readonly IRepoInsightRepository _repoInsightRepository;
     private readonly InsightContext _context;
