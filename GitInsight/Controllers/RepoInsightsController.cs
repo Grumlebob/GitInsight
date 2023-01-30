@@ -44,7 +44,7 @@ public class RepoInsightsController : ControllerBase
                 Commands.Fetch(repository, remoteName, refSpecs, options, $"Fetching updates for {repoPath}");
 
                 // Merge the fetched changes into the local repository
-                MergeResult result = repository.MergeFetchedRefs(new Signature("Your Name", "your@email.com", DateTime.Now), new MergeOptions
+                MergeResult result = repository.MergeFetchedRefs(new Signature("codeMerge", "codeMerge", DateTime.Now), new MergeOptions
                 {
                     FastForwardStrategy = FastForwardStrategy.NoFastForward,
                     MergeFileFavor = MergeFileFavor.Theirs
