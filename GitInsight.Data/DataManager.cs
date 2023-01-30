@@ -36,8 +36,6 @@ public class DataManager
         //repo
         var dto = new RepoInsightCreateDto(relPath, relPath, null!, null!, null!);
         var (repoResult, _) = await _repoInsightRepository.CreateAsync(dto);
-
-        
         
         //branches
         foreach (var b in repo.Branches)
