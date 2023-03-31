@@ -1,4 +1,4 @@
-﻿---
+---
 # MegaLinter GitHub Action configuration file
 # More info at https://megalinter.github.io
 name: MegaLinter
@@ -60,7 +60,7 @@ jobs:
             # Upload MegaLinter artifacts
             - name: Archive production artifacts
               if: ${{ success() }} || ${{ failure() }}
-              uses: actions/upload-artifact@v2
+              uses: actions/upload-artifact@v3
               with:
                   name: MegaLinter reports
                   path: |
